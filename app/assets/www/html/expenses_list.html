@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tailor Manager - Expenses</title>
+<script src="../js/tailwindcss.js"></script>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+
+
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-dim": "#cbdbf5",
+                      "surface-container": "#e5eeff",
+                      "tertiary-container": "#3f2200",
+                      "primary-fixed": "#d8e3fb",
+                      "surface": "#f8f9ff",
+                      "secondary-container": "#e0e0db",
+                      "on-surface-variant": "#45474c",
+                      "on-primary-fixed": "#111c2d",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#d3e4fe",
+                      "outline": "#75777d",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#1a1c19",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-background": "#0b1c30",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "surface-tint": "#545f73",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#b58759",
+                      "tertiary": "#221000",
+                      "background": "#f8f9ff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#ffdcbd",
+                      "on-secondary-fixed-variant": "#454744",
+                      "primary": "#091426",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed-variant": "#623f18",
+                      "secondary": "#5d5f5b",
+                      "on-primary-container": "#8590a6",
+                      "surface-bright": "#f8f9ff",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#213145",
+                      "surface-container-high": "#dce9ff",
+                      "outline-variant": "#c5c6cd",
+                      "primary-fixed-dim": "#bcc7de",
+                      "on-surface": "#0b1c30",
+                      "secondary-fixed-dim": "#c6c7c2",
+                      "inverse-primary": "#bcc7de",
+                      "primary-container": "#1e293b",
+                      "on-tertiary-fixed": "#2c1600",
+                      "on-secondary-container": "#62635f",
+                      "tertiary-fixed-dim": "#f0bd8b",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e3e3de"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack_lg": "32px",
+                      "gutter": "24px",
+                      "container_padding": "40px",
+                      "stack_sm": "8px",
+                      "sidebar_width": "280px",
+                      "header_height": "72px",
+                      "stack_md": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Public Sans"
+                      ],
+                      "headline-md": [
+                              "Public Sans"
+                      ],
+                      "display": [
+                              "Public Sans"
+                      ],
+                      "label-lg": [
+                              "Public Sans"
+                      ],
+                      "label-sm": [
+                              "Public Sans"
+                      ],
+                      "headline-lg": [
+                              "Public Sans"
+                      ],
+                      "body-md": [
+                              "Public Sans"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.04em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+    <link href="../css/fonts.css" rel="stylesheet" />
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary dark:bg-primary shadow-md">
+<!-- Header -->
+<div class="p-gutter flex items-center gap-4 border-b border-primary-container/20">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-primary-container shrink-0">
+<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A macro shot of a stylized, premium golden needle and a spool of deep navy thread resting on a piece of high-quality textured beige linen fabric. The lighting is soft and studio-quality, emphasizing the craftsmanship and elegance of a boutique tailor shop. Corporate modern aesthetic." src=\"../img/logo.png\"/>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary">Artisan Stitch</h1>
+<p class="text-label-sm font-label-sm text-on-primary/70">Premium Tailoring</p>
+</div>
+</div>
+<!-- Main Navigation -->
+<div class="flex-1 overflow-y-auto py-stack_md flex flex-col gap-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-lg text-label-lg">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="straighten">straighten</span>
+<span class="font-label-lg text-label-lg">Measurements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-label-lg text-label-lg">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-lg text-label-lg">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-lg text-label-lg">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all hover:bg-primary-container/20" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-lg text-label-lg">Expenses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-lg text-label-lg">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</div>
+<!-- Footer -->
+<div class="p-4 mt-auto border-t border-primary-container/20 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-label-sm text-label-sm hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="backup">backup</span>
+<span>Backup &amp; Restore</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-label-sm text-label-sm hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-label-sm text-label-sm hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="cloud_off">cloud_off</span>
+<span>Offline Mode</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm transition-transform">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
+</div>
+<div class="flex items-center gap-6">
+<button onclick="window.API.navigate('new_order')" class="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Order
+            </button>
+<div class="flex items-center gap-2 border-l border-outline-variant/30 pl-6">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest/20 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest/20 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-secondary-container ml-2 cursor-pointer shadow-[0px_4px_20px_rgba(0,0,0,0.05)]">
+<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A portrait of a meticulously organized tailor's workspace, featuring a vintage measuring tape neatly coiled next to a pair of sharp tailor's scissors on a pristine white oak table. Soft, diffused natural light pouring in from a nearby window creates a bright, modern, and reliable corporate aesthetic." src=\"../img/profile.png\"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[280px] mt-[72px] flex-1 p-container_padding max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-stack_lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Expenses</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and track your workshop expenditures.</p>
+</div>
+<button onclick="window.API.navigate('add_expense')" class="flex items-center gap-2 bg-primary text-on-primary px-5 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] hover:bg-primary/90 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Add Expense
+            </button>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-stack_lg">
+<!-- Today's Expenses -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="today">today</span>
+</div>
+<span class="px-2 py-1 bg-surface-container-highest/20 text-primary rounded-full font-label-sm text-label-sm">Today</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface-variant mb-1">Today's Expenses</p>
+<h3 class="font-display text-display text-on-surface">$145.00</h3>
+</div>
+</div>
+<!-- This Month -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<span class="px-2 py-1 bg-surface-container-highest/20 text-primary rounded-full font-label-sm text-label-sm">This Month</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface-variant mb-1">This Month</p>
+<h3 class="font-display text-display text-on-surface">$2,840.50</h3>
+</div>
+</div>
+<!-- Total Expenses -->
+<div class="bg-primary rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.1)] flex flex-col justify-between relative overflow-hidden">
+<!-- Abstract pattern overlay -->
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="px-2 py-1 bg-white/10 text-on-primary rounded-full font-label-sm text-label-sm">YTD</span>
+</div>
+<div class="relative z-10">
+<p class="font-label-lg text-label-lg text-on-primary/80 mb-1">Total Expenses</p>
+<h3 class="font-display text-display text-on-primary">$14,290.00</h3>
+</div>
+</div>
+</div>
+<!-- Expenses List -->
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Recent Expenses</h3>
+<div class="flex flex-col gap-3">
+<!-- Header Row -->
+<div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<div class="col-span-2">Date</div>
+<div class="col-span-3">Expense Name</div>
+<div class="col-span-2">Category</div>
+<div class="col-span-3">Note</div>
+<div class="col-span-2 text-right">Amount</div>
+</div>
+<!-- List Items -->
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
+<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 24, 2023</div>
+<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Premium Silk Thread</div>
+<div class="col-span-2">
+<span class="px-3 py-1 bg-[#dce9ff]/40 text-[#545f73] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#dce9ff]">
+<span class="material-symbols-outlined text-[14px]" data-icon="category">category</span>
+                            Material
+                        </span>
+</div>
+<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Restock for winter collection</div>
+<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$120.00</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
+<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 22, 2023</div>
+<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Shop Electricity</div>
+<div class="col-span-2">
+<span class="px-3 py-1 bg-[#ffdcbd]/40 text-[#623f18] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#ffdcbd]">
+<span class="material-symbols-outlined text-[14px]" data-icon="bolt">bolt</span>
+                            Utility
+                        </span>
+</div>
+<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Monthly bill</div>
+<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$245.50</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
+<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 15, 2023</div>
+<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Sewing Machine Repair</div>
+<div class="col-span-2">
+<span class="px-3 py-1 bg-[#e0e0db]/40 text-[#454744] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#e0e0db]">
+<span class="material-symbols-outlined text-[14px]" data-icon="build">build</span>
+                            Maintenance
+                        </span>
+</div>
+<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Routine maintenance for primary machine</div>
+<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$85.00</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
+<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 01, 2023</div>
+<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Monthly Rent</div>
+<div class="col-span-2">
+<span class="px-3 py-1 bg-[#d8e3fb]/40 text-[#111c2d] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#d8e3fb]">
+<span class="material-symbols-outlined text-[14px]" data-icon="storefront">storefront</span>
+                            Rent
+                        </span>
+</div>
+<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Studio space</div>
+<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$1,500.00</div>
+</div>
+</div>
+</div>
+</main>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/expenses.js"></script>
+</body></html>

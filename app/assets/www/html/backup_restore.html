@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Backup &amp; Restore - Artisan Stitch</title>
+<script src="../js/tailwindcss.js"></script>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#3f2200",
+                        "primary-fixed": "#d8e3fb",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#e0e0db",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#75777d",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1a1c19",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-tint": "#545f73",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b58759",
+                        "tertiary": "#221000",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-secondary-fixed-variant": "#454744",
+                        "primary": "#091426",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "secondary": "#5d5f5b",
+                        "on-primary-container": "#8590a6",
+                        "surface-bright": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c5c6cd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-container": "#62635f",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e3e3de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack_lg": "32px",
+                        "gutter": "24px",
+                        "container_padding": "40px",
+                        "stack_sm": "8px",
+                        "sidebar_width": "280px",
+                        "header_height": "72px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Public Sans"],
+                        "headline-md": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "label-lg": ["Public Sans"],
+                        "label-sm": ["Public Sans"],
+                        "headline-lg": ["Public Sans"],
+                        "body-md": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <link href="../css/fonts.css" rel="stylesheet" />
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface text-primary dark:text-primary shadow-sm hidden md:flex">
+<div class="flex items-center gap-4">
+<!-- Search omitted for settings context, left blank for alignment -->
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-highest/20">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-highest/20">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+</div>
+<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-full flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-md">
+<span class="material-symbols-outlined" data-weight="fill">add</span>
+                New Order
+            </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A beautifully tailored dark navy suit jacket on a wooden mannequin in a bright, modern workshop, soft beige background, corporate modern aesthetic with tactile fabric details, professional lighting." src=\"../img/profile.png\"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary dark:bg-primary shadow-md hidden md:flex">
+<!-- Header -->
+<div class="p-gutter flex items-center gap-4 border-b border-primary-container">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-[28px]" data-icon="cut">content_cut</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary">Artisan Stitch</h1>
+<p class="text-label-sm font-label-sm text-on-primary/70">Premium Tailoring</p>
+</div>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto py-stack_sm custom-scrollbar flex flex-col gap-1 px-4 mt-4">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                Customers
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="straighten">straighten</span>
+                Measurements
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+                Orders
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                Payments
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+                Deliveries
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                Expenses
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Reports
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+<!-- Footer Tabs -->
+<div class="mt-auto border-t border-primary-container p-4 flex flex-col gap-1">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="backup">backup</span>
+                Backup &amp; Restore
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="cloud_off">cloud_off</span>
+                Offline Mode
+            </a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="md:ml-[280px] md:pt-[72px] min-h-screen p-container_padding flex justify-center">
+<div class="w-full max-w-3xl flex flex-col gap-stack_lg">
+<!-- Page Header -->
+<div class="mb-4">
+<h2 class="font-display text-display text-on-surface mb-2">Data Security</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Manage your shop's records, protect customer measurements, and ensure you never lose important order details.</p>
+</div>
+<!-- Bento Grid Layout for Backup/Restore -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
+<!-- Backup Card -->
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between h-[320px] hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300">
+<div>
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Create Backup</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Save a secure copy of your current shop records, including measurements and active orders.</p>
+<div class="bg-surface rounded-lg p-3 flex flex-col gap-1 border border-surface-container">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Last Backup:</span>
+<span class="font-label-lg text-label-lg text-on-surface">Today, 09:41 AM</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Location:</span>
+<span class="font-body-md text-body-md text-on-surface truncate max-w-[150px]">Documents/ArtisanStitch</span>
+</div>
+</div>
+</div>
+<button id="btn-backup" class="w-full h-16 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-md transition-all active:scale-[0.98] mt-6">
+<span class="material-symbols-outlined" data-icon="save_alt">save_alt</span>
+                        Backup Data
+                    </button>
+</div>
+<!-- Restore Card -->
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between h-[320px] hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 relative overflow-hidden">
+<!-- Subtle warning background pattern -->
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-error-container/20 to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="history">history</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Restore Previous</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Return your shop to a previous state using a saved backup file.</p>
+<div class="flex items-start gap-3 p-3 bg-error-container/30 rounded-lg border border-error-container/50">
+<span class="material-symbols-outlined text-error mt-0.5 text-[20px]" data-icon="warning">warning</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Restoring will replace all current information. Any new measurements entered since the backup will be removed.</p>
+</div>
+</div>
+<button id="btn-restore" class="w-full h-16 bg-surface text-primary border border-outline-variant font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-[0.98] mt-6 relative z-10">
+<span class="material-symbols-outlined" data-icon="restore">restore</span>
+                        Restore Data
+                    </button>
+</div>
+</div>
+<!-- Settings Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container mt-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="auto_mode">auto_mode</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface">Automatic Backup Before Exit</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Securely save your work every time you close the application.</p>
+</div>
+</div>
+<!-- Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary shadow-sm"></div>
+</label>
+</div>
+</div>
+</div>
+</main>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/backup.js"></script>
+</body></html>

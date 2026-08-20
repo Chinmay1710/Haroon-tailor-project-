@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Measurement - Tailor Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#3f2200",
+                        "primary-fixed": "#d8e3fb",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#e0e0db",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#75777d",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1a1c19",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-tint": "#545f73",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b58759",
+                        "tertiary": "#221000",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-secondary-fixed-variant": "#454744",
+                        "primary": "#091426",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "secondary": "#5d5f5b",
+                        "on-primary-container": "#8590a6",
+                        "surface-bright": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c5c6cd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-container": "#62635f",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e3e3de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack_lg": "32px",
+                        "gutter": "24px",
+                        "container_padding": "40px",
+                        "stack_sm": "8px",
+                        "sidebar_width": "280px",
+                        "header_height": "72px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Public Sans"],
+                        "headline-md": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "label-lg": ["Public Sans"],
+                        "label-sm": ["Public Sans"],
+                        "headline-lg": ["Public Sans"],
+                        "body-md": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary shadow-md hidden md:flex">
+<!-- Header -->
+<div class="flex flex-col items-center justify-center p-gutter border-b border-primary-container/30">
+<img alt="Tailor Shop Logo" class="w-16 h-16 rounded-full bg-primary-container mb-4 object-cover" data-alt="A minimalist line-art logo of a needle and thread forming an elegant abstract shape. The logo is rendered in crisp white against a deep navy blue background, exuding a premium, modern artisan craft aesthetic. The lighting is flat and graphic, emphasizing clean lines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBywZ2A76fNXnyBjgsVRrz-eiGvpPrBkjjImGw9jfZCX5Yhlvp74fF9zw6EjHOo3iR2HvfnXWWdj7aB8ft9NEiUu6Fnw-ypRPsxx66f5kZmhK2_zE0Cxj_fxg3xWHMqaNIpDCIImrs4i5yOOTWGMKfVG54G_E2rkVugbvvsnCu-99eQ_SvmjPSHo8rh9g_SuPWmxVMO9WJBuEg6dNpwrXLMhO6_rzoB--xpQVSO1SfwjAFfKPGd6Q"/>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">Artisan Stitch</h1>
+<p class="font-label-sm text-label-sm text-on-primary/70 mt-1">Premium Tailoring</p>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto py-stack_md">
+<ul class="space-y-1 px-stack_sm">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="person">person</span>
+<span>Customers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="straighten" data-weight="fill">straighten</span>
+<span>Measurements</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="shopping_bag">shopping_bag</span>
+<span>Orders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="payments">payments</span>
+<span>Payments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="local_shipping">local_shipping</span>
+<span>Deliveries</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="receipt_long">receipt_long</span>
+<span>Expenses</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Footer Tabs -->
+<div class="mt-auto py-stack_md border-t border-primary-container/30">
+<ul class="space-y-1 px-stack_sm">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="backup">backup</span>
+<span>Backup &amp; Restore</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="help">help</span>
+<span>Help</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="cloud_off">cloud_off</span>
+<span>Offline Mode</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-0 md:left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface shadow-sm">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Toggle (Placeholder logic) -->
+<button class="md:hidden p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search Bar (on_left in JSON, but placed logically before actions) -->
+<div class="hidden lg:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface outline-none placeholder:text-on-surface-variant/70 w-64" placeholder="Search..." type="text"/>
+</div>
+<!-- Icon Actions -->
+<button aria-label="Notifications" class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Calendar" class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+<!-- Trailing Primary Action -->
+<button class="hidden sm:flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-label-lg text-label-lg hover:bg-primary/90 hover:shadow-md transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Order
+            </button>
+<!-- Profile Image -->
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container focus:outline-none focus:border-primary transition-colors">
+<img alt="Shop Profile" class="w-full h-full object-cover" data-alt="A professional, well-lit headshot of a master tailor in a modern workshop. They are smiling warmly, wearing a crisp apron over a neutral-toned shirt. The background is slightly blurred, showing soft natural light and neat spools of thread on wooden shelves, conveying trust and craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY5nHSXCj_wdSDYEdr-kLkMmb_HLSPqzHnZzjjbcFuJMxiScGLzPCnqwzUIwlAYzkEh9a8dglFEfQ70r2VW-dvUAPwIZ06emE-U_0CMB2pmo78RbgfP6tUC1KX3QvlpSIDXd0ElZPpXrQtonKdJdamJPRdmGWgY94EJk0_hYWcEUW0gxsx1kZWE0ZEst5F8OY_2GPDek5zowpSLmMMxtiFlVoeiJy8O_Bmzqyff9RJnt7DOPkMsYI"/>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 w-full mt-[72px] md:ml-[280px] p-container_padding bg-surface overflow-y-auto">
+<!-- Page Header -->
+<div class="mb-stack_lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<a class="inline-flex items-center text-on-surface-variant hover:text-primary transition-colors mb-2 font-label-sm text-label-sm uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="arrow_back">arrow_back</span>
+                    Back to Customer
+                </a>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Add Measurement</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Record new dimensions for John Doe.</p>
+</div>
+<!-- Unit Toggle -->
+<div class="inline-flex items-center bg-surface-container rounded-lg p-1 border border-outline-variant/30">
+<button class="px-4 py-2 rounded-md font-label-lg text-label-lg bg-surface shadow-sm text-primary transition-all">
+                    Inches
+                </button>
+<button class="px-4 py-2 rounded-md font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-all">
+                    CM
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Template Selection -->
+<div class="lg:col-span-3 space-y-stack_md">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Template</h3>
+<div class="flex flex-col gap-2">
+<!-- Active Template -->
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-surface-container-high/50 border border-primary/20 text-primary font-label-lg text-label-lg text-left transition-colors">
+<span class="material-symbols-outlined text-primary" data-icon="apparel">apparel</span>
+                            Shirt
+                            <span class="material-symbols-outlined ml-auto text-primary" data-icon="check_circle" data-weight="fill">check_circle</span>
+</button>
+<!-- Inactive Templates -->
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-transparent border border-transparent hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-body-md text-body-md text-left transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="styler">styler</span>
+                            Pant
+                        </button>
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-transparent border border-transparent hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-body-md text-body-md text-left transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="dry_cleaning">dry_cleaning</span>
+                            Kurta
+                        </button>
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-transparent border border-transparent hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-body-md text-body-md text-left transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="accessibility_new">accessibility_new</span>
+                            Blouse
+                        </button>
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-transparent border border-transparent hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-body-md text-body-md text-left transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="checkroom">checkroom</span>
+                            Suit
+                        </button>
+<div class="my-2 border-t border-outline-variant/30"></div>
+<button class="flex items-center gap-3 p-3 w-full rounded-lg bg-transparent border border-transparent hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-body-md text-body-md text-left transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="draw">draw</span>
+                            Custom
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Measurement Form -->
+<div class="lg:col-span-9">
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-6 pb-4 border-b border-outline-variant/30">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="apparel">apparel</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-background">Shirt Measurements</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">All measurements in Inches.</p>
+</div>
+</div>
+<!-- Specialized Measurement Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+<!-- Measurement Field -->
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="length">Length</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="length" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="shoulder">Shoulder</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="shoulder" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="chest">Chest</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="chest" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="waist">Waist</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="waist" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="hip">Hip</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="hip" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="sleeve">Sleeve</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="sleeve" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="bicep">Bicep</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="bicep" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="cuff">Cuff</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="cuff" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="collar">Collar</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="collar" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="front_length">Front Length</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="front_length" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="back_length">Back Length</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-headline-md text-headline-md text-center text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" id="back_length" placeholder="00.0" type="number"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant">in</span>
+</div>
+</div>
+</div>
+<!-- Notes Section -->
+<div class="mb-8">
+<label class="block font-label-lg text-label-lg text-on-surface mb-2" for="notes">Measurement Notes</label>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 font-body-md text-body-md text-on-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none" id="notes" placeholder="Add specific fit preferences, body anomalies, or client requests here..." rows="3"></textarea>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-6 border-t border-outline-variant/30">
+<button class="px-6 py-3 rounded-lg border border-outline-variant bg-surface text-on-surface font-label-lg text-label-lg hover:bg-surface-container-low transition-colors" type="button">
+                            Cancel
+                        </button>
+<button class="flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary/90 hover:shadow-[0px_4px_12px_rgba(9,20,38,0.2)] active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                            Save Measurement
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

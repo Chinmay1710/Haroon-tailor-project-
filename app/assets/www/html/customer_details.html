@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Details - Tailor Manager</title>
+<!-- Material Symbols -->
+
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="../js/tailwindcss.js"></script>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#3f2200",
+                        "primary-fixed": "#d8e3fb",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#e0e0db",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#75777d",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1a1c19",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-tint": "#545f73",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b58759",
+                        "tertiary": "#221000",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-secondary-fixed-variant": "#454744",
+                        "primary": "#091426",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "secondary": "#5d5f5b",
+                        "on-primary-container": "#8590a6",
+                        "surface-bright": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c5c6cd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-container": "#62635f",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e3e3de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack_lg": "32px",
+                        "gutter": "24px",
+                        "container_padding": "40px",
+                        "stack_sm": "8px",
+                        "sidebar_width": "280px",
+                        "header_height": "72px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Public Sans"],
+                        "headline-md": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "label-lg": ["Public Sans"],
+                        "label-sm": ["Public Sans"],
+                        "headline-lg": ["Public Sans"],
+                        "body-md": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="../css/fonts.css" rel="stylesheet" />
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen antialiased flex">
+<!-- SideNavBar (JSON Component) -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary dark:bg-primary shadow-md">
+<!-- Header -->
+<div class="p-gutter flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary">styler</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary">Artisan Stitch</h1>
+<p class="text-on-primary/70 font-body-md text-sm">Premium Tailoring</p>
+</div>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Active Tab: Customers -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="straighten">straighten</span>
+<span>Measurements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Expenses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<!-- Footer Tabs -->
+<div class="px-4 py-6 border-t border-surface-container-highest/10 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="backup">backup</span>
+<span>Backup &amp; Restore</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="cloud_off">cloud_off</span>
+<span>Offline Mode</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar (JSON Component) -->
+<header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
+<div class="relative w-64 hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-lg border-outline-variant bg-surface-container-lowest text-on-surface focus:ring-2 focus:ring-primary focus:border-primary border transition-colors" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary px-5 py-2.5 rounded-lg font-label-lg text-label-lg flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Order
+            </button>
+<div class="w-10 h-10 rounded-full bg-primary-container overflow-hidden ml-2 border-2 border-surface-container-highest cursor-pointer">
+<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A macro photograph of tightly woven premium charcoal wool fabric, softly lit from the side to emphasize the high-quality tactile texture, suitable for a boutique tailor shop branding avatar." src=\"../img/profile.png\"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-[72px] w-full min-h-screen bg-surface p-container_padding">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-stack_lg">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 id="cd-name" class="font-headline-lg text-headline-lg text-on-surface">Loading...</h1>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] icon-fill">star</span> VIP
+                    </span>
+</div>
+<p id="cd-subtitle" class="font-body-md text-on-surface-variant">Loading...</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-stack_md">
+<!-- Left Column: Details & Measurements (Spans 2 cols on wide screens) -->
+<div class="xl:col-span-2 flex flex-col gap-stack_md">
+<!-- Customer Info Card -->
+<section class="bg-surface-container-lowest rounded-xl p-gutter shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-container-high/50">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">contact_page</span>
+                            Contact Details
+                        </h2>
+<button class="text-primary hover:bg-surface-container px-4 py-2 rounded-lg font-label-lg text-label-lg transition-colors border border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Mobile Phone</p>
+<p id="cd-mobile" class="font-body-lg text-body-lg text-on-surface">Loading...</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Email Address</p>
+<p id="cd-email" class="font-body-lg text-body-lg text-on-surface">N/A</p>
+</div>
+<div class="md:col-span-2">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Shipping Address</p>
+<p id="cd-address" class="font-body-lg text-body-lg text-on-surface">Loading...</p>
+</div>
+<div class="md:col-span-2 bg-surface p-4 rounded-lg border border-surface-container-high">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">notes</span> Notes
+                            </p>
+<p id="cd-notes" class="font-body-md text-body-md text-on-surface">Loading...</p>
+</div>
+</div>
+</section>
+<!-- Order History -->
+<section class="mt-4">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                            Recent Orders
+                        </h2>
+<a class="font-label-lg text-label-lg text-primary hover:underline" href="#">View All</a>
+</div>
+<!-- List Cards Pattern (Avoiding dense tables) -->
+<div id="cd-orders-list" class="flex flex-col gap-stack_sm">
+    <div class="p-4 text-center text-on-surface-variant">Loading orders...</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Measurements & Quick Actions -->
+<div class="flex flex-col gap-stack_md">
+<!-- Quick Actions Card -->
+<section class="bg-surface-container-lowest rounded-xl p-gutter shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-container-high/50 flex flex-col gap-3">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-2">Actions</h3>
+<button onclick="gotoNewOrder()" class="w-full bg-primary text-on-primary h-14 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add_circle</span>
+                        New Order
+                    </button>
+<button class="w-full bg-surface text-on-surface-variant border border-outline-variant h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors mt-2">
+<span class="material-symbols-outlined">edit</span>
+                        Edit Customer
+                    </button>
+<button onclick="showDeleteModal()" class="w-full bg-error-container text-error border border-error/20 h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-error hover:text-on-error transition-colors mt-2">
+<span class="material-symbols-outlined">delete</span>
+                        Delete Customer
+                    </button>
+</section>
+<!-- Saved Measurements Card -->
+<section class="bg-surface-container-lowest rounded-xl p-gutter shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-container-high/50 flex-1">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">design_services</span>
+                            Master Profile
+                        </h2>
+<span class="text-on-surface-variant text-sm flex items-center gap-1" title="Last updated">
+<span class="material-symbols-outlined text-[16px]">update</span> 2w ago
+                        </span>
+</div>
+<div id="cd-measurements-grid" class="grid grid-cols-2 gap-4 mb-6">
+    <div class="col-span-2 text-center text-on-surface-variant p-4">No measurements available.</div>
+</div>
+<a class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:underline p-2" href="#">
+                        View All Measurements
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</section>
+</div>
+</div>
+</main>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center opacity-0 transition-opacity">
+    <div class="bg-surface rounded-2xl w-full max-w-md p-6 shadow-xl transform scale-95 transition-transform" id="delete-modal-content">
+        <div class="flex items-center gap-4 text-error mb-4">
+            <div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[24px]">warning</span>
+            </div>
+            <h3 class="font-headline-md text-headline-md">Delete Customer</h3>
+        </div>
+        <p class="text-on-surface-variant mb-8">
+            Are you sure you want to delete this customer? This will also remove their measurement profiles. This action cannot be undone.
+        </p>
+        <div class="flex justify-end gap-3">
+            <button onclick="hideDeleteModal()" class="px-5 py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-variant transition-colors">
+                Cancel
+            </button>
+            <button onclick="confirmDeleteCustomer()" class="px-5 py-2.5 rounded-lg font-label-lg text-label-lg bg-error text-on-error hover:opacity-90 transition-opacity flex items-center gap-2" id="btn-confirm-delete">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeleteModal() {
+        const modal = document.getElementById('delete-modal');
+        const content = document.getElementById('delete-modal-content');
+        modal.classList.remove('hidden');
+        // trigger reflow
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+    }
+    
+    function hideDeleteModal() {
+        const modal = document.getElementById('delete-modal');
+        const content = document.getElementById('delete-modal-content');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+    
+    function confirmDeleteCustomer() {
+        const btn = document.getElementById('btn-confirm-delete');
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Deleting...';
+        btn.disabled = true;
+        
+        if (window.deleteCustomer) {
+            window.deleteCustomer();
+        }
+    }
+</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/customer_details.js"></script>
+</body></html>

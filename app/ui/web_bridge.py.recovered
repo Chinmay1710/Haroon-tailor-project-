@@ -1,0 +1,146 @@
+from PySide6.QtCore import QObject, Slot, Signal, Property
+import json
+from datetime import date
+from app.services.report_service import ReportService
+from app.services.customer_service import CustomerService
+from app.services.order_service import OrderService
+from app.services.payment_service import PaymentService
+
+class WebBridge(QObject):
+    """Bridge between Javascript and Python."""
+    
+    navigate_requested = Signal(str)
+    
+    def __init__(self, services):
+        super().__init__()
+        self.services = services
+
+    @Slot(str)
+    def log(self, message):
+        print(f"[JS] {message}")
+
+    @Slot(str, str, result=str)
+    def dispatch(self, action, payload_str):
+        print(f"[Bridge] Dispatch Action: {action}")
+        try:
+            payload = json.loads(payload_str) if payload_str else {}
+        except json.JSONDecodeError:
+            payload = {}
+
+        response = {"status": "error", "message": "Unknown action"}
+        
+        try:
+            # ────────────────────────────────────────────────────────────
+            # NAVIGATION
+            # ────────────────────────────────────────────────────────────
+            if action == "navigate_to":
+                page = payload.get("page", "dashboard")
+                self.navigate_requested.emit(page)
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # DASHBOARD
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_dashboard_stats":
+                report_srv: ReportService = self.services['report']
+                order_srv: OrderService = self.services['order']
+                today_report = report_srv.get_today_report()
+                
+                # Fetch recent orders (last 5)
+                recent_orders_all = order_srv.get_all_orders()
+                recent_orders = []
+                for o in sorted(recent_orders_all, key=lambda x: x.created_at, reverse=True)[:5]:
+                    recent_orders.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "Unknown",
+                        "status": o.status
+                    })
+                    
+                # Fetch deliveries today
+                today = date.today()
+                deliveries_today_all = order_srv.get_orders_due_in_range(today, today)
+                deliveries = []
+                for o in deliveries_today_all:
+                    deliveries.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "Unknown",
+                        "status": o.status,
+                        "remaining": o.remaining_amount,
+                        "items": "Various" # Could be enhanced to show real items
+                    })
+
+                # Status counts
+                status_counts = {
+                    "NEW": len([o for o in recent_orders_all if o.status == "NEW"]),
+                    "STITCHING": len([o for o in recent_orders_all if o.status == "STITCHING"]),
+                    "READY": len([o for o in recent_orders_all if o.status == "READY"]),
+                    "DELIVERED": len([o for o in recent_orders_all if o.status == "DELIVERED"]),
+                    "OVERDUE": len([o for o in recent_orders_all if o.status == "OVERDUE"])
+                }
+
+                data = {
+                    "orders_today": today_report['total_orders'],
+                    "sales_today": today_report['total_sales'],
+                    "pending_payments": today_report['pending_payments'],
+                    "deliveries_today": len(deliveries_today_all),
+                    "status_counts": status_counts,
+                    "recent_orders": recent_orders,
+                    "deliveries": deliveries
+                }
+                response = {"status": "success", "data": data}
+
+            # ────────────────────────────────────────────────────────────
+            # CUSTOMERS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_customers":
+                cust_srv: CustomerService = self.services['customer']
+                customers = cust_srv.get_all_customers()
+                data = []
+                for c in customers:
+                    data.append({
+                        "id": c.id,
+                        "name": c.name,
+                        "mobile": c.mobile,
+                        "address": c.address or "",
+                        "notes": c.notes or "",
+                        "orders_count": len(c.orders),
+                        "is_active": c.is_active
+                    })
+                response = {"status": "success", "data": data}
+
+            elif action == "create_customer":
+                cust_srv: CustomerService = self.services['customer']
+                customer = cust_srv.create_customer(
+                    name=payload.get('name'),
+                    mobile=payload.get('mobile'),
+                    address=payload.get('address'),
+                    notes=payload.get('notes')
+                )
+                response = {"status": "success", "data": {"id": customer.id}}
+
+            elif action == "update_customer":
+                cust_srv: CustomerService = self.services['customer']
+                cust_id = payload.get("id")
+                cust_srv.update_customer(
+                    cust_id,
+                    name=payload.get('name'),
+                    mobile=payload.get('mobile'),
+                    address=payload.get('address'),
+                    notes=payload.get('notes')
+                )
+                response = {"status": "success"}
+
+            elif action == "delete_customer":
+                cust_srv: CustomerService = self.services['customer']
+                cust_srv.delete_customer(payload.get("id"))
+                response = {"status": "success"}
+
+            else:
+                response = {"status": "error", "message": f"Action {action} not implemented"}
+                
+        except Exception as e:
+            response = {"status": "error", "message": str(e)}
+
+        return json.dumps(response)

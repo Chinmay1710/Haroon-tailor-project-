@@ -1,0 +1,32 @@
+# Tailor Shop Management App - Screen List & Requirements
+
+## Core UI Structure
+- **Sidebar**: Fixed left. Shop Logo, Nav (Dashboard, Customers, Measurements, Orders, Payments, Deliveries, Expenses, Reports, Settings), Bottom (Backup, Help, Offline Status).
+- **Header**: Page Title, Search, Notifications, Date, Profile, "+ New Order" Button.
+
+## Screen List
+1.  **Dashboard**: Summary cards, Today's Deliveries table, Order Status progress, Recent Orders, Quick Action buttons.
+2.  **Customers List**: Search, + Add Customer, Table (ID, Name, Mobile, Orders, Pending, Last Order).
+3.  **Add Customer**: Simple form (Name, Mobile, Address, Notes).
+4.  **Customer Details**: Info, Saved Measurements list, Order History table.
+5.  **Measurements List**: Customer search, Template selection (Shirt, Pant, etc.), List of saved profiles.
+6.  **Add Measurement**: Template-based form (Inches/CM toggle, specific fields for Shirt/Pant/Blouse).
+7.  **Orders List**: Tabs/Filters (All, New, Stitching, Ready, Delivered, Overdue), Order Table.
+8.  **New Order (Multi-step)**: Step 1: Customer, Step 2: Item, Step 3: Measurement, Step 4: Details, Step 5: Payment, Step 6: Confirmation.
+9.  **Order Details**: Status workflow (New -> Ready), Sections for Customer, Order, Measurements, Payments, Notes.
+10. **Payments**: Totals (Collected, Pending), Payment history table.
+11. **Add Payment**: Form (Order, Amount, Method: Cash/UPI/Card).
+12. **Deliveries**: Grouped by (Due Today, Due Tomorrow, Overdue, Upcoming).
+13. **Expenses**: Summary cards, Category-based table (Material, Rent, etc.).
+14. **Add Expense**: Simple form (Name, Category, Amount, Date).
+15. **Reports**: Simple metrics cards, Basic charts for Sales/Expenses, Print/Export buttons.
+16. **Receipt Preview**: Clean, printable layout for customer (Shop info, Order details, Payment status).
+17. **Stitching Slip Preview**: High-readability slip for the workstation (Measurements, Special instructions).
+18. **Backup & Restore**: Large buttons for Backup/Restore, Last backup date, Auto-backup toggle.
+19. **Settings**: Shop Info, App Prefs (Currency, Units), Printing, Backup location.
+
+## Design Principles
+- Offline-first (no cloud mentions).
+- Simple English labels.
+- Icon + Text everywhere.
+- 1-2 click accessibility for main actions.

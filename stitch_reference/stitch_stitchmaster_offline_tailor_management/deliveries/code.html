@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tailor Manager - Deliveries</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container": "#e5eeff",
+                    "tertiary-container": "#3f2200",
+                    "primary-fixed": "#d8e3fb",
+                    "surface": "#f8f9ff",
+                    "secondary-container": "#e0e0db",
+                    "on-surface-variant": "#45474c",
+                    "on-primary-fixed": "#111c2d",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#d3e4fe",
+                    "outline": "#75777d",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1a1c19",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-background": "#0b1c30",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "surface-tint": "#545f73",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#b58759",
+                    "tertiary": "#221000",
+                    "background": "#f8f9ff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#ffdcbd",
+                    "on-secondary-fixed-variant": "#454744",
+                    "primary": "#091426",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#623f18",
+                    "secondary": "#5d5f5b",
+                    "on-primary-container": "#8590a6",
+                    "surface-bright": "#f8f9ff",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#213145",
+                    "surface-container-high": "#dce9ff",
+                    "outline-variant": "#c5c6cd",
+                    "primary-fixed-dim": "#bcc7de",
+                    "on-surface": "#0b1c30",
+                    "secondary-fixed-dim": "#c6c7c2",
+                    "inverse-primary": "#bcc7de",
+                    "primary-container": "#1e293b",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-secondary-container": "#62635f",
+                    "tertiary-fixed-dim": "#f0bd8b",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#e3e3de"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack_lg": "32px",
+                    "gutter": "24px",
+                    "container_padding": "40px",
+                    "stack_sm": "8px",
+                    "sidebar_width": "280px",
+                    "header_height": "72px",
+                    "stack_md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": [
+                            "Public Sans"
+                    ],
+                    "headline-md": [
+                            "Public Sans"
+                    ],
+                    "display": [
+                            "Public Sans"
+                    ],
+                    "label-lg": [
+                            "Public Sans"
+                    ],
+                    "label-sm": [
+                            "Public Sans"
+                    ],
+                    "headline-lg": [
+                            "Public Sans"
+                    ],
+                    "body-md": [
+                            "Public Sans"
+                    ]
+            },
+            "fontSize": {
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-sm": [
+                            "13px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.04em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface');
+            color: theme('colors.on-surface');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Ambient shadows for cards */
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .card-shadow-active {
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Hide scrollbar for clean UI but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-hidden flex h-screen w-full">
+<!-- SideNavBar -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary dark:bg-primary text-on-primary dark:text-on-primary shadow-md hidden md:flex">
+<!-- Header -->
+<div class="p-gutter border-b border-primary-container/30 flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A minimalist line art logo of a needle and thread forming an elegant monogram, colored in soft cream against a dark navy background. The style is modern, premium, and sophisticated, suitable for a high-end tailor shop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYt7kApEhuIoOfQGUvkRocwr8xIjWOVA4OPH1cqL_kEhIfzklkt-6BmXNYDe3X3ADhcOCOcoY-mpBH7NWOkPOD_4BCts86wLQ1NbKLu_yMOWHBwZbGSlxuGawPS8S8s4iNL0NuqIkl21guwWuVnXsLJay9u0hA4U6OtRincJ5YzN9wd32l0-tuzhDK3qN8_k6mTlYTjnfQjnRcoq7VEtSo_LMPjrz_kH-6Mf7baV1-pX7azM6ZbG4"/>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary truncate">Artisan Stitch</h1>
+<p class="font-label-sm text-label-sm text-on-primary/70">Premium Tailoring</p>
+</div>
+</div>
+<!-- Scrollable Tabs -->
+<div class="flex-1 overflow-y-auto no-scrollbar py-stack_md flex flex-col gap-2 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="straighten">straighten</span>
+<span>Measurements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Payments</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span class="material-symbols-outlined filled" data-icon="local_shipping">local_shipping</span>
+<span>Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Expenses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<!-- Footer -->
+<div class="mt-auto p-4 border-t border-primary-container/30 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-label-sm font-label-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="backup">backup</span>
+<span>Backup &amp; Restore</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-label-sm font-label-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+<span>Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-label-sm font-label-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="cloud_off">cloud_off</span>
+<span>Offline Mode</span>
+</a>
+</div>
+</nav>
+<!-- Main Workspace -->
+<div class="flex-1 flex flex-col w-full md:pl-[280px]">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-0 md:left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm">
+<!-- Left: Mobile Menu Toggle & Brand (Visible on mobile) / Search (Visible on desktop) -->
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary p-2 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="md:hidden font-headline-md text-headline-md text-primary font-bold">Tailor Manager</h2>
+<!-- Search Bar -->
+<div class="hidden md:flex relative w-64 lg:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-full border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary transition-all text-body-md placeholder:text-on-surface-variant" placeholder="Search orders, customers..." type="text"/>
+</div>
+</div>
+<!-- Right: Actions & Profile -->
+<div class="flex items-center gap-3 md:gap-6">
+<!-- Icon Actions -->
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container hover:text-primary transition-colors hidden sm:block">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+</div>
+<!-- Primary Action -->
+<button class="hidden sm:flex items-center gap-2 bg-primary text-on-primary px-4 h-10 rounded-lg hover:bg-primary/90 hover:scale-95 transition-all active:scale-95 shadow-sm font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Order
+                </button>
+<!-- Profile -->
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container cursor-pointer hover:border-primary transition-colors">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling artisan tailor in a bright, modern studio. The lighting is soft and flattering, creating a warm, inviting atmosphere. The style is realistic and high-quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDls_12_x_PSj5U91l5YolsXLVUJSOA36x4HEpLZ5CnL7WySYxCFKHagEsLYVQyU-mb8IxqF1pUE2bA1nxbWtgquTFhqgJhs_6DSVO0R_4wr8V1XH1YlMQMZLZgQN6BULSf-DhMQ9XMFTDcNGeHFeRQxGj2Vkl_cUUPgtbcTiPrTXQdCg1FAVTi4YwbqBdCJMLQTNnsNlEDN3m6f4Mkp3kDUDLAyyWaR1qf6iuvmvXpLyaxoHkSCSo"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 mt-[72px] overflow-y-auto p-4 md:p-container_padding bg-surface no-scrollbar">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-stack_lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">Deliveries Overview</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Manage order fulfillment and delivery schedules.</p>
+</div>
+<!-- Quick Filters -->
+<div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm">All Active</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors font-label-lg text-label-lg">Pending Payment</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors font-label-lg text-label-lg">Ready to Ship</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-stack_lg">
+<!-- Left/Main Column: Urgent & Today (Takes 2 columns on XL) -->
+<div class="xl:col-span-2 flex flex-col gap-stack_lg">
+<!-- OVERDUE SECTION (High Priority Visuals) -->
+<section>
+<div class="flex items-center gap-2 mb-stack_sm">
+<span class="material-symbols-outlined text-error">warning</span>
+<h3 class="font-headline-md text-headline-md text-error">Overdue</h3>
+<span class="bg-error/10 text-error px-2 py-0.5 rounded-full font-label-sm text-label-sm ml-2">2 Orders</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Overdue Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow border-l-4 border-error flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-transform hover:-translate-y-1">
+<div class="flex flex-col sm:flex-row gap-4 sm:gap-8 flex-1">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">ORD-2094</p>
+<p class="font-label-lg text-label-lg text-primary">Eleanor Vance</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Item</p>
+<p class="font-body-md text-body-md text-on-surface">Silk Evening Gown</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Due Date</p>
+<p class="font-label-lg text-label-lg text-error">Oct 12 (2 days ago)</p>
+</div>
+<div class="flex gap-2 items-center sm:ml-auto">
+<span class="px-2 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-label-sm">Paid</span>
+<span class="px-2 py-1 bg-surface-container-highest/50 text-primary rounded-full font-label-sm text-label-sm">Final Fitting</span>
+</div>
+</div>
+<div class="flex gap-2 border-t sm:border-t-0 sm:border-l border-outline-variant pt-3 sm:pt-0 sm:pl-4">
+<button class="flex-1 sm:flex-none justify-center flex items-center gap-2 bg-surface-container border border-outline-variant text-primary px-3 py-2 rounded-lg hover:bg-primary-fixed hover:border-primary transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> Mark Ready
+                                    </button>
+</div>
+</div>
+</div>
+</section>
+<!-- DUE TODAY SECTION -->
+<section>
+<div class="flex items-center gap-2 mb-stack_sm border-b border-outline-variant pb-2">
+<span class="material-symbols-outlined text-primary">today</span>
+<h3 class="font-headline-md text-headline-md text-primary">Due Today</h3>
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-label-sm text-label-sm ml-2">3 Orders</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Today Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-transform hover:-translate-y-1 group">
+<div class="flex flex-col sm:flex-row gap-4 sm:gap-8 flex-1">
+<div class="w-24">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">ORD-2101</p>
+<p class="font-label-lg text-label-lg text-primary">Marcus Cole</p>
+</div>
+<div class="w-40">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Item</p>
+<p class="font-body-md text-body-md text-on-surface">3-Piece Wool Suit</p>
+</div>
+<div class="flex gap-2 items-center sm:ml-auto">
+<span class="px-2 py-1 bg-error/10 text-error rounded-full font-label-sm text-label-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">warning</span> Pending</span>
+<span class="px-2 py-1 bg-[#10b981]/10 text-[#047857] rounded-full font-label-sm text-label-sm">Ready</span>
+</div>
+</div>
+<div class="flex gap-2 border-t sm:border-t-0 sm:border-l border-outline-variant pt-3 sm:pt-0 sm:pl-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex-1 sm:flex-none justify-center flex items-center gap-2 bg-primary text-on-primary px-3 py-2 rounded-lg hover:bg-primary/90 transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span> Deliver
+                                    </button>
+</div>
+</div>
+<!-- Today Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-transform hover:-translate-y-1 group">
+<div class="flex flex-col sm:flex-row gap-4 sm:gap-8 flex-1">
+<div class="w-24">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">ORD-2105</p>
+<p class="font-label-lg text-label-lg text-primary">Sarah Jenkins</p>
+</div>
+<div class="w-40">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Item</p>
+<p class="font-body-md text-body-md text-on-surface">Linen Trousers (x2)</p>
+</div>
+<div class="flex gap-2 items-center sm:ml-auto">
+<span class="px-2 py-1 bg-secondary-container/50 text-on-secondary-container rounded-full font-label-sm text-label-sm">Paid</span>
+<span class="px-2 py-1 bg-[#10b981]/10 text-[#047857] rounded-full font-label-sm text-label-sm">Ready</span>
+</div>
+</div>
+<div class="flex gap-2 border-t sm:border-t-0 sm:border-l border-outline-variant pt-3 sm:pt-0 sm:pl-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="flex-1 sm:flex-none justify-center flex items-center gap-2 bg-primary text-on-primary px-3 py-2 rounded-lg hover:bg-primary/90 transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span> Deliver
+                                    </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Tomorrow & Upcoming -->
+<div class="flex flex-col gap-stack_lg">
+<!-- DUE TOMORROW -->
+<section class="bg-surface-container-low rounded-2xl p-6 border border-outline-variant/30">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-primary">Tomorrow</h3>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Oct 15</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Compact Card -->
+<div class="bg-surface-container-lowest rounded-lg p-3 border border-outline-variant/50 hover:border-primary-fixed transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-label-lg text-label-lg text-primary">David Chen</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ORD-2112 • Alterations</p>
+</div>
+<span class="px-2 py-1 bg-[#f59e0b]/10 text-[#b45309] rounded-full font-label-sm text-[11px] uppercase tracking-wider">Sewing</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30">
+<span class="font-label-sm text-[12px] text-on-surface-variant">Paid</span>
+<button class="text-primary hover:underline font-label-sm text-[12px]">Mark Ready</button>
+</div>
+</div>
+<!-- Compact Card -->
+<div class="bg-surface-container-lowest rounded-lg p-3 border border-outline-variant/50 hover:border-primary-fixed transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-label-lg text-label-lg text-primary">Elena Rodriguez</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ORD-2114 • Cocktail Dress</p>
+</div>
+<span class="px-2 py-1 bg-[#10b981]/10 text-[#047857] rounded-full font-label-sm text-[11px] uppercase tracking-wider">Ready</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30">
+<span class="font-label-sm text-[12px] text-error flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">warning</span> Pending</span>
+<button class="text-primary hover:underline font-label-sm text-[12px]">Send Reminder</button>
+</div>
+</div>
+</div>
+</section>
+<!-- UPCOMING -->
+<section>
+<h3 class="font-label-lg text-label-lg text-on-surface-variant mb-4 uppercase tracking-wider">Later This Week</h3>
+<div class="space-y-2">
+<!-- List Item -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-lowest transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-high flex flex-col items-center justify-center text-primary">
+<span class="font-label-sm text-[10px] uppercase">Thu</span>
+<span class="font-headline-md text-[16px] leading-tight">16</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-primary">James Wilson</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Bespoke Blazer</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+<!-- List Item -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-lowest transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-surface-container-high flex flex-col items-center justify-center text-primary">
+<span class="font-label-sm text-[10px] uppercase">Fri</span>
+<span class="font-headline-md text-[16px] leading-tight">17</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-primary">Maria Garcia</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Skirt Hemming</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-outline-variant rounded-lg text-primary font-label-lg text-label-lg hover:bg-surface-container transition-colors">
+                            View Calendar
+                        </button>
+</section>
+</div>
+</div>
+<!-- Bottom padding for scrolling -->
+<div class="h-24 md:h-12"></div>
+</main>
+</div>
+</body></html>

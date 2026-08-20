@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tailor Manager - New Order</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container": "#e5eeff",
+                    "tertiary-container": "#3f2200",
+                    "primary-fixed": "#d8e3fb",
+                    "surface": "#f8f9ff",
+                    "secondary-container": "#e0e0db",
+                    "on-surface-variant": "#45474c",
+                    "on-primary-fixed": "#111c2d",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#d3e4fe",
+                    "outline": "#75777d",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1a1c19",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-background": "#0b1c30",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "surface-tint": "#545f73",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#b58759",
+                    "tertiary": "#221000",
+                    "background": "#f8f9ff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#ffdcbd",
+                    "on-secondary-fixed-variant": "#454744",
+                    "primary": "#091426",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#623f18",
+                    "secondary": "#5d5f5b",
+                    "on-primary-container": "#8590a6",
+                    "surface-bright": "#f8f9ff",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#213145",
+                    "surface-container-high": "#dce9ff",
+                    "outline-variant": "#c5c6cd",
+                    "primary-fixed-dim": "#bcc7de",
+                    "on-surface": "#0b1c30",
+                    "secondary-fixed-dim": "#c6c7c2",
+                    "inverse-primary": "#bcc7de",
+                    "primary-container": "#1e293b",
+                    "on-tertiary-fixed": "#2c1600",
+                    "on-secondary-container": "#62635f",
+                    "tertiary-fixed-dim": "#f0bd8b",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#e3e3de"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack_lg": "32px",
+                    "gutter": "24px",
+                    "container_padding": "40px",
+                    "stack_sm": "8px",
+                    "sidebar_width": "280px",
+                    "header_height": "72px",
+                    "stack_md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Public Sans"],
+                    "headline-md": ["Public Sans"],
+                    "display": ["Public Sans"],
+                    "label-lg": ["Public Sans"],
+                    "label-sm": ["Public Sans"],
+                    "headline-lg": ["Public Sans"],
+                    "body-md": ["Public Sans"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- TopAppBar Shell Suppressed (Transactional intent) -->
+<!-- SideNavBar Shell Suppressed (Transactional intent) -->
+<main class="w-full max-w-4xl mx-auto py-container_padding px-gutter flex flex-col h-screen">
+<!-- Header -->
+<header class="flex items-center justify-between mb-stack_lg">
+<button class="flex items-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined mr-2" data-icon="arrow_back">arrow_back</span>
+<span class="font-label-lg text-label-lg">Cancel</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-primary">New Order</h1>
+<div class="w-20"></div> <!-- Spacer -->
+</header>
+<!-- Progress Indicator -->
+<div class="flex items-center justify-between mb-stack_lg px-4 relative">
+<div class="absolute left-0 right-0 top-1/2 h-0.5 bg-secondary-fixed -z-10 mx-8 transform -translate-y-1/2"></div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-lg text-label-lg mb-2 shadow-sm ring-4 ring-surface">1</div>
+<span class="font-label-sm text-label-sm text-primary">Customer</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center font-label-lg text-label-lg mb-2 shadow-sm ring-4 ring-surface">2</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Details</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center font-label-lg text-label-lg mb-2 shadow-sm ring-4 ring-surface">3</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Measure</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center font-label-lg text-label-lg mb-2 shadow-sm ring-4 ring-surface">4</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Schedule</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-primary flex items-center justify-center font-label-lg text-label-lg mb-2 shadow-sm ring-4 ring-surface">5</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Payment</span>
+</div>
+</div>
+<!-- Step 1 Content -->
+<div class="flex-grow bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-stack_lg flex flex-col">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack_md">Select Customer</h2>
+<div class="relative mb-stack_lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md transition-shadow outline-none" placeholder="Search by name or phone..." type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md mb-stack_lg flex-grow overflow-y-auto pr-2">
+<!-- Add New Card -->
+<button class="border-2 border-dashed border-outline-variant rounded-xl p-stack_md flex flex-col items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-colors hover:bg-surface-container-low h-32">
+<span class="material-symbols-outlined mb-2" data-icon="person_add">person_add</span>
+<span class="font-label-lg text-label-lg">+ Add New Customer</span>
+</button>
+<!-- Recent Customers -->
+<div class="bg-surface rounded-xl p-stack_md border border-outline-variant flex items-center cursor-pointer hover:border-primary transition-colors h-32">
+<img alt="Customer Profile" class="w-12 h-12 rounded-full object-cover mr-4" data-alt="A professional headshot of a middle-aged man in a tailored suit, soft lighting, warm modern office background, high quality, realistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLoOmV__9_znOotmtQ-eWn3uJ02Gp0Occkki7ko22EK20aP9drYKNLPIGJB0D8aylGchV97--KFr3SpjURDE6KPFMo3muptw_CT1hgIbnGJlpIfOSEGeQMTPqrMcgIqtT_ScT1A7g-zQAKyzPvKB_lKvyGZG3gjpxSh1lry8xUotv6iq3EWlJ-sWiSEoLWzaS9fZ5uMh2Um1qxI6TcuHabV0sp3azvpLZZCNnTvwi3IFfOqV8B3Cc"/>
+<div>
+<h3 class="font-label-lg text-label-lg text-primary">James Wilson</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">+1 (555) 019-2834</p>
+<p class="font-label-sm text-label-sm text-primary-container/70 mt-1">Last order: 2 mos ago</p>
+</div>
+</div>
+<div class="bg-surface rounded-xl p-stack_md border border-outline-variant flex items-center cursor-pointer hover:border-primary transition-colors h-32">
+<img alt="Customer Profile" class="w-12 h-12 rounded-full object-cover mr-4" data-alt="A professional headshot of a young woman in a smart casual blazer, soft lighting, bright modern studio background, high quality, realistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBriyOOOeNoSN55aFZAL50f8LYczHxF0VvyJ0w0Yd8y6JETx9-xLV4DPBMu-JbVE5U29NYNKSC4oFgGnK4AsHeEpTayqb5Kl7_Y-klp2BGrUjMWjyXi8vgZbgZiBApPWUdir3anx6TR_Ia2_k6_ul3TS72Gh0GAcmSG0iqJzByK_n_JHpf-oJoQ6WNOJWdcEEAtEI3t--604UFL2p02HsHUGUU28hQmaLbuj3_uPBwk46JJ6M9A4Pw"/>
+<div>
+<h3 class="font-label-lg text-label-lg text-primary">Sarah Chen</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">+1 (555) 928-1123</p>
+<p class="font-label-sm text-label-sm text-primary-container/70 mt-1">Last order: 1 week ago</p>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto pt-stack_md border-t border-secondary-fixed flex justify-end">
+<button class="bg-primary text-on-primary font-label-lg text-label-lg py-3 px-6 rounded-lg flex items-center hover:bg-primary/90 transition-colors shadow-sm hover:shadow-md">
+<span>Continue to Details</span>
+<span class="material-symbols-outlined ml-2" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

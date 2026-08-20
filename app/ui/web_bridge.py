@@ -1,0 +1,665 @@
+from PySide6.QtCore import QObject, Slot, Signal, Property
+import json
+from datetime import date, datetime
+from app.services.report_service import ReportService
+from app.services.customer_service import CustomerService
+from app.services.order_service import OrderService
+from app.services.payment_service import PaymentService
+
+class WebBridge(QObject):
+    """Bridge between Javascript and Python."""
+    
+    navigate_requested = Signal(str)
+    backup_requested = Signal()
+    restore_requested = Signal()
+    
+    def __init__(self, services):
+        super().__init__()
+        self.services = services
+
+    @Slot(str)
+    def log(self, message):
+        print(f"[JS] {message}")
+
+    @Slot(str, str, result=str)
+    def dispatch(self, action, payload_str):
+        print(f"[Bridge] Dispatch Action: {action}")
+        try:
+            from app.database.engine import get_session
+            session = get_session()
+            # Force close any pending transaction on this thread's session to ensure fresh reads
+            session.commit()
+            
+            payload = json.loads(payload_str) if payload_str else {}
+        except json.JSONDecodeError:
+            payload = {}
+
+        response = {"status": "error", "message": "Unknown action"}
+        
+        try:
+            # ────────────────────────────────────────────────────────────
+            # NAVIGATION
+            # ────────────────────────────────────────────────────────────
+            if action == "navigate_to":
+                page = payload.get("page", "dashboard")
+                self.navigate_requested.emit(page)
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # DASHBOARD
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_dashboard_stats":
+                order_srv = self.services["order"]
+                dash_data = order_srv.get_dashboard_data()
+                
+                recent_orders = []
+                for o in dash_data["recent_orders"]:
+                    recent_orders.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "Unknown",
+                        "status": o.status
+                    })
+                    
+                deliveries = []
+                for o in dash_data["today_deliveries_list"]:
+                    deliveries.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "Unknown",
+                        "status": o.status,
+                        "remaining": o.remaining_amount,
+                        "items": "Various"
+                    })
+
+                data = {
+                    "orders_today": dash_data["orders_today"],
+                    "sales_today": dash_data["today_sales"],
+                    "pending_payments": dash_data["pending_payments"],
+                    "deliveries_today": dash_data["deliveries_today"],
+                    "status_counts": dash_data["status_counts"],
+                    "recent_orders": recent_orders,
+                    "deliveries": deliveries
+                }
+                response = {"status": "success", "data": data}
+
+            # ────────────────────────────────────────────────────────────
+            # CUSTOMERS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_customers":
+                from app.database.engine import get_session
+                session = get_session()
+                try:
+                    from app.models.customer import Customer
+                    from app.models.order import Order
+                    
+                    # Clear session just to be safe if any detached objects linger
+                    session.expunge_all()
+                    
+                    customers = session.query(Customer).filter(Customer.is_active == True).order_by(Customer.id.desc()).all()  # noqa: E712
+                    data = []
+                    for c in customers:
+                        orders = session.query(Order).filter(Order.customer_id == c.id).all()
+                        count = len(orders)
+                        pending_amount = sum(o.remaining_amount for o in orders)
+                        last_order_date = max([o.order_date for o in orders if o.order_date], default=None)
+                        data.append({
+                            "id": c.id,
+                            "name": c.name,
+                            "mobile": c.mobile,
+                            "address": c.address or "",
+                            "notes": c.notes or "",
+                            "orders_count": count,
+                            "pending_amount": pending_amount,
+                            "last_order": last_order_date.isoformat() if last_order_date else "-",
+                            "is_active": c.is_active
+                        })
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+            
+            elif action == "get_customer_details":
+                from app.database.engine import get_session
+                session = get_session()
+                try:
+                    from app.models.customer import Customer
+                    from app.models.order import Order
+                    from app.models.measurement import MeasurementProfile
+                    
+                    cust_id = payload.get("id")
+                    c = session.query(Customer).filter(Customer.id == cust_id).first()
+                    if not c:
+                        raise Exception("Customer not found")
+                        
+                    orders = session.query(Order).filter(Order.customer_id == c.id).all()
+                    
+                    order_data = []
+                    for o in orders:
+                        order_data.append({
+                            "id": o.id,
+                            "order_number": o.order_number,
+                            "clothing_type": o.items[0].clothing_type if o.items else "Custom",
+                            "order_date": o.order_date.isoformat() if o.order_date else "",
+                            "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
+                            "status": o.status,
+                            "total_amount": o.total_amount,
+                            "remaining_amount": o.remaining_amount
+                        })
+                        
+                    profiles = session.query(MeasurementProfile).filter(MeasurementProfile.customer_id == c.id).all()
+                    profile_data = []
+                    for p in profiles:
+                        vals = {}
+                        for v in p.values:
+                            vals[v.field_name] = v.field_value
+                        profile_data.append({
+                            "id": p.id,
+                            "template_type": p.template_type,
+                            "updated_at": p.updated_at.isoformat() if p.updated_at else "",
+                            "values": vals
+                        })
+                        
+                    data = {
+                        "customer": {
+                            "id": c.id,
+                            "name": c.name,
+                            "mobile": c.mobile,
+                            "address": c.address or "",
+                            "notes": c.notes or ""
+                        },
+                        "orders": order_data,
+                        "profiles": profile_data
+                    }
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+
+            elif action == "create_customer":
+                cust_srv: CustomerService = self.services['customer']
+                customer = cust_srv.create_customer(
+                    name=payload.get('name'),
+                    mobile=payload.get('mobile'),
+                    address=payload.get('address'),
+                    notes=payload.get('notes')
+                )
+                response = {"status": "success", "data": {"id": customer.id}}
+
+            elif action == "update_customer":
+                cust_srv: CustomerService = self.services['customer']
+                cust_id = payload.get("id")
+                cust_srv.update_customer(
+                    cust_id,
+                    name=payload.get('name'),
+                    mobile=payload.get('mobile'),
+                    address=payload.get('address'),
+                    notes=payload.get('notes')
+                )
+                response = {"status": "success"}
+
+            elif action == "delete_customer":
+                from app.database.engine import get_session
+                from app.models.customer import Customer
+                customer_id = int(payload.get("id"))
+                del_session = get_session()
+                try:
+                    c = del_session.query(Customer).filter(Customer.id == customer_id).first()
+                    if c:
+                        del_session.delete(c)
+                        del_session.commit()
+                        print(f"[Delete] Customer {customer_id} physically deleted along with all related records.")
+                        response = {"status": "success"}
+                    else:
+                        response = {"status": "error", "message": f"Customer not found (ID: {customer_id})"}
+                except Exception as e:
+                    del_session.rollback()
+                    print(f"[Delete] Error: {e}")
+                    response = {"status": "error", "message": str(e)}
+                finally:
+                    del_session.close()
+
+
+            # ────────────────────────────────────────────────────────────
+            # MEASUREMENTS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_all_measurements":
+                from app.database.engine import get_session
+                session = get_session()
+                try:
+                    from app.models.measurement import MeasurementProfile
+                    from app.models.customer import Customer
+                    
+                    # Clear session just to be safe
+                    session.expunge_all()
+                    
+                    measurements = session.query(MeasurementProfile).all()
+                    data = []
+                    for m in measurements:
+                        customer = session.query(Customer).filter(Customer.id == m.customer_id).first()
+                        
+                        data.append({
+                            "id": m.id,
+                            "name": m.name,
+                            "customer_name": customer.name if customer else "Unknown",
+                            "template_type": m.template_type,
+                            "values_count": len(m.values), # Values are cascade-loaded or we can just let lazy load happen safely since session is open and clean
+                            "updated_at": m.updated_at.isoformat()
+                        })
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+
+            # ────────────────────────────────────────────────────────────
+            # ────────────────────────────────────────────────────────────
+            # MEASUREMENTS FOR CUSTOMER (WIZARD)
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_measurements_for_customer":
+                cust_id = payload.get("customer_id")
+                meas_srv = self.services["measurement"]
+                measurements = meas_srv.get_profiles_for_customer(cust_id)
+                data = []
+                for m in measurements:
+                    vals = {}
+                    for v in m.values:
+                        vals[v.field_name] = v.field_value
+                    data.append({
+                        "id": m.id,
+                        "template_type": m.template_type,
+                        "values": vals,
+                        "updated_at": m.updated_at.isoformat()
+                    })
+                response = {"status": "success", "data": data}
+                
+            elif action == "create_measurement":
+                cust_id = payload.get("customer_id")
+                template = payload.get("template_type", "Shirt")
+                name = payload.get("name", f"{template} Profile")
+                values = payload.get("values", {})
+                notes = payload.get("notes", "")
+                
+                if not cust_id:
+                    raise ValueError("customer_id is required")
+                    
+                meas_srv = self.services["measurement"]
+                m = meas_srv.create_profile(
+                    customer_id=cust_id,
+                    template_type=template,
+                    name=name,
+                    values=values,
+                    notes=notes
+                )
+                response = {"status": "success", "data": {"id": m.id}}
+
+            # ────────────────────────────────────────────────────────────
+            # ORDERS
+            # ────────────────────────────────────────────────────────────
+            elif action == "create_order":
+                order_srv = self.services["order"]
+                
+                # Parse date string to date object
+                deliv_str = payload.get("deliveryDate")
+                deliv_date = None
+                if deliv_str:
+                    deliv_date = datetime.strptime(deliv_str, "%Y-%m-%d").date()
+                
+                items = payload.get("items", [])
+                if not items:
+                    # Backward compatibility fallback
+                    items = [{
+                        "clothing_type": payload.get("clothingType", "Custom"),
+                        "quantity": payload.get("quantity", 1),
+                        "price": float(payload.get("price", 0)),
+                        "measurement_profile_id": payload.get("measurementId")
+                    }]
+
+                order = order_srv.create_order(
+                    customer_id=payload.get("customerId"),
+                    items=items,
+                    order_date=datetime.now().date(),
+                    delivery_date=deliv_date,
+                    special_instructions=payload.get("notes", ""),
+                    advance_amount=float(payload.get("advance", 0)),
+                    payment_method=payload.get("paymentMethod", "Cash")
+                )
+                
+                response = {
+                    "status": "success", 
+                    "data": {"id": order.id, "order_number": order.order_number}
+                }
+                
+            elif action == "update_order":
+                order_srv = self.services["order"]
+                order_id = payload.get("orderId")
+                
+                deliv_str = payload.get("deliveryDate")
+                deliv_date = None
+                if deliv_str:
+                    deliv_date = datetime.strptime(deliv_str, "%Y-%m-%d").date()
+                
+                items = payload.get("items", [])
+                
+                order = order_srv.update_order(
+                    order_id=order_id,
+                    items=items,
+                    delivery_date=deliv_date,
+                    special_instructions=payload.get("notes", "")
+                )
+                
+                response = {
+                    "status": "success", 
+                    "data": {"id": order.id, "order_number": order.order_number}
+                }
+                
+            elif action == "get_all_orders":
+                order_srv = self.services["order"]
+                orders = order_srv.get_all_orders()
+                data = []
+                for o in orders:
+                    data.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "Unknown",
+                        "customer_id": o.customer.id if o.customer else None,
+                        "customer_mobile": o.customer.mobile if o.customer else "",
+                        "items": ", ".join([f"{i.quantity}x {i.clothing_type}" for i in o.items]) if o.items else "Custom",
+                        "order_date": o.order_date.isoformat() if o.order_date else "",
+                        "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
+                        "status": o.status,
+                        "total_amount": o.total_amount,
+                        "remaining_amount": o.remaining_amount
+                    })
+                response = {"status": "success", "data": data}
+                
+            elif action == "get_order_details":
+                from app.database.engine import get_session
+                session = get_session()
+                try:
+                    from app.models.order import Order
+                    order_id = payload.get("id")
+                    o = session.query(Order).filter(Order.id == order_id).first()
+                    if not o:
+                        raise Exception("Order not found")
+                        
+                    c = o.customer
+                    
+                    payments = []
+                    for p in o.payments:
+                        payments.append({
+                            "id": p.id,
+                            "amount": p.amount,
+                            "payment_date": p.payment_date.isoformat() if p.payment_date else "",
+                            "payment_method": p.payment_method
+                        })
+                        
+                    data = {
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_id": c.id if c else None,
+                        "customer_name": c.name if c else "Unknown",
+                        "customer_mobile": c.mobile if c else "",
+                        "customer_address": c.address if c else "",
+                        "order_date": o.order_date.isoformat() if o.order_date else "",
+                        "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
+                        "status": o.status,
+                        "total_amount": o.total_amount,
+                        "advance_amount": o.advance_amount,
+                        "remaining_amount": o.remaining_amount,
+                        "special_instructions": o.special_instructions or "",
+                        "payments": payments,
+                        "items": []
+                    }
+                    
+                    for item in o.items:
+                        item_data = {
+                            "id": item.id,
+                            "clothing_type": item.clothing_type,
+                            "quantity": item.quantity,
+                            "price": item.price,
+                            "notes": item.notes or "",
+                            "image_path": getattr(item, "image_path", None) or "",
+                            "measurements": {}
+                        }
+                        for m in item.measurements:
+                            item_data["measurements"][m.field_name] = m.field_value
+                        data["items"].append(item_data)
+                        
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+                
+            elif action == "update_order_status":
+                order_srv = self.services["order"]
+                order_srv.update_status(payload.get("order_id"), payload.get("status"))
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # PAYMENTS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_all_payments":
+                from app.database.engine import get_session
+                from app.repositories.payment_repo import PaymentRepository
+                session = get_session()
+                try:
+                    repo = PaymentRepository(session)
+                    payments = repo.get_all()
+                    data = []
+                    for p in payments:
+                        data.append({
+                            "id": p.id,
+                            "order_id": p.order_id,
+                            "order_number": p.order.order_number if p.order else "",
+                            "customer_name": p.customer.name if p.customer else "",
+                            "amount": p.amount,
+                            "payment_date": p.payment_date.isoformat() if p.payment_date else "",
+                            "payment_method": p.payment_method
+                        })
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+
+            elif action == "get_payments_dashboard":
+                from app.database.engine import get_session
+                from app.models.payment import Payment
+                from app.models.order import Order
+                from datetime import date
+                session = get_session()
+                try:
+                    today = date.today()
+                    
+                    # Total collected
+                    all_payments = session.query(Payment).all()
+                    total_collected = sum(p.amount for p in all_payments)
+                    
+                    # Today's payments
+                    today_payments = sum(p.amount for p in all_payments if p.payment_date == today)
+                    
+                    # Pending payments (remaining amount on all active orders)
+                    active_orders = session.query(Order).filter(Order.status != 'CANCELLED').all()
+                    pending_payments = sum(o.remaining_amount for o in active_orders if o.remaining_amount > 0)
+                    
+                    data = {
+                        "total_collected": total_collected,
+                        "pending_payments": pending_payments,
+                        "today_payments": today_payments
+                    }
+                    response = {"status": "success", "data": data}
+                finally:
+                    session.close()
+                    
+            elif action == "create_payment":
+                pay_srv = self.services["payment"]
+                from datetime import date
+                pay_srv.add_payment(
+                    order_id=payload.get("order_id"),
+                    amount=float(payload.get("amount")),
+                    payment_method=payload.get("payment_method", "Cash"),
+                    payment_date=date.today()
+                )
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # DELIVERIES
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_deliveries_dashboard":
+                from datetime import date, timedelta
+                order_srv = self.services["order"]
+                today = date.today()
+                tomorrow = today + timedelta(days=1)
+                
+                orders = order_srv.get_all_orders()
+                deliveries = []
+                counts = {"due_today": 0, "due_tomorrow": 0, "upcoming": 0, "overdue": 0}
+                
+                for o in orders:
+                    if o.status in ["DELIVERED", "CANCELLED"]: continue
+                    
+                    if o.delivery_date:
+                        if o.delivery_date < today:
+                            counts["overdue"] += 1
+                        elif o.delivery_date == today:
+                            counts["due_today"] += 1
+                        elif o.delivery_date == tomorrow:
+                            counts["due_tomorrow"] += 1
+                        else:
+                            counts["upcoming"] += 1
+                            
+                    deliveries.append({
+                        "id": o.id,
+                        "order_number": o.order_number,
+                        "customer_name": o.customer.name if o.customer else "",
+                        "mobile": o.customer.mobile if o.customer else "",
+                        "items": "Various",
+                        "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
+                        "status": o.status
+                    })
+                
+                deliveries.sort(key=lambda x: x["delivery_date"])
+                response = {"status": "success", "data": {"counts": counts, "deliveries": deliveries}}
+
+            # ────────────────────────────────────────────────────────────
+            # EXPENSES
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_expenses_dashboard":
+                exp_srv = self.services["expense"]
+                expenses = exp_srv.get_all_expenses()
+                data = []
+                for e in expenses:
+                    data.append({
+                        "id": e.id,
+                        "date": e.date.isoformat() if e.date else "",
+                        "category": e.category,
+                        "amount": e.amount,
+                        "description": e.description or "",
+                        "payment_method": e.payment_method
+                    })
+                from datetime import date, timedelta
+                today = date.today()
+                week_start = today - timedelta(days=today.weekday())
+                month_start = today.replace(day=1)
+                
+                stats = {"today": 0, "week": 0, "month": 0}
+                for e in expenses:
+                    if e.date:
+                        if e.date == today:
+                            stats["today"] += e.amount
+                        if e.date >= week_start:
+                            stats["week"] += e.amount
+                        if e.date >= month_start:
+                            stats["month"] += e.amount
+                response = {"status": "success", "data": {"expenses": data, "stats": stats}}
+                
+            elif action == "create_expense":
+                exp_srv = self.services["expense"]
+                from datetime import date
+                exp_srv.create_expense(
+                    category=payload.get("category"),
+                    amount=payload.get("amount"),
+                    description=payload.get("description"),
+                    payment_method=payload.get("payment_method"),
+                    date=date.today()
+                )
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # REPORTS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_report_data":
+                rep_srv = self.services["report"]
+                data = rep_srv.get_this_month_report()
+                response = {"status": "success", "data": {
+                    "total_sales": data.get("total_sales", 0),
+                    "total_orders": data.get("total_orders", 0),
+                    "total_expenses": data.get("total_expenses", 0),
+                    "net_profit": data.get("estimated_profit", 0)
+                }}
+
+            # ────────────────────────────────────────────────────────────
+            # SETTINGS
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_settings":
+                from app.database.engine import get_session
+                from app.repositories.settings_repo import SettingsRepository
+                session = get_session()
+                try:
+                    repo = SettingsRepository(session)
+                    s = repo.get_settings()
+                    response = {"status": "success", "data": {
+                        "shop_name": s.shop_name,
+                        "owner_name": s.owner_name,
+                        "phone": s.phone,
+                        "address": s.address,
+                        "currency_symbol": s.currency,
+                        "measurement_unit": s.measurement_unit
+                    }}
+                finally:
+                    session.close()
+                    
+            elif action == "update_settings":
+                from app.database.engine import get_session
+                from app.repositories.settings_repo import SettingsRepository
+                session = get_session()
+                try:
+                    repo = SettingsRepository(session)
+                    repo.update_settings(**payload)
+                    session.commit()
+                    response = {"status": "success"}
+                finally:
+                    session.close()
+
+            elif action == "create_backup":
+                import os, shutil
+                db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database', 'tailor_shop.db'))
+                backup_dir = os.path.expanduser('~/Documents/ArtisanStitch_Backups')
+                os.makedirs(backup_dir, exist_ok=True)
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                backup_path = os.path.join(backup_dir, f'backup_{timestamp}.db')
+                
+                if os.path.exists(db_path):
+                    shutil.copy2(db_path, backup_path)
+                    response = {"status": "success", "path": backup_path}
+                else:
+                    response = {"status": "error", "message": "Database file not found"}
+
+            elif action == "restore_backup":
+                import os, shutil
+                import glob
+                
+                # In a real app we'd let the user select the file, but for now we restore the latest backup.
+                db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database', 'tailor_shop.db'))
+                backup_dir = os.path.expanduser('~/Documents/ArtisanStitch_Backups')
+                backups = glob.glob(os.path.join(backup_dir, '*.db'))
+                
+                if backups:
+                    latest_backup = max(backups, key=os.path.getctime)
+                    shutil.copy2(latest_backup, db_path)
+                    response = {"status": "success"}
+                else:
+                    response = {"status": "error", "message": "No backups found to restore."}
+
+            else:
+                response = {"status": "error", "message": f"Unknown action: {action}"}
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            response = {"status": "error", "message": str(e)}
+
+        return json.dumps(response)

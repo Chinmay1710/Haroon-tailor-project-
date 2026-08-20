@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Customer - Tailor Manager</title>
+<!-- Google Fonts: Public Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS via CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#3f2200",
+                        "primary-fixed": "#d8e3fb",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#e0e0db",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#75777d",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1a1c19",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-tint": "#545f73",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b58759",
+                        "tertiary": "#221000",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-secondary-fixed-variant": "#454744",
+                        "primary": "#091426",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "secondary": "#5d5f5b",
+                        "on-primary-container": "#8590a6",
+                        "surface-bright": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c5c6cd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-container": "#62635f",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e3e3de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack_lg": "32px",
+                        "gutter": "24px",
+                        "container_padding": "40px",
+                        "stack_sm": "8px",
+                        "sidebar_width": "280px",
+                        "header_height": "72px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Public Sans"],
+                        "headline-md": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "label-lg": ["Public Sans"],
+                        "label-sm": ["Public Sans"],
+                        "headline-lg": ["Public Sans"],
+                        "body-md": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for textareas */
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #c5c6cd; /* outline-variant */
+            border-radius: 4px;
+        }
+        /* Soft ambient shadow utility */
+        .ambient-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-[280px] z-40 bg-primary text-on-primary shadow-md">
+<!-- Header -->
+<div class="p-6 flex items-center gap-4 border-b border-primary-container">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">styler</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md font-bold text-on-primary">Artisan Stitch</span>
+<span class="font-label-sm text-label-sm text-on-primary/70">Premium Tailoring</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active Tab: Customers -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+                Customers
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">straighten</span>
+                Measurements
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+                Orders
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Payments
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+                Deliveries
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                Expenses
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<!-- Footer Links -->
+<div class="p-3 border-t border-primary-container flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">backup</span>
+                Backup &amp; Restore
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">cloud_off</span>
+                Offline Mode
+            </a>
+</div>
+</aside>
+<!-- TopAppBar Component -->
+<header class="hidden md:flex fixed top-0 right-0 left-[280px] h-[72px] justify-between items-center px-gutter z-30 bg-surface shadow-sm">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary">Tailor Manager</span>
+</div>
+<div class="flex items-center gap-2">
+<!-- Global Actions -->
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+<div class="w-px h-8 bg-outline-variant/30 mx-2"></div>
+<!-- Primary Action -->
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 transition-colors font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Order
+            </button>
+<!-- Profile -->
+<div class="ml-4 w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/30 shrink-0">
+<img alt="Shop Profile" class="w-full h-full object-cover" data-alt="A close up, well-lit photograph of a middle-aged bespoke tailor in a neat, tailored vest and crisp white shirt, smiling warmly in a bright, modern workshop setting. Natural light softly illuminates his features." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJLHCeB5-JnAOwm_0Nd-_tYiqpl9zWLE3IrauG4o9zhb5WVDULN91HXp-ebJT0AmCt88znSwhApiDxGcEI-w_E4ZttCC-UKJ953vBw785MjiPcwL3m4UlXfOfK_MeKOh-HuB1Qro84DscB76YnpcKFc5Fv-VdtRbjCErldPlDLxWI5oRM8WsBSnSkto9gFqXXBpTmfNpj8DdrGNv3eo6Hm82KWllsRrzXUf3L8BzajSMaFZWU3JUg"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-[280px] pt-[72px] p-container_padding min-h-screen flex flex-col items-center">
+<!-- Content Wrapper constrained to max-width -->
+<div class="w-full max-w-3xl">
+<!-- Page Header -->
+<div class="mb-stack_lg">
+<div class="flex items-center gap-2 mb-2">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                        Back to Customers
+                    </a>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary">Add New Customer</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Create a new profile to track measurements and order history.</p>
+</div>
+<!-- Success Message Placeholder (Initially Hidden) -->
+<div class="hidden mb-6 p-4 rounded-xl bg-surface-container border border-primary-fixed flex items-center justify-between ambient-shadow transform transition-all duration-300 opacity-0 translate-y-[-10px]" id="success-message">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-primary">Customer saved successfully!</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">They have been added to your client roster.</p>
+</div>
+</div>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="hideSuccessMessage()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Form Card -->
+<div class="bg-surface-container-lowest rounded-xl p-8 ambient-shadow border border-outline-variant/20">
+<form class="flex flex-col gap-stack_md" id="add-customer-form" onsubmit="handleSave(event)">
+<!-- Basic Info Group -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
+<!-- Name Input -->
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="customerName">
+                                Full Name <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="customerName" placeholder="e.g. Jane Doe" required="" type="text"/>
+</div>
+</div>
+<!-- Mobile Input -->
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="customerMobile">
+                                Mobile Number <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">call</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="customerMobile" placeholder="+1 (555) 000-0000" required="" type="tel"/>
+</div>
+</div>
+</div>
+<!-- Address Textarea -->
+<div class="flex flex-col gap-2 mt-2">
+<label class="font-label-lg text-label-lg text-on-surface" for="customerAddress">Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant">location_on</span>
+<textarea class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow resize-y" id="customerAddress" placeholder="Street address, City, ZIP" rows="3"></textarea>
+</div>
+</div>
+<!-- Notes Textarea -->
+<div class="flex flex-col gap-2 mt-2">
+<label class="font-label-lg text-label-lg text-on-surface flex justify-between items-end" for="customerNotes">
+<span>Client Notes</span>
+<span class="font-label-sm text-label-sm text-outline font-normal">Optional</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant">notes</span>
+<textarea class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow resize-y" id="customerNotes" placeholder="Preferences, fitting quirks, preferred fabrics..." rows="4"></textarea>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row gap-4 pt-6 mt-4 border-t border-outline-variant/30">
+<button class="h-16 px-8 rounded-xl border border-outline-variant bg-surface text-primary font-label-lg text-label-lg flex items-center justify-center flex-1 hover:bg-surface-container-low active:scale-[0.98] transition-all" type="button">
+                            Cancel
+                        </button>
+<button class="h-16 px-8 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center flex-1 hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" type="submit">
+<span class="material-symbols-outlined">save</span>
+                            Save Customer
+                        </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Lightweight JS for Interaction -->
+<script>
+        function handleSave(event) {
+            event.preventDefault(); // Prevent actual form submission for demo
+            
+            const msg = document.getElementById('success-message');
+            const form = document.getElementById('add-customer-form');
+            
+            // Show message
+            msg.classList.remove('hidden');
+            // Small delay to allow display:block to apply before animating opacity
+            setTimeout(() => {
+                msg.classList.remove('opacity-0', 'translate-y-[-10px]');
+                msg.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+            
+            // Optional: reset form
+            form.reset();
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                hideSuccessMessage();
+            }, 5000);
+        }
+
+        function hideSuccessMessage() {
+            const msg = document.getElementById('success-message');
+            msg.classList.remove('opacity-100', 'translate-y-0');
+            msg.classList.add('opacity-0', 'translate-y-[-10px]');
+            
+            // Wait for transition to finish before hiding completely
+            setTimeout(() => {
+                msg.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body></html>

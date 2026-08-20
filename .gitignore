@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Database
+*.sqlite
+*.db
+tailor_shop.db
+
+# macOS
+.DS_Store
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+app/data/
+app/assets/www/uploads/

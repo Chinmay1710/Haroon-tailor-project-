@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tailor Manager - Measurements</title>
+<script src="../js/tailwindcss.js"></script>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+
+
+
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-dim": "#cbdbf5",
+                      "surface-container": "#e5eeff",
+                      "tertiary-container": "#3f2200",
+                      "primary-fixed": "#d8e3fb",
+                      "surface": "#f8f9ff",
+                      "secondary-container": "#e0e0db",
+                      "on-surface-variant": "#45474c",
+                      "on-primary-fixed": "#111c2d",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#d3e4fe",
+                      "outline": "#75777d",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#1a1c19",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-background": "#0b1c30",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "surface-tint": "#545f73",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#b58759",
+                      "tertiary": "#221000",
+                      "background": "#f8f9ff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#ffdcbd",
+                      "on-secondary-fixed-variant": "#454744",
+                      "primary": "#091426",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed-variant": "#623f18",
+                      "secondary": "#5d5f5b",
+                      "on-primary-container": "#8590a6",
+                      "surface-bright": "#f8f9ff",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#213145",
+                      "surface-container-high": "#dce9ff",
+                      "outline-variant": "#c5c6cd",
+                      "primary-fixed-dim": "#bcc7de",
+                      "on-surface": "#0b1c30",
+                      "secondary-fixed-dim": "#c6c7c2",
+                      "inverse-primary": "#bcc7de",
+                      "primary-container": "#1e293b",
+                      "on-tertiary-fixed": "#2c1600",
+                      "on-secondary-container": "#62635f",
+                      "tertiary-fixed-dim": "#f0bd8b",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e3e3de"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack_lg": "32px",
+                      "gutter": "24px",
+                      "container_padding": "40px",
+                      "stack_sm": "8px",
+                      "sidebar_width": "280px",
+                      "header_height": "72px",
+                      "stack_md": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Public Sans"],
+                      "headline-md": ["Public Sans"],
+                      "display": ["Public Sans"],
+                      "label-lg": ["Public Sans"],
+                      "label-sm": ["Public Sans"],
+                      "headline-lg": ["Public Sans"],
+                      "body-md": ["Public Sans"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              },
+              boxShadow: {
+                  'soft': '0px 4px 20px rgba(0, 0, 0, 0.05)',
+                  'hover': '0px 10px 30px rgba(0, 0, 0, 0.1)'
+              }
+          }
+          },
+        }
+      </script>
+    <link href="../css/fonts.css" rel="stylesheet" />
+</head>
+<body class="bg-surface text-on-surface font-body-lg min-h-screen">
+<!-- SideNavBar -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary dark:bg-primary shadow-md">
+<!-- Header -->
+<div class="p-gutter flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container shrink-0">
+<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A professional and sleek tailor shop logo with a minimalist needle and thread design, rendered in clean lines with a subtle premium feel, set against a dark background, evoking a modern corporate and tactile aesthetic." src=\"../img/logo.png\"/>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary">Artisan Stitch</h1>
+<p class="font-body-md text-body-md text-on-primary/70">Premium Tailoring</p>
+</div>
+</div>
+<!-- Main Nav Tabs -->
+<ul class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span>Dashboard</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">person</span>Customers</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#"><span class="material-symbols-outlined text-[20px]">straighten</span>Measurements</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">shopping_bag</span>Orders</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">payments</span>Payments</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">local_shipping</span>Deliveries</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span>Expenses</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span>Reports</a></li>
+<li><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">settings</span>Settings</a></li>
+</ul>
+<!-- Footer Tabs -->
+<ul class="px-4 py-4 space-y-1 border-t border-primary-container">
+<li><a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">backup</span>Backup &amp; Restore</a></li>
+<li><a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">help</span>Help</a></li>
+<li><a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#"><span class="material-symbols-outlined text-[20px]">cloud_off</span>Offline Mode</a></li>
+</ul>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm">
+<div class="flex items-center gap-6">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">Tailor Manager</h2>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-lg border-none focus:ring-2 focus:ring-primary text-body-md font-body-md w-64" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container"><span class="material-symbols-outlined">notifications</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container"><span class="material-symbols-outlined">calendar_today</span></button>
+<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Order
+            </button>
+<div class="w-9 h-9 rounded-full overflow-hidden bg-surface-container-highest cursor-pointer border border-outline-variant">
+<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A small, professional profile picture of a tailor working in a bright, modern workshop, soft lighting, capturing a sense of craftsmanship and tactile quality." src=\"../img/profile.png\"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-[72px] p-container_padding min-h-screen">
+<!-- Action Bar & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-stack_lg">
+<div class="flex flex-col gap-2 flex-1 max-w-md">
+<label class="font-label-lg text-label-lg text-on-surface-variant" for="customer-select">Select Customer</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-lowest border border-outline-variant text-on-surface font-body-md rounded-lg pl-4 pr-10 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-soft" id="customer-select">
+<option selected="" value="john_doe">John Doe - +1 (555) 123-4567</option>
+<option value="jane_smith">Jane Smith - +1 (555) 987-6543</option>
+<option value="robert_jones">Robert Jones - +1 (555) 456-7890</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">arrow_drop_down</span>
+</div>
+</div>
+<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary px-5 py-3 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-soft hover:shadow-hover shrink-0 h-[48px]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        New Measurement
+                    </button>
+</div>
+<!-- Bento Grid for Measurements -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-stack_md">
+<!-- Measurement Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-soft hover:shadow-hover transition-shadow border border-surface-container-high flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">styler</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[20px]">Bespoke Shirt</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Slim Fit Profile</p>
+</div>
+</div>
+<div class="relative group">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-2 gap-x-4 mt-2">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Neck</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">15.5"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Chest</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">40"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sleeve</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">34"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Length</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">31"</span>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Updated: Oct 12, 2023</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container hover:bg-primary-fixed text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Measurement Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-soft hover:shadow-hover transition-shadow border border-surface-container-high flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">apparel</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[20px]">Formal Trousers</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tapered Fit</p>
+</div>
+</div>
+<div class="relative group">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-2 gap-x-4 mt-2">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Waist</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">34"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Inseam</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">32"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Outseam</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">41"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Thigh</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">24"</span>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Updated: Nov 05, 2023</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container hover:bg-primary-fixed text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- New Empty State Card for adding specific type directly -->
+<button class="bg-surface-container-low rounded-xl p-6 shadow-none hover:shadow-soft transition-all border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-3 text-on-surface-variant hover:text-primary hover:border-primary group h-full min-h-[220px]">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[24px]">add_circle</span>
+</div>
+<span class="font-label-lg text-label-lg font-semibold">Create New Profile</span>
+<span class="font-body-md text-body-md text-center max-w-[200px] text-sm opacity-80">Add a new set of measurements for a suit, jacket, or custom garment.</span>
+</button>
+</div>
+</main>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/measurements.js"></script>
+</body></html>
