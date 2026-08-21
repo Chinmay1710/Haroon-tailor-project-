@@ -1,60 +1,9 @@
-/**
- * payments.js - Data binding for Payments List
- */
+import re
 
-let allPayments = [];
+with open("app/assets/www/js/payments.js", "r") as f:
+    content = f.read()
 
-document.addEventListener("DOMContentLoaded", function() {
-    function init() {
-        if (!window.pyBridge) {
-            setTimeout(init, 100);
-            return;
-        }
-        loadPayments();
-        
-        const searchInput = document.getElementById('payment-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => filterPayments(e.target.value));
-        }
-    }
-    init();
-});
-
-async function loadPayments() {
-    try {
-        const data = await window.API.request('get_all_payments');
-        allPayments = data;
-        renderPayments(allPayments);
-    } catch (e) {
-        console.error(e);
-        window.API.toast("Failed to load payments", "error");
-    }
-    
-    try {
-        const dash = await window.API.request('get_payments_dashboard');
-        const tc = document.getElementById('dash-total-collected');
-        if (tc) tc.textContent = window.API.formatCurrency(dash.total_collected || 0);
-        
-        const pp = document.getElementById('dash-pending-payments');
-        if (pp) pp.textContent = window.API.formatCurrency(dash.pending_payments || 0);
-        
-        const tp = document.getElementById('dash-today-payments');
-        if (tp) tp.textContent = window.API.formatCurrency(dash.today_payments || 0);
-    } catch (e) {
-        console.error("Failed to load dashboard metrics", e);
-    }
-}
-
-function filterPayments(query) {
-    const q = query.toLowerCase();
-    const filtered = allPayments.filter(p => 
-        (p.customer_name && p.customer_name.toLowerCase().includes(q)) || 
-        (p.order_number && p.order_number.toLowerCase().includes(q))
-    );
-    renderPayments(filtered);
-}
-
-function renderPayments(payments) {
+new_func = """function renderPayments(payments) {
     const container = document.getElementById('table-payments');
     if (!container) return;
     
@@ -100,4 +49,9 @@ function renderPayments(payments) {
         `;
         container.appendChild(div);
     });
-}
+}"""
+
+content = re.sub(r'function renderPayments\(payments\) \{.*?^\}$', new_func, content, flags=re.DOTALL|re.MULTILINE)
+
+with open("app/assets/www/js/payments.js", "w") as f:
+    f.write(content)

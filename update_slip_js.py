@@ -1,29 +1,9 @@
-/**
- * stitching_slip_preview.js - Render dynamic stitching slip data before printing
- */
+import re
 
-document.addEventListener("DOMContentLoaded", function() {
-    function init() {
-        if (!window.pyBridge) {
-            setTimeout(init, 100);
-            return;
-        }
-        
-        let navParamsStr = sessionStorage.getItem("nav_params");
-        let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
-        
-        if (!navParams || !navParams.order_id) {
-            window.API.toast("No order ID provided.", "error");
-            document.getElementById('ss-order-number').textContent = "Error: Order ID Missing";
-            return;
-        }
-        
-        loadSlipData(navParams.order_id);
-    }
-    init();
-});
+with open("app/assets/www/js/stitching_slip_preview.js", "r") as f:
+    content = f.read()
 
-async function loadSlipData(orderId) {
+new_func = """async function loadSlipData(orderId) {
     try {
         const o = await window.API.request('get_order_details', {id: orderId});
         
@@ -93,4 +73,9 @@ async function loadSlipData(orderId) {
         window.API.toast("Failed to load stitching slip: " + e, "error");
     }
 }
+"""
 
+content = re.sub(r'async function loadSlipData\(orderId\) \{.*?^\}$', new_func, content, flags=re.DOTALL|re.MULTILINE)
+
+with open("app/assets/www/js/stitching_slip_preview.js", "w") as f:
+    f.write(content)

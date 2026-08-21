@@ -41,18 +41,35 @@ async function loadOrderData(orderId) {
         const tbody = document.getElementById('rp-items-tbody');
         tbody.innerHTML = '';
         
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-outline-variant/50';
-        tr.innerHTML = `
-            <td class="py-4 px-2">
-                <p class="font-label-lg text-label-lg">${o.clothing_type || 'Custom Item'}</p>
-                <p class="text-on-surface-variant text-sm mt-1">${o.special_instructions || ''}</p>
-            </td>
-            <td class="py-4 px-2 text-center">${o.quantity}</td>
-            <td class="py-4 px-2 text-right">${window.API.formatCurrency(o.total_amount / (o.quantity || 1))}</td>
-            <td class="py-4 px-2 text-right font-label-lg text-label-lg">${window.API.formatCurrency(o.total_amount)}</td>
-        `;
-        tbody.appendChild(tr);
+        if (o.items && o.items.length > 0) {
+            o.items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-outline-variant/50';
+                tr.innerHTML = `
+                    <td class="py-4 px-2">
+                        <p class="font-label-lg text-label-lg">${item.clothing_type || 'Custom Item'}</p>
+                        <p class="text-on-surface-variant text-sm mt-1">${item.notes || ''}</p>
+                    </td>
+                    <td class="py-4 px-2 text-center">${item.quantity || 1}</td>
+                    <td class="py-4 px-2 text-right">${window.API.formatCurrency(item.price || 0)}</td>
+                    <td class="py-4 px-2 text-right font-label-lg text-label-lg">${window.API.formatCurrency((item.price || 0) * (item.quantity || 1))}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            // Fallback just in case
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-outline-variant/50';
+            tr.innerHTML = `
+                <td class="py-4 px-2">
+                    <p class="font-label-lg text-label-lg">Custom Item</p>
+                </td>
+                <td class="py-4 px-2 text-center">1</td>
+                <td class="py-4 px-2 text-right">${window.API.formatCurrency(o.total_amount)}</td>
+                <td class="py-4 px-2 text-right font-label-lg text-label-lg">${window.API.formatCurrency(o.total_amount)}</td>
+            `;
+            tbody.appendChild(tr);
+        }
         
         document.getElementById('rp-total').textContent = window.API.formatCurrency(o.total_amount);
         

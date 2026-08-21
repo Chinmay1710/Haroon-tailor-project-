@@ -1,4 +1,7 @@
-/**
+with open("app/assets/www/js/add_payment.js", "r") as f:
+    content = f.read()
+
+new_content = """/**
  * add_payment.js - Logic for recording a new payment
  */
 
@@ -179,3 +182,7 @@ async function submitPayment(orderId) {
         btn.disabled = false;
     }
 }
+"""
+
+with open("app/assets/www/js/add_payment.js", "w") as f:
+    f.write(new_content)

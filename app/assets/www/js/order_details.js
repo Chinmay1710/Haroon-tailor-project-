@@ -52,6 +52,21 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('od-edit-order-btn').addEventListener('click', function() {
             window.API.request('navigate_to', {page: 'new_order', order_id: navParams.id, action: 'edit'});
         });
+        
+        document.getElementById('od-mark-complete-btn').addEventListener('click', function() {
+            if (currentOrder) {
+                if (currentOrder.remaining_amount > 0) {
+                    const collect = confirm(`This order has a remaining balance of ${window.API.formatCurrency(currentOrder.remaining_amount)}. Would you like to collect the payment now before completing the order?`);
+                    if (collect) {
+                        window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id, complete_after: true});
+                        return;
+                    }
+                }
+                updateOrderStatus(navParams.id, 'DELIVERED').then(() => {
+                    loadOrderDetails(navParams.id);
+                });
+            }
+        });
     }
     init();
 });
@@ -87,6 +102,13 @@ function renderOrder(o) {
     document.getElementById('od-customer-name').textContent = o.customer_name || 'Unknown';
     document.getElementById('od-customer-mobile').textContent = o.customer_mobile || 'No mobile provided';
     document.getElementById('od-customer-address').textContent = o.customer_address || '';
+    
+    const markBtn = document.getElementById('od-mark-complete-btn');
+    if (o.status !== 'DELIVERED' && o.status !== 'CANCELLED') {
+        markBtn.classList.remove('hidden');
+    } else {
+        markBtn.classList.add('hidden');
+    }
     
     document.getElementById('od-view-customer-btn').onclick = () => {
         if (o.customer_id) {

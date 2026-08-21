@@ -29,6 +29,33 @@ document.addEventListener("DOMContentLoaded", function() {
                     else if (text.includes("backup")) window.dispatchToPython("navigate_to", {page: "backup_restore"});
                 });
             });
+            
+            // Apply global shop settings
+            window.applyGlobalSettings = async function() {
+                try {
+                    // Give api.js a moment to finish its QWebChannel setup
+                    if (!window.API || !window.API.request) return; 
+                    
+                    const settings = await window.API.request("get_settings");
+                    if (settings) {
+                        document.querySelectorAll('.global-shop-name').forEach(el => {
+                            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = settings.shop_name;
+                            else el.textContent = settings.shop_name;
+                        });
+                        document.querySelectorAll('.global-shop-phone').forEach(el => {
+                            el.textContent = settings.phone || "";
+                        });
+                        document.querySelectorAll('.global-shop-address').forEach(el => {
+                            el.textContent = settings.address || "";
+                        });
+                    }
+                } catch (e) {
+                    console.error("Failed to apply global settings:", e);
+                }
+            };
+            
+            // Small delay to ensure window.API is ready
+            setTimeout(window.applyGlobalSettings, 150);
         });
     }
 });

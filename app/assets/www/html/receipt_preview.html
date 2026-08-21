@@ -199,15 +199,15 @@
 <div class="receipt-container bg-surface-container-lowest w-full max-w-[800px] rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant p-[40px] md:p-[60px] text-on-surface bg-white relative overflow-hidden">
 <!-- Watermark / Background Texture -->
 <div class="absolute inset-0 pointer-events-none opacity-[0.03] flex items-center justify-center z-0">
-<span class="material-symbols-outlined" style="font-size: 400px; font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="material-symbols-outlined" style="font-size: 400px; font-variation-settings: 'FILL' 1;">checkroom</span>
 </div>
 <div class="relative z-10">
 <!-- Receipt Header -->
 <div class="flex justify-between items-start mb-stack_lg pb-stack_md border-b-2 border-primary/20">
 <div>
-<h2 class="font-display text-display text-primary mb-2">Artisan Stitch</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">123 Tailor Row, Craftsville, NY 10001</p>
-<p class="font-body-md text-body-md text-on-surface-variant">Phone: (555) 019-8273 | Web: artisanstitch.com</p>
+<h2 class="font-display text-display text-primary mb-2 "><span class="global-shop-name">Artisan Stitch</span></h2>
+<p class="font-body-md text-body-md text-on-surface-variant global-shop-address">123 Tailor Row, Craftsville, NY 10001</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Phone: <span class="global-shop-phone">(555) 019-8273</span></p>
 </div>
 <div class="text-right">
 <h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">RECEIPT</h3>
@@ -285,6 +285,6 @@
 </div>
 </main>
 <script src="../js/api.js"></script>
-<script src="../js/app.js"></script>
+<script src="../js/app.js?v=3"></script>
 <script src="../js/receipt_preview.js"></script>
 </body></html>

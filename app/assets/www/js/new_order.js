@@ -245,7 +245,7 @@ window.openAddItemModal = function(itemId = null) {
     const modal = document.getElementById('add-item-modal');
     
     // Reset modal
-    document.getElementById('modal-save-profile').checked = false;
+    document.getElementById('modal-save-profile').checked = true;
     
     if (itemId) {
         document.getElementById('modal-title').textContent = "Edit Item";

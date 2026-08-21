@@ -200,13 +200,17 @@
 <section class="bg-surface-container-lowest rounded-xl p-gutter ambient-shadow flex flex-col gap-stack_md">
 <h2 class="font-headline-md text-headline-md text-on-surface mb-stack_sm">Actions</h2>
 <div class="flex flex-col gap-stack_sm">
-<button id="od-edit-order-btn" class="w-full bg-primary text-on-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors ambient-shadow">
+<button id="od-edit-order-btn" class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
 <span class="material-symbols-outlined">edit</span>
                             Edit Order
                         </button>
 <button id="od-add-payment-btn" class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
 <span class="material-symbols-outlined">payments</span>
                             Add Payment
+                        </button>
+<button id="od-mark-complete-btn" class="w-full bg-primary text-on-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors ambient-shadow mt-2 hidden">
+<span class="material-symbols-outlined">check_circle</span>
+                            Mark as Complete
                         </button>
 <div class="h-[1px] bg-outline-variant my-2 w-full"></div>
 <button id="od-print-receipt-btn" class="w-full text-on-surface-variant font-label-lg text-label-lg py-3 px-4 flex items-center justify-start gap-3 hover:bg-surface-container-low rounded-lg transition-colors">
@@ -251,6 +255,6 @@
 </div>
 </main>
 <script src="../js/api.js"></script>
-<script src="../js/app.js"></script>
+<script src="../js/app.js?v=3"></script>
 <script src="../js/order_details.js?v=2"></script>
 </body></html>
