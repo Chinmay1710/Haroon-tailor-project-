@@ -49,10 +49,12 @@ def run_qa_tests():
         order_srv = OrderService()
         order = order_srv.create_order(
             customer_id=customer.id,
-            clothing_type="Shirt",
-            measurement_profile_id=profile.id,
-            quantity=1,
-            price=2000,
+            items=[{
+                "clothing_type": "Shirt",
+                "quantity": 1,
+                "price": 2000,
+                "measurement_profile_id": profile.id
+            }],
             order_date=date.today(),
             delivery_date=date.today(),
             special_instructions="QA Notes",
