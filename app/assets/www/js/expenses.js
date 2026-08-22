@@ -24,9 +24,9 @@ async function loadExpenses() {
     try {
         const data = await window.API.request('get_expenses_dashboard');
         
-        document.getElementById('exp-this-month').innerText = window.API.formatCurrency(data.summary.total_this_month);
-        document.getElementById('exp-count').innerText = data.summary.count_this_month;
-        document.getElementById('exp-top-cat').innerText = data.summary.top_category || 'None';
+        document.getElementById('exp-today').innerText = window.API.formatCurrency(data.stats.today);
+        document.getElementById('exp-this-week').innerText = window.API.formatCurrency(data.stats.week);
+        document.getElementById('exp-this-month').innerText = window.API.formatCurrency(data.stats.month);
         
         allExpenses = data.expenses;
         renderExpenses(allExpenses);

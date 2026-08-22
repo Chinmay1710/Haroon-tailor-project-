@@ -185,7 +185,7 @@
 <h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Tailor Manager</h2>
 <div class="relative w-full max-w-md hidden md:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow" placeholder="Search orders, customers..." type="text"/>
+<input id="order-search" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow" placeholder="Search orders, customers..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-stack_md">
@@ -216,23 +216,6 @@
 </div>
 </div>
 
-<!-- ⚠️ Urgent Deadline Alerts -->
-<div id="urgent-alerts-container" class="hidden mb-stack_lg">
-    <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-5 shadow-sm">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-red-600 text-[24px]">warning</span>
-            </div>
-            <div>
-                <h3 class="font-headline-md text-[18px] text-red-800 font-bold" data-i18n="dashboard.urgent_alert_title">⚠️ Urgent: Work Not Started!</h3>
-                <p class="text-red-600 text-[13px] mt-0.5" data-i18n="dashboard.urgent_alert_subtitle">These orders have delivery deadlines within 3 days but stitching hasn't begun yet.</p>
-            </div>
-        </div>
-        <div id="urgent-alerts-list" class="space-y-2">
-            <!-- Alerts will be injected here by JS -->
-        </div>
-    </div>
-</div>
 
 <!-- List Cards Wrapper -->
 <div class="flex flex-col gap-stack_sm" id="orders-container">
@@ -245,6 +228,21 @@
 <div class="col-span-2" data-i18n="common.status">Status</div>
 <div class="col-span-1 text-right" data-i18n="common.actions">Action</div>
 </div>
+</div>
+
+<!-- Pagination Controls -->
+<div id="pagination-container" class="flex justify-between items-center mt-6 px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-sm">
+    <div class="text-on-surface-variant font-label-sm" id="pagination-info">
+        Showing 0 to 0 of 0 orders
+    </div>
+    <div class="flex gap-2" id="pagination-buttons">
+        <button id="btn-prev-page" class="w-8 h-8 rounded-full flex items-center justify-center border border-outline-variant/50 text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
+        <button id="btn-next-page" class="w-8 h-8 rounded-full flex items-center justify-center border border-outline-variant/50 text-on-surface hover:bg-surface-container-highest disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </button>
+    </div>
 </div>
 </main>
 </div>

@@ -116,6 +116,7 @@ class WebBridge(QObject):
             # DASHBOARD
             # ────────────────────────────────────────────────────────────
             elif action == "get_dashboard_stats":
+                from datetime import date
                 order_srv = self.services["order"]
                 target_date = None
                 date_str = payload.get("date")

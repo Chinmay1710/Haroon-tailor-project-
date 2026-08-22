@@ -3,6 +3,9 @@
  */
 
 let allOrders = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+
 
 document.addEventListener("DOMContentLoaded", function() {
     function init() {
@@ -43,6 +46,21 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         
         window.currentOrderFilter = 'All Orders';
+        
+        const btnPrev = document.getElementById('btn-prev-page');
+        const btnNext = document.getElementById('btn-next-page');
+        if (btnPrev && btnNext) {
+            btnPrev.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    filterOrders(false);
+                }
+            });
+            btnNext.addEventListener('click', () => {
+                currentPage++;
+                filterOrders(false);
+            });
+        }
     }
     init();
 });
@@ -53,62 +71,7 @@ async function loadOrders() {
         allOrders = data;
         filterOrders();
         
-        // Render Urgent Deadline Alerts on Orders page
-        const alertsContainer = document.getElementById('urgent-alerts-container');
-        const alertsList = document.getElementById('urgent-alerts-list');
-        
-        if (alertsContainer && alertsList) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const urgentAlerts = allOrders.filter(o => {
-                if (o.status !== 'NEW' || !o.delivery_date) return false;
-                const dDate = new Date(o.delivery_date);
-                dDate.setHours(0, 0, 0, 0);
-                const diffTime = dDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays <= 3) {
-                    o.days_left = diffDays;
-                    return true;
-                }
-                return false;
-            });
-            
-            // Sort by most urgent first
-            urgentAlerts.sort((a, b) => a.days_left - b.days_left);
-            
-            if (urgentAlerts.length > 0) {
-                alertsContainer.classList.remove('hidden');
-                alertsList.innerHTML = '';
-                urgentAlerts.forEach(alert => {
-                    const daysText = alert.days_left < 0 ? 'OVERDUE'
-                                   : alert.days_left === 0 ? '⏰ TODAY!' 
-                                   : alert.days_left === 1 ? '1 day left' 
-                                   : `${alert.days_left} days left`;
-                    const urgencyColor = alert.days_left <= 0 ? 'bg-red-600 text-white' 
-                                       : alert.days_left === 1 ? 'bg-orange-500 text-white' 
-                                       : 'bg-yellow-500 text-white';
-                    
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center justify-between bg-white/80 rounded-lg px-4 py-3 border border-red-100 hover:bg-white cursor-pointer transition-colors';
-                    div.onclick = () => window.API.request('navigate_to', {page: 'order_details', id: alert.id});
-                    div.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-red-500">assignment_late</span>
-                            <div>
-                                <p class="font-bold text-[14px] text-red-900">${alert.customer_name} — ${alert.items}</p>
-                                <p class="text-[12px] text-red-600">Order ${alert.order_number} • Delivery: ${window.API.formatDate(alert.delivery_date)}</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-[11px] font-bold ${urgencyColor}">${daysText}</span>
-                    `;
-                    alertsList.appendChild(div);
-                });
-            } else {
-                alertsContainer.classList.add('hidden');
-            }
-        }
-        
+
     } catch (e) {
         console.error(e);
         window.API.toast("Failed to load orders", "error");
@@ -133,7 +96,8 @@ window.markOrderComplete = async function(id, remainingAmount) {
     }
 };
 
-function filterOrders() {
+function filterOrders(resetPage = true) {
+    if (resetPage) currentPage = 1;
     const q = (document.getElementById('order-search')?.value || '').toLowerCase();
     const status = window.currentOrderFilter || 'All Orders';
     
@@ -161,7 +125,37 @@ function filterOrders() {
         
         return matchesSearch && matchesStatus;
     });
-    renderOrders(filtered);
+
+    // Sort by closest delivery date first
+    filtered.sort((a, b) => {
+        const dateA = a.delivery_date ? new Date(a.delivery_date).getTime() : Infinity;
+        const dateB = b.delivery_date ? new Date(b.delivery_date).getTime() : Infinity;
+        return dateA - dateB;
+    });
+
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    
+    const pInfo = document.getElementById('pagination-info');
+    if (pInfo) {
+        if (totalItems === 0) {
+            pInfo.innerText = "Showing 0 orders";
+        } else {
+            pInfo.innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} orders`;
+        }
+    }
+    
+    const btnPrev = document.getElementById('btn-prev-page');
+    const btnNext = document.getElementById('btn-next-page');
+    if (btnPrev) btnPrev.disabled = currentPage === 1;
+    if (btnNext) btnNext.disabled = currentPage === totalPages;
+
+    const pagedData = filtered.slice(startIndex, endIndex);
+    renderOrders(pagedData);
 }
 
 function renderOrders(orders) {
@@ -188,12 +182,31 @@ function renderOrders(orders) {
     
     orders.forEach(o => {
         const isOverdue = o.status === 'OVERDUE' || (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.delivery_date && new Date(o.delivery_date) < new Date());
+        
+        let isUrgent = false;
+        let daysLeft = null;
+        let daysText = '';
+        if (o.status === 'NEW' && o.delivery_date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dDate = new Date(o.delivery_date);
+            dDate.setHours(0, 0, 0, 0);
+            const diffTime = dDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays >= 0 && diffDays <= 3) {
+                isUrgent = true;
+                daysLeft = diffDays;
+                daysText = daysLeft === 0 ? '⏰ TODAY!' : (daysLeft === 1 ? '1 day left' : `${daysLeft} days left`);
+            }
+        }
+
         const displayStatus = isOverdue ? 'OVERDUE' : o.status;
         
         let statusColor, statusBg, statusDot;
         let cardBg = 'bg-surface-container-lowest';
         let cardBorder = 'border-outline-variant/30';
         let errorHighlight = '';
+        let urgentBadge = '';
         
         if (isOverdue) {
             statusColor = 'text-on-error-container';
@@ -202,6 +215,17 @@ function renderOrders(orders) {
             cardBg = 'bg-error-container/20';
             cardBorder = 'border-error/20';
             errorHighlight = '<div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>';
+        } else if (isUrgent) {
+            const urgencyColor = daysLeft === 0 ? 'bg-red-600 text-white' 
+                               : daysLeft === 1 ? 'bg-orange-500 text-white' 
+                               : 'bg-yellow-500 text-white';
+            urgentBadge = `<span class="inline-flex items-center px-2 py-0.5 ml-2 rounded-md font-label-sm text-[10px] uppercase font-bold ${urgencyColor}">${daysText}</span>`;
+            cardBorder = 'border-red-400/50';
+            cardBg = 'bg-red-50/50';
+            errorHighlight = '<div class="absolute left-0 top-0 bottom-0 w-1 bg-red-400"></div>';
+            statusColor = 'text-on-surface-variant';
+            statusBg = 'bg-surface-container-low border border-outline-variant/50';
+            statusDot = 'bg-outline';
         } else {
             switch(o.status) {
                 case 'NEW':
@@ -261,8 +285,11 @@ function renderOrders(orders) {
                     <span class="font-body-md text-body-md text-on-surface">${window.API.formatDate(o.order_date)}</span>
                 </div>
                 <div class="flex flex-col mt-2 md:mt-1">
-                    <span class="font-label-sm text-label-sm ${isOverdue ? 'text-error font-bold' : 'text-on-surface-variant'} uppercase">Delivery</span>
-                    <span class="font-body-md text-body-md ${isOverdue ? 'text-error font-semibold' : 'text-on-surface'}">${window.API.formatDate(o.delivery_date)}</span>
+                    <span class="font-label-sm text-label-sm ${isOverdue || isUrgent ? 'text-error font-bold' : 'text-on-surface-variant'} uppercase">Delivery</span>
+                    <div class="flex items-center">
+                        <span class="font-body-md text-body-md ${isOverdue || isUrgent ? 'text-error font-semibold' : 'text-on-surface'}">${window.API.formatDate(o.delivery_date)}</span>
+                        ${urgentBadge}
+                    </div>
                 </div>
             </div>
             <div class="col-span-1 md:col-span-2 flex flex-row md:flex-col justify-between md:justify-start">
