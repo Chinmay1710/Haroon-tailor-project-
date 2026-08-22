@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+
+<html class="light" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -126,9 +127,8 @@
 <link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="font-body-md text-body-md overflow-x-hidden min-h-screen flex bg-surface">
-
-    <!-- Global Navigation Rail / Sidebar (Shared Component) -->
-    <nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary shadow-md">
+<!-- Global Navigation Rail / Sidebar (Shared Component) -->
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary shadow-md">
 <!-- Header -->
 <div class="p-gutter flex items-center gap-stack_sm mb-4">
 <div class="w-10 h-10 rounded-full bg-surface-container-highest/20 flex items-center justify-center shrink-0">
@@ -198,12 +198,10 @@
 </a>
 </div>
 </nav>
-
-    <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col ml-[280px]">
-        
-        <!-- TopAppBar (Shared Component) -->
-        <header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface shadow-sm">
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col ml-[280px]">
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface shadow-sm">
 <!-- Brand / Search Area -->
 <div class="flex items-center gap-8 flex-1">
 <span class="font-headline-md text-headline-md text-primary font-bold">Tailor Manager</span>
@@ -211,9 +209,7 @@
 <!-- Global Actions -->
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 text-on-surface-variant">
-<button class="p-2 rounded-full hover:bg-surface-container-highest/30 hover:text-primary transition-colors duration-200">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
+
 <button class="p-2 rounded-full hover:bg-surface-container-highest/30 hover:text-primary transition-colors duration-200">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
@@ -229,121 +225,113 @@
 </div>
 </div>
 </header>
-
-        <!-- Canvas Area -->
-        <main class="mt-[72px] p-container_padding flex-1 flex flex-col max-w-[1600px] mx-auto w-full">
-            
-            <!-- Page Header Section -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack_md mb-stack_lg">
-                <div>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Workers</h2>
-                    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your tailoring staff, task assignments, and piece-rate payouts.</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <!-- Search Input -->
-                    <div class="relative w-full md:w-80">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
-                            <span class="material-symbols-outlined text-[20px]" data-icon="search">search</span>
-                        </div>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface placeholder-on-surface-variant/60 focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" placeholder="Search workers...">
-                    </div>
-                    <!-- Page Primary Action -->
-                    <button onclick="document.getElementById('add-worker-modal').classList.remove('hidden')" class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap">
-                        <span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
+<!-- Canvas Area -->
+<main class="mt-[72px] p-container_padding flex-1 flex flex-col max-w-[1600px] mx-auto w-full">
+<!-- Page Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack_md mb-stack_lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Workers</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your tailoring staff, task assignments, and piece-rate payouts.</p>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search Input -->
+<div class="relative w-full md:w-80">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]" data-icon="search">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface placeholder-on-surface-variant/60 focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" placeholder="Search workers..." type="text"/>
+</div>
+<!-- Page Primary Action -->
+<button class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap" onclick="document.getElementById('add-worker-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
                         Add Worker
                     </button>
-                </div>
-            </div>
-            
-            <!-- Portal Info Banner -->
-            <div class="mb-stack_lg p-6 bg-surface-container-lowest border border-primary/20 rounded-xl flex items-center justify-between shadow-sm">
-                <div class="flex items-start gap-4">
-                    <div class="p-3 bg-primary/10 rounded-full text-primary">
-                        <span class="material-symbols-outlined text-2xl">devices</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-sm text-primary mb-1">Mobile Worker Portal Active</h3>
-                        <p class="text-on-surface-variant font-body-sm max-w-xl">Workers can view assignments and track their payouts from their own devices. Simply provide them with the link below and their 4-digit Login PIN.</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <input type="text" id="portal-url" readonly class="font-mono text-sm text-on-surface bg-surface border border-outline-variant rounded-lg px-4 py-2.5 w-64 focus:outline-none" value="Loading link...">
-                    </div>
-                    <button onclick="copyPortalLink()" class="p-2.5 bg-surface border border-outline-variant rounded-lg text-primary hover:bg-primary-container/50 transition-colors" title="Copy Link">
-                        <span class="material-symbols-outlined text-[20px]">content_copy</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Main Data Table -->
-            <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden flex-1">
-                <div class="overflow-x-auto h-full">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead>
-                            <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                                <th class="px-6 py-4 font-medium">Name</th>
-                                <th class="px-6 py-4 font-medium">Phone</th>
-                                <th class="px-6 py-4 font-medium">Login PIN</th>
-                                <th class="px-6 py-4 font-medium">Status</th>
-                                <th class="px-6 py-4 font-medium text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="workers-list" class="divide-y divide-surface-container-highest">
-                            <!-- Loading State -->
-                            <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
-                                    <div class="inline-flex flex-col items-center justify-center text-on-surface-variant">
-                                        <span class="material-symbols-outlined animate-spin text-3xl mb-2">refresh</span>
-                                        <p class="font-body-md text-body-md">Loading workers...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-        </main>
-    </div>
-
-    <!-- Add Worker Modal -->
-    <div id="add-worker-modal" class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[450px] max-w-[90vw] overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
-                <h3 class="font-headline-sm text-on-surface">Add New Worker</h3>
-                <button onclick="document.getElementById('add-worker-modal').classList.add('hidden')" class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-container-highest/50">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-md text-on-surface mb-1.5">Full Name <span class="text-error">*</span></label>
-                    <input type="text" id="w-name" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface" placeholder="e.g. Ramesh Tailor">
-                </div>
-                <div>
-                    <label class="block font-label-md text-on-surface mb-1.5">Phone Number</label>
-                    <input type="text" id="w-phone" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface" placeholder="10-digit number">
-                </div>
-                <div>
-                    <label class="block font-label-md text-on-surface mb-1.5">4-Digit Login PIN <span class="text-error">*</span></label>
-                    <input type="text" id="w-pin" maxlength="4" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface font-mono tracking-[0.5em] text-lg text-center" placeholder="1234">
-                    <p class="text-on-surface-variant/70 text-xs mt-1.5">Workers will use this PIN to log into the mobile portal.</p>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-surface-container-highest flex justify-end gap-3 bg-surface/50">
-                <button onclick="document.getElementById('add-worker-modal').classList.add('hidden')" class="px-5 py-2 rounded-lg text-on-surface font-label-lg hover:bg-surface-container-high transition-colors">Cancel</button>
-                <button onclick="saveWorker()" class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-lg hover:bg-primary/90 transition-colors shadow-sm">Save Worker</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/app.js"></script>
-    
-    <script>
+</div>
+</div>
+<!-- Portal Info Banner -->
+<div class="mb-stack_lg p-6 bg-surface-container-lowest border border-primary/20 rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary/10 rounded-full text-primary">
+<span class="material-symbols-outlined text-2xl">devices</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-primary mb-1">Mobile Worker Portal Active</h3>
+<p class="text-on-surface-variant font-body-sm max-w-xl">Workers can view assignments and track their payouts from their own devices. Simply provide them with the link below and their 4-digit Login PIN.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<input class="font-mono text-sm text-on-surface bg-surface border border-outline-variant rounded-lg px-4 py-2.5 w-64 focus:outline-none" id="portal-url" readonly="" type="text" value="Loading link..."/>
+</div>
+<button class="p-2.5 bg-surface border border-outline-variant rounded-lg text-primary hover:bg-primary-container/50 transition-colors" onclick="copyPortalLink()" title="Copy Link">
+<span class="material-symbols-outlined text-[20px]">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Main Data Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden flex-1">
+<div class="overflow-x-auto h-full">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="px-6 py-4 font-medium">Name</th>
+<th class="px-6 py-4 font-medium">Phone</th>
+<th class="px-6 py-4 font-medium">Login PIN</th>
+<th class="px-6 py-4 font-medium">Status</th>
+<th class="px-6 py-4 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest" id="workers-list">
+<!-- Loading State -->
+<tr>
+<td class="px-6 py-12 text-center" colspan="5">
+<div class="inline-flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined animate-spin text-3xl mb-2">refresh</span>
+<p class="font-body-md text-body-md">Loading workers...</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Add Worker Modal -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm transition-opacity" id="add-worker-modal">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[450px] max-w-[90vw] overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
+<h3 class="font-headline-sm text-on-surface">Add New Worker</h3>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('add-worker-modal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-5">
+<div>
+<label class="block font-label-md text-on-surface mb-1.5">Full Name <span class="text-error">*</span></label>
+<input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface" id="w-name" placeholder="e.g. Ramesh Tailor" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-on-surface mb-1.5">Phone Number</label>
+<input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface" id="w-phone" placeholder="10-digit number" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-on-surface mb-1.5">4-Digit Login PIN <span class="text-error">*</span></label>
+<input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface font-mono tracking-[0.5em] text-lg text-center" id="w-pin" maxlength="4" placeholder="1234" type="text"/>
+<p class="text-on-surface-variant/70 text-xs mt-1.5">Workers will use this PIN to log into the mobile portal.</p>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-surface-container-highest flex justify-end gap-3 bg-surface/50">
+<button class="px-5 py-2 rounded-lg text-on-surface font-label-lg hover:bg-surface-container-high transition-colors" onclick="document.getElementById('add-worker-modal').classList.add('hidden')">Cancel</button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-lg hover:bg-primary/90 transition-colors shadow-sm" onclick="saveWorker()">Save Worker</button>
+</div>
+</div>
+</div>
+<!-- Scripts -->
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
         async function initWorkers() {
             if (!window.pyBridge) {
                 setTimeout(initWorkers, 100);

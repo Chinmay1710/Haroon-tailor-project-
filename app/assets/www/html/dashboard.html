@@ -6,9 +6,6 @@
 <title>Tailor Manager - Dashboard</title>
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -173,7 +170,7 @@
           'opsz' 24
         }
       </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen">
 <!-- SideNavBar -->
@@ -181,7 +178,7 @@
 <!-- Header -->
 <div class="p-gutter border-b border-on-primary/10 flex items-center gap-stack_sm">
 <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden shrink-0">
-<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A macro shot of a vintage brass tailor's thimble and a measuring tape curled organically on a dark wooden workbench, dramatic side lighting, warm tones, high resolution, corporate modern aesthetic with tactile warmth." src=\"../img/logo.png\"/>
+<img alt='\"Tailor' class="w-full h-full object-cover" data-alt="A macro shot of a vintage brass tailor's thimble and a measuring tape curled organically on a dark wooden workbench, dramatic side lighting, warm tones, high resolution, corporate modern aesthetic with tactile warmth." logo\"="" shop="" src='\"../img/logo.png\"/'/>
 </div>
 <div>
 <h2 class="text-headline-md font-headline-md font-bold text-on-primary leading-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
@@ -253,19 +250,19 @@
 <h1 class="font-headline-md text-headline-md text-primary">Tailor Manager</h1>
 </div>
 <div class="flex items-center gap-stack_md">
+<div class="relative flex items-center justify-center">
+<input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="dashboard-date-picker" onchange="loadDashboardStats(this.value)" type="date"/>
 <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low">
 <span class="material-symbols-outlined">calendar_today</span>
 </button>
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low relative">
-<span class="material-symbols-outlined">notifications</span>
-<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-</button>
-<button onclick="window.API.navigate('new_order')" class="ml-2 h-[40px] px-4 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm">
+</div>
+
+<button class="ml-2 h-[40px] px-4 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
                 New Order
             </button>
 <div class="ml-4 w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-outline-variant cursor-pointer">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A portrait of an experienced tailor, smiling warmly, wearing a crisp white shirt and a tape measure draped around the neck, set against a softly lit background of fabric rolls in a modern workshop." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A portrait of an experienced tailor, smiling warmly, wearing a crisp white shirt and a tape measure draped around the neck, set against a softly lit background of fabric rolls in a modern workshop." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </header>
@@ -288,7 +285,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Orders Today</p>
-<p id="stat-orders-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">12</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-orders-today">12</p>
 </div>
 </div>
 <!-- Today's Sales -->
@@ -298,7 +295,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Today's Sales</p>
-<p id="stat-sales-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹4,500</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-sales-today">₹4,500</p>
 </div>
 </div>
 <!-- Pending Payments -->
@@ -308,7 +305,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Pending Payments</p>
-<p id="stat-pending-payments" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹12,200</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-pending-payments">₹12,200</p>
 </div>
 </div>
 <!-- Deliveries Today -->
@@ -318,7 +315,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Deliveries Today</p>
-<p id="stat-deliveries-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">8</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-deliveries-today">8</p>
 </div>
 </div>
 </div>
@@ -334,23 +331,23 @@
 </div>
 <div class="grid grid-cols-2 md:grid-cols-5 gap-stack_sm">
 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low text-center">
-<p id="pipe-new" class="font-headline-md text-headline-md text-on-surface">24</p>
+<p class="font-headline-md text-headline-md text-on-surface" id="pipe-new">24</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">New</p>
 </div>
 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border-t-4 border-t-[#3b82f6] text-center">
-<p id="pipe-stitching" class="font-headline-md text-headline-md text-on-surface">18</p>
+<p class="font-headline-md text-headline-md text-on-surface" id="pipe-stitching">18</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Stitching</p>
 </div>
 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border-t-4 border-t-[#10b981] text-center">
-<p id="pipe-ready" class="font-headline-md text-headline-md text-on-surface">12</p>
+<p class="font-headline-md text-headline-md text-on-surface" id="pipe-ready">12</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Ready</p>
 </div>
 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low text-center">
-<p id="pipe-delivered" class="font-headline-md text-headline-md text-on-surface">45</p>
+<p class="font-headline-md text-headline-md text-on-surface" id="pipe-delivered">45</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Delivered</p>
 </div>
 <div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border-t-4 border-t-[#ef4444] text-center col-span-2 md:col-span-1">
-<p id="pipe-overdue" class="font-headline-md text-headline-md text-on-surface">3</p>
+<p class="font-headline-md text-headline-md text-on-surface" id="pipe-overdue">3</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Overdue</p>
 </div>
 </div>
@@ -371,7 +368,7 @@
 <th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Action</th>
 </tr>
 </thead>
-<tbody id="table-deliveries-today" class="divide-y divide-surface-variant">
+<tbody class="divide-y divide-surface-variant" id="table-deliveries-today">
 <tr class="hover:bg-surface-container/30 transition-colors">
 <td class="p-4 font-body-md text-body-md font-medium">#ORD-092</td>
 <td class="p-4 font-body-md text-body-md">Rahul Sharma</td>
@@ -426,19 +423,19 @@
 <section>
 <h3 class="font-headline-md text-headline-md text-on-surface mb-stack_sm">Quick Actions</h3>
 <div class="grid grid-cols-2 gap-stack_sm">
-<button id="btn-add-customer" onclick="window.API.navigate('add_customer')" class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24">
+<button class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24" id="btn-add-customer" onclick="window.API.navigate('add_customer')">
 <span class="material-symbols-outlined text-primary">person_add</span>
 <span class="font-label-sm text-label-sm text-on-surface">Add Customer</span>
 </button>
-<button id="btn-new-order" onclick="window.API.navigate('new_order')" class="bg-primary hover:bg-primary/90 transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.1)] border border-transparent flex flex-col items-center justify-center gap-2 h-24 text-on-primary">
+<button class="bg-primary hover:bg-primary/90 transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.1)] border border-transparent flex flex-col items-center justify-center gap-2 h-24 text-on-primary" id="btn-new-order" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined">add_circle</span>
 <span class="font-label-sm text-label-sm">New Order</span>
 </button>
-<button id="btn-add-payment" onclick="window.API.navigate('add_payment')" class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24">
+<button class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24" id="btn-add-payment" onclick="window.API.navigate('add_payment')">
 <span class="material-symbols-outlined text-tertiary-container">payments</span>
 <span class="font-label-sm text-label-sm text-on-surface">Add Payment</span>
 </button>
-<button onclick="window.API.navigate('expenses_list')" class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24">
+<button class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24" onclick="window.API.navigate('expenses_list')">
 <span class="material-symbols-outlined text-error">receipt_long</span>
 <span class="font-label-sm text-label-sm text-on-surface">Add Expense</span>
 </button>
@@ -457,7 +454,7 @@
 <div class="flex items-center justify-between mb-stack_sm">
 <h3 class="font-headline-md text-headline-md text-on-surface">Recent Orders</h3>
 </div>
-<div id="recent-orders-list" class="space-y-3">
+<div class="space-y-3" id="recent-orders-list">
 <!-- Order Item -->
 <div class="bg-surface-container-lowest p-3 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex items-center justify-between">
 <div class="flex items-center gap-3">

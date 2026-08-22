@@ -19,9 +19,10 @@ document.addEventListener("DOMContentLoaded", function() {
     initDashboard();
 });
 
-async function loadDashboardStats() {
+async function loadDashboardStats(date_str = null) {
     try {
-        const data = await window.API.request('get_dashboard_stats');
+        const payload = date_str ? { date: date_str } : {};
+        const data = await window.API.request('get_dashboard_stats', payload);
         
         // 1. Update Top Stat Cards
         document.getElementById('stat-orders-today').innerText = data.orders_today;

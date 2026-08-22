@@ -5,12 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Add Customer - Tailor Manager</title>
 <!-- Google Fonts: Public Sans -->
-
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-
 <!-- Material Symbols Outlined -->
-
-
 <!-- Tailwind CSS via CDN -->
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
@@ -123,7 +119,7 @@
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
         }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-surface text-on-surface font-body-md antialiased min-h-screen">
 <!-- SideNavBar Component -->
@@ -201,21 +197,19 @@
 </div>
 <div class="flex items-center gap-2">
 <!-- Global Actions -->
-<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-<span class="material-symbols-outlined">notifications</span>
-</button>
+
 <button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
 <span class="material-symbols-outlined">calendar_today</span>
 </button>
 <div class="w-px h-8 bg-outline-variant/30 mx-2"></div>
 <!-- Primary Action -->
-<button onclick="window.API.navigate('new_order')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 transition-colors font-label-lg text-label-lg">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 transition-colors font-label-lg text-label-lg" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
                 New Order
             </button>
 <!-- Profile -->
 <div class="ml-4 w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/30 shrink-0">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A close up, well-lit photograph of a middle-aged bespoke tailor in a neat, tailored vest and crisp white shirt, smiling warmly in a bright, modern workshop setting. Natural light softly illuminates his features." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A close up, well-lit photograph of a middle-aged bespoke tailor in a neat, tailored vest and crisp white shirt, smiling warmly in a bright, modern workshop setting. Natural light softly illuminates his features." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </header>
@@ -299,11 +293,11 @@
 <button class="h-16 px-8 rounded-xl border border-outline-variant bg-surface text-primary font-label-lg text-label-lg flex items-center justify-center flex-1 hover:bg-surface-container-low active:scale-[0.98] transition-all" type="button">
                             Cancel
                         </button>
-<button id="btn-save-customer" class="h-16 px-6 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center flex-1 hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" type="submit">
+<button class="h-16 px-6 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center flex-1 hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" id="btn-save-customer" type="submit">
 <span class="material-symbols-outlined">save</span>
                             Save Customer
                         </button>
-<button id="btn-save-add-measurements" class="h-16 px-6 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center flex-[1.5] hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" type="button">
+<button class="h-16 px-6 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center flex-[1.5] hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" id="btn-save-add-measurements" type="button">
 <span class="material-symbols-outlined">add_shopping_cart</span>
                             Save &amp; New Order
                         </button>

@@ -81,7 +81,14 @@ class WebBridge(QObject):
             # ────────────────────────────────────────────────────────────
             elif action == "get_dashboard_stats":
                 order_srv = self.services["order"]
-                dash_data = order_srv.get_dashboard_data()
+                target_date = None
+                date_str = payload.get("date")
+                if date_str:
+                    try:
+                        target_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                    except ValueError:
+                        pass
+                dash_data = order_srv.get_dashboard_data(target_date)
                 
                 recent_orders = []
                 for o in dash_data["recent_orders"]:

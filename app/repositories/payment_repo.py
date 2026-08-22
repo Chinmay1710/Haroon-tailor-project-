@@ -61,9 +61,10 @@ class PaymentRepository:
             Payment.payment_date <= end_date,
         ).order_by(Payment.payment_date.desc()).all()
 
-    def get_today_total(self) -> float:
+    def get_today_total(self, target_date: date = None) -> float:
+        target_date = target_date or date.today()
         result = self.session.query(func.sum(Payment.amount)).filter(
-            Payment.payment_date == date.today()
+            Payment.payment_date == target_date
         ).scalar()
         return result or 0.0
 

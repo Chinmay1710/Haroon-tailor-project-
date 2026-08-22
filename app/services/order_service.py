@@ -255,17 +255,18 @@ class OrderService:
         finally:
             session.close()
 
-    def get_dashboard_data(self) -> dict:
+    def get_dashboard_data(self, target_date: date = None) -> dict:
         """Get all data needed for the dashboard."""
+        target_date = target_date or date.today()
         session = get_session()
         try:
             order_repo = OrderRepository(session)
             pay_repo = PaymentRepository(session)
 
-            today_orders = order_repo.get_today_orders()
-            today_sales = pay_repo.get_today_total()
+            today_orders = order_repo.get_today_orders(target_date)
+            today_sales = pay_repo.get_today_total(target_date)
             pending_payments = pay_repo.get_total_pending()
-            today_deliveries = order_repo.get_by_delivery_date(date.today())
+            today_deliveries = order_repo.get_by_delivery_date(target_date)
             status_counts = order_repo.count_by_status()
             recent_orders = order_repo.get_recent(5)
             overdue_orders = order_repo.get_overdue()

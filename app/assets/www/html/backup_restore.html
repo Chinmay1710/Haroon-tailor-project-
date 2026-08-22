@@ -6,9 +6,6 @@
 <title>Backup &amp; Restore - Artisan Stitch</title>
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -105,7 +102,7 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-background text-on-background font-body-md min-h-screen overflow-x-hidden">
 <!-- TopAppBar -->
@@ -115,19 +112,17 @@
 </div>
 <div class="flex items-center gap-6">
 <div class="flex items-center gap-4">
-<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-highest/20">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
+
 <button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-highest/20">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
 </div>
-<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-full flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-md">
+<button class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-full flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-md" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined" data-weight="fill">add</span>
                 New Order
             </button>
 <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A beautifully tailored dark navy suit jacket on a wooden mannequin in a bright, modern workshop, soft beige background, corporate modern aesthetic with tactile fabric details, professional lighting." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A beautifully tailored dark navy suit jacket on a wooden mannequin in a bright, modern workshop, soft beige background, corporate modern aesthetic with tactile fabric details, professional lighting." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </header>
@@ -227,7 +222,7 @@
 </div>
 </div>
 </div>
-<button id="btn-backup" class="w-full h-16 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-md transition-all active:scale-[0.98] mt-6">
+<button class="w-full h-16 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-md transition-all active:scale-[0.98] mt-6" id="btn-backup">
 <span class="material-symbols-outlined" data-icon="save_alt">save_alt</span>
                         Backup Data
                     </button>
@@ -247,7 +242,7 @@
 <p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Restoring will replace all current information. Any new measurements entered since the backup will be removed.</p>
 </div>
 </div>
-<button id="btn-restore" class="w-full h-16 bg-surface text-primary border border-outline-variant font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-[0.98] mt-6 relative z-10">
+<button class="w-full h-16 bg-surface text-primary border border-outline-variant font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-[0.98] mt-6 relative z-10" id="btn-restore">
 <span class="material-symbols-outlined" data-icon="restore">restore</span>
                         Restore Data
                     </button>

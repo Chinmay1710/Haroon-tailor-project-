@@ -177,12 +177,12 @@ class OrderRepository:
         counts["OVERDUE"] = len(self.get_overdue())
         return counts
 
-    def get_today_orders(self) -> list[Order]:
-        today = date.today()
+    def get_today_orders(self, target_date: date = None) -> list[Order]:
+        target_date = target_date or date.today()
         return self.session.query(Order).options(
             joinedload(Order.customer),
         ).filter(
-            Order.order_date == today
+            Order.order_date == target_date
         ).order_by(Order.created_at.desc()).all()
 
     def get_recent(self, limit: int = 5) -> list[Order]:
