@@ -109,103 +109,76 @@
 </head>
 <body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
 <!-- SideNavBar -->
-<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary shadow-md hidden md:flex">
-<!-- Header -->
-<div class="flex flex-col items-center justify-center p-gutter border-b border-primary-container/30">
-<img alt='\"Tailor' class="w-16 h-16 rounded-full bg-primary-container mb-4 object-cover" data-alt="A minimalist line-art logo of a needle and thread forming an elegant abstract shape. The logo is rendered in crisp white against a deep navy blue background, exuding a premium, modern artisan craft aesthetic. The lighting is flat and graphic, emphasizing clean lines." logo\"="" shop="" src='\"../img/logo.png\"/'/>
-<h1 class="font-headline-md text-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
-<p class="font-label-sm text-label-sm text-on-primary/70 mt-1" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
-</div>
-<!-- Main Tabs -->
-<!-- Language Switcher -->
-<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container" id="lang-btn-en" onclick="window.I18n.setLang('en')">English</button>
-<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary" id="lang-btn-hi" onclick="window.I18n.setLang('hi')">हिन्दी</button>
-</div>
-<div class="flex-1 overflow-y-auto py-stack_md">
-<ul class="space-y-1 px-stack_sm">
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="dashboard">dashboard</span>
-<span data-i18n="sidebar.dashboard">Dashboard</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="person">person</span>
-<span data-i18n="sidebar.customers">Customers</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg bg-surface-container-highest/10 text-on-primary border-l-4 border-surface-container-highest opacity-90 transition-all text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="straighten" data-weight="fill">straighten</span>
-<span data-i18n="sidebar.measurements">Measurements</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="shopping_bag">shopping_bag</span>
-<span data-i18n="sidebar.orders">Orders</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="payments">payments</span>
-<span data-i18n="sidebar.payments">Payments</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="local_shipping">local_shipping</span>
-<span data-i18n="sidebar.deliveries">Deliveries</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="receipt_long">receipt_long</span>
-<span data-i18n="sidebar.expenses">Expenses</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="analytics">analytics</span>
-<span data-i18n="sidebar.reports">Reports</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined">engineering</span>
-<span data-i18n="sidebar.workers">Workers</span>
-</a><a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="settings">settings</span>
-<span data-i18n="sidebar.settings">Settings</span>
-</a>
-</li>
-</ul>
-</div>
-<!-- Footer Tabs -->
-<div class="mt-auto py-stack_md border-t border-primary-container/30">
-<ul class="space-y-1 px-stack_sm">
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="backup">backup</span>
-<span data-i18n="sidebar.backup">Backup &amp; Restore</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="help">help</span>
-<span data-i18n="sidebar.help">Help</span>
-</a>
-</li>
-<li>
-<a class="flex items-center px-4 py-stack_sm rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[15px] font-medium tracking-wide" href="#">
-<span class="material-symbols-outlined mr-4" data-icon="cloud_off">cloud_off</span>
-<span data-i18n="sidebar.offline">Offline Mode</span>
-</a>
-</li>
-</ul>
-</div>
+<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary text-on-primary shadow-md">
+  <div class="p-gutter border-b border-on-primary/10 flex items-center gap-stack_sm">
+    <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden shrink-0">
+      <img src="../img/logo.png" alt="Tailor Shop Logo" class="w-full h-full object-cover" />
+    </div>
+    <div>
+      <h2 class="text-[18px] font-bold text-on-primary leading-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
+      <p class="text-[13px] text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+    </div>
+  </div>
+  <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+  </div>
+  <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">dashboard</span>
+      <span data-i18n="sidebar.dashboard">Dashboard</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">person</span>
+      <span data-i18n="sidebar.customers">Customers</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container-highest/10 text-on-primary border-l-4 border-surface-container-highest opacity-90 transition-all text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 22px;">straighten</span>
+      <span data-i18n="sidebar.measurements">Measurements</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">shopping_bag</span>
+      <span data-i18n="sidebar.orders">Orders</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">payments</span>
+      <span data-i18n="sidebar.payments">Payments</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">local_shipping</span>
+      <span data-i18n="sidebar.deliveries">Deliveries</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">receipt_long</span>
+      <span data-i18n="sidebar.expenses">Expenses</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">analytics</span>
+      <span data-i18n="sidebar.reports">Reports</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">engineering</span>
+      <span data-i18n="sidebar.workers">Workers</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 22px;">settings</span>
+      <span data-i18n="sidebar.settings">Settings</span>
+    </a>
+  </div>
+  <div class="px-3 py-3 border-t border-on-primary/10 flex flex-col gap-1">
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 20px;">backup</span>
+      <span data-i18n="sidebar.backup">Backup & Restore</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 20px;">help</span>
+      <span data-i18n="sidebar.help">Help</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
+      <span class="material-symbols-outlined" style="font-size: 20px;">cloud_off</span>
+      <span data-i18n="sidebar.offline">Offline Mode</span>
+    </a>
+  </div>
 </nav>
 <!-- TopAppBar -->
 <header class="fixed top-0 right-0 left-0 md:left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface shadow-sm">
