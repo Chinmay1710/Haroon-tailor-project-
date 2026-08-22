@@ -312,8 +312,11 @@
 <!-- Payment Table Area -->
 <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest overflow-hidden">
 <div class="px-6 py-4 border-b border-surface-container-highest flex justify-between items-center bg-surface/50">
-<h3 class="font-headline-md text-[20px] font-semibold text-on-surface">Recent Transactions</h3>
-<div class="flex gap-2 relative">
+<div class="flex gap-4">
+    <button id="tab-transactions" class="font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1">Recent Transactions</button>
+    <button id="tab-pending" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Pending Balances</button>
+</div>
+<div class="flex gap-2 relative" id="payment-controls">
     <div class="relative inline-block">
         <button id="filter-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
@@ -349,7 +352,7 @@
 <!-- List Cards (Alternative to dense table) -->
 <div class="p-6 flex flex-col gap-4">
 <!-- Header Row (Visual only) -->
-<div class="hidden md:grid grid-cols-6 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<div id="list-header" class="hidden md:grid grid-cols-6 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
 <div>Date</div>
 <div>Order No.</div>
 <div>Customer</div>
