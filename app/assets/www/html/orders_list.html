@@ -106,73 +106,73 @@
 </head>
 <body class="bg-surface text-on-surface flex w-full min-h-screen">
 <!-- SideNavBar -->
-<nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary text-on-primary shadow-md">
-  <div class="p-gutter border-b border-on-primary/10 flex items-center gap-stack_sm">
-    <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden shrink-0">
-      <img src="../img/logo.png" alt="Tailor Shop Logo" class="w-full h-full object-cover" />
+<nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
     </div>
     <div>
-      <h2 class="text-[18px] font-bold text-on-primary leading-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
-      <p class="text-[13px] text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
     </div>
   </div>
-  <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
   </div>
-  <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">dashboard</span>
+  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
       <span data-i18n="sidebar.dashboard">Dashboard</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">person</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
       <span data-i18n="sidebar.customers">Customers</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">straighten</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">straighten</span>
       <span data-i18n="sidebar.measurements">Measurements</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-container-highest/10 text-on-primary border-l-4 border-surface-container-highest opacity-90 transition-all text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 22px;">shopping_bag</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
+      <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">shopping_bag</span>
       <span data-i18n="sidebar.orders">Orders</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">payments</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
       <span data-i18n="sidebar.payments">Payments</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">local_shipping</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
       <span data-i18n="sidebar.deliveries">Deliveries</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">receipt_long</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
       <span data-i18n="sidebar.expenses">Expenses</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">analytics</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">analytics</span>
       <span data-i18n="sidebar.reports">Reports</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">engineering</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
       <span data-i18n="sidebar.workers">Workers</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[14px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 22px;">settings</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
       <span data-i18n="sidebar.settings">Settings</span>
     </a>
   </div>
-  <div class="px-3 py-3 border-t border-on-primary/10 flex flex-col gap-1">
-    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 20px;">backup</span>
-      <span data-i18n="sidebar.backup">Backup & Restore</span>
+  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 20px;">help</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
       <span data-i18n="sidebar.help">Help</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 text-[13px] font-semibold tracking-wide">
-      <span class="material-symbols-outlined" style="font-size: 20px;">cloud_off</span>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
       <span data-i18n="sidebar.offline">Offline Mode</span>
     </a>
   </div>
