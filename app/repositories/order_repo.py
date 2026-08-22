@@ -130,6 +130,19 @@ class OrderRepository:
             Order.status.notin_(["DELIVERED", "CANCELLED"]),
         ).order_by(Order.delivery_date).all()
 
+    def get_urgent_not_started(self, warning_days: int = 3) -> list[Order]:
+        """Get orders whose delivery is within `warning_days` but work hasn't started (status=NEW)."""
+        today = date.today()
+        deadline = today + timedelta(days=warning_days)
+        return self.session.query(Order).options(
+            joinedload(Order.customer),
+            joinedload(Order.items),
+        ).filter(
+            Order.delivery_date <= deadline,
+            Order.delivery_date >= today,
+            Order.status == "NEW",
+        ).order_by(Order.delivery_date).all()
+
     def get_by_customer(self, customer_id: int) -> list[Order]:
         return self.session.query(Order).options(
             joinedload(Order.items),

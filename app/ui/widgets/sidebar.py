@@ -75,7 +75,6 @@ class Sidebar(QWidget):
         ("📏", "Measurements", "measurements"),
         ("🛍️", "Orders", "orders"),
         ("💳", "Payments", "payments"),
-        ("🚚", "Deliveries", "deliveries"),
         ("📋", "Expenses", "expenses"),
         ("📈", "Reports", "reports"),
         ("⚙️", "Settings", "settings"),

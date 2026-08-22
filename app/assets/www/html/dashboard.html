@@ -276,6 +276,23 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant mt-1">Today is Thursday, October 26, 2023. Let's see what needs to be done.</p>
 </div>
 </div>
+<!-- ⚠️ Urgent Deadline Alerts -->
+<div id="urgent-alerts-container" class="hidden">
+    <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-red-600 text-[24px]">warning</span>
+            </div>
+            <div>
+                <h3 class="font-headline-md text-[18px] text-red-800 font-bold" data-i18n="dashboard.urgent_alert_title">⚠️ Urgent: Work Not Started!</h3>
+                <p class="text-red-600 text-[13px] mt-0.5" data-i18n="dashboard.urgent_alert_subtitle">These orders have delivery deadlines within 3 days but stitching hasn't begun yet.</p>
+            </div>
+        </div>
+        <div id="urgent-alerts-list" class="space-y-2">
+            <!-- Alerts will be injected here by JS -->
+        </div>
+    </div>
+</div>
 <!-- Summary Cards Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack_md">
 <!-- Orders Today -->
@@ -291,7 +308,7 @@
 <!-- Today's Sales -->
 <div class="bg-surface-container-lowest p-stack_md rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex items-center gap-stack_md">
 <div class="w-12 h-12 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-container shrink-0">
-<span class="material-symbols-outlined">payments</span>
+<span class="material-symbols-outlined">Payments</span>
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.sales_today">Today's Sales</span></p>
@@ -363,9 +380,9 @@
 <th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Order No</th>
 <th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Customer</th>
 <th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Item</th>
-<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Status</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase" data-i18n="common.status">Status</th>
 <th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase">Remaining (₹)</th>
-<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Action</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant uppercase text-right" data-i18n="common.actions">Action</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-surface-variant" id="table-deliveries-today">
@@ -432,7 +449,7 @@
 <span class="font-label-sm text-label-sm">New Order</span>
 </button>
 <button class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24" id="btn-add-payment" onclick="window.API.navigate('add_payment')">
-<span class="material-symbols-outlined text-tertiary-container">payments</span>
+<span class="material-symbols-outlined text-tertiary-container">Payments</span>
 <span class="font-label-sm text-label-sm text-on-surface">Add Payment</span>
 </button>
 <button class="bg-surface-container-lowest hover:bg-surface-container transition-colors p-4 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low flex flex-col items-center justify-center gap-2 h-24" onclick="window.API.navigate('expenses_list')">

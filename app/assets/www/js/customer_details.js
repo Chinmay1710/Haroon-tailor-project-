@@ -57,6 +57,59 @@ window.deleteCustomer = async function() {
     }
 };
 
+window.editCustomer = function() {
+    if (!currentCustomerId) return;
+    
+    // Pre-fill form from current displayed data
+    const name = document.getElementById('cd-name').textContent;
+    const mobile = document.getElementById('cd-mobile').textContent;
+    const address = document.getElementById('cd-address').textContent;
+    const notes = document.getElementById('cd-notes').textContent;
+    
+    document.getElementById('edit-name').value = (name && name !== 'Unknown Customer') ? name : '';
+    document.getElementById('edit-mobile').value = (mobile && mobile !== 'No Mobile') ? mobile : '';
+    document.getElementById('edit-address').value = (address && address !== 'No Address Provided') ? address : '';
+    document.getElementById('edit-notes').value = (notes && notes !== 'No Notes') ? notes : '';
+    
+    showEditModal();
+};
+
+window.saveCustomerEdit = async function() {
+    if (!currentCustomerId) return;
+    
+    const name = document.getElementById('edit-name').value.trim();
+    if (!name) {
+        window.API.toast("Customer name is required", "error");
+        return;
+    }
+    
+    const btn = document.getElementById('btn-save-edit');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> Saving...';
+    btn.disabled = true;
+    
+    try {
+        await window.API.request('update_customer', {
+            id: currentCustomerId,
+            name: name,
+            mobile: document.getElementById('edit-mobile').value.trim(),
+            address: document.getElementById('edit-address').value.trim(),
+            notes: document.getElementById('edit-notes').value.trim()
+        });
+        
+        window.API.toast("Customer updated successfully", "success");
+        hideEditModal();
+        
+        // Refresh the page data
+        loadCustomerDetails(currentCustomerId);
+    } catch (e) {
+        window.API.toast("Failed to update customer: " + e, "error");
+    } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    }
+};
+
 async function loadCustomerDetails(id) {
     try {
         const data = await window.API.request('get_customer_details', {id: id});

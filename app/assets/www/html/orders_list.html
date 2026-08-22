@@ -205,26 +205,45 @@
 <main class="flex-1 mt-[72px] p-container_padding max-w-7xl mx-auto w-full">
 <div class="mb-stack_lg flex flex-col md:flex-row md:items-end justify-between gap-stack_md">
 <div>
-<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Orders</h1>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2" data-i18n="sidebar.orders">Orders</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">Manage and track all customer orders across production stages.</p>
 </div>
 <!-- Filter Tabs -->
-<div class="flex space-x-2 bg-surface-container-lowest p-1 rounded-xl shadow-sm border border-outline-variant/30 overflow-x-auto hide-scrollbar" id="order-filter-buttons">
+<div class="flex flex-wrap gap-2 bg-surface-container-lowest p-1 rounded-xl shadow-sm border border-outline-variant/30" id="order-filter-buttons">
 <button class="px-4 py-2 rounded-lg bg-surface-container-highest text-primary font-label-lg text-label-lg whitespace-nowrap" data-filter="All Orders">All Orders</button>
 <button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap" data-filter="Incomplete">Incomplete Orders</button>
 <button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap" data-filter="Complete">Complete Orders</button>
 </div>
 </div>
+
+<!-- ⚠️ Urgent Deadline Alerts -->
+<div id="urgent-alerts-container" class="hidden mb-stack_lg">
+    <div class="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-red-600 text-[24px]">warning</span>
+            </div>
+            <div>
+                <h3 class="font-headline-md text-[18px] text-red-800 font-bold" data-i18n="dashboard.urgent_alert_title">⚠️ Urgent: Work Not Started!</h3>
+                <p class="text-red-600 text-[13px] mt-0.5" data-i18n="dashboard.urgent_alert_subtitle">These orders have delivery deadlines within 3 days but stitching hasn't begun yet.</p>
+            </div>
+        </div>
+        <div id="urgent-alerts-list" class="space-y-2">
+            <!-- Alerts will be injected here by JS -->
+        </div>
+    </div>
+</div>
+
 <!-- List Cards Wrapper -->
 <div class="flex flex-col gap-stack_sm" id="orders-container">
 <!-- Headers (Hidden on small, shown on md up) -->
 <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-2 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
-<div class="col-span-2">Order Info</div>
-<div class="col-span-3">Customer &amp; Item</div>
-<div class="col-span-2">Dates</div>
-<div class="col-span-2">Financials</div>
-<div class="col-span-2">Status</div>
-<div class="col-span-1 text-right">Action</div>
+<div class="col-span-2" data-i18n="orders.order_info">Order Info</div>
+<div class="col-span-3" data-i18n="orders.customer_item">Customer &amp; Item</div>
+<div class="col-span-2" data-i18n="orders.dates">Dates</div>
+<div class="col-span-2" data-i18n="orders.financials">Financials</div>
+<div class="col-span-2" data-i18n="common.status">Status</div>
+<div class="col-span-1 text-right" data-i18n="common.actions">Action</div>
 </div>
 </div>
 </main>

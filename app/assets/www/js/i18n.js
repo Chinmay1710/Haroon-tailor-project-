@@ -23,6 +23,8 @@
                 "loading": "Loading..."
             },
             "sidebar": {
+                "offline_mode": "Offline Mode",
+                "backup_restore": "Backup & Restore",
                 "dashboard": "Dashboard",
                 "customers": "Customers",
                 "measurements": "Measurements",
@@ -55,9 +57,16 @@
                 "items": "Items",
                 "no_orders": "No orders for today.",
                 "no_deliveries": "No deliveries scheduled for today.",
-                "order_pipeline": "Order Pipeline"
+                "order_pipeline": "Order Pipeline",
+                "urgent_alert_title": "⚠️ Urgent: Work Not Started!",
+                "urgent_alert_subtitle": "These orders have delivery deadlines within 3 days but stitching hasn't begun yet."
             },
             "customers": {
+                "id": "Customer ID",
+                "name": "Customer Name",
+                "total_orders": "Total Orders",
+                "pending_amount": "Pending Amount",
+                "last_order": "Last Order",
                 "title": "Customer Management",
                 "subtitle": "View and manage your tailor shop client profiles",
                 "add_customer": "Add Customer",
@@ -132,6 +141,10 @@
                 "save_ticket": "Save Measurement"
             },
             "orders": {
+                "order_info": "Order Info",
+                "customer_item": "Customer & Item",
+                "dates": "Dates",
+                "financials": "Financials",
                 "title": "Orders Tracker",
                 "subtitle": "Monitor and update shop active order pipeline",
                 "add_order": "New Order",
@@ -257,6 +270,10 @@
                 "loading": "लोड हो रहा है..."
             },
             "sidebar": {
+                "offline_mode": "ऑफ़लाइन मोड",
+                "backup_restore": "बैकअप और रीस्टोर",
+                "offline_mode": "Offline Mode",
+                "backup_restore": "Backup & Restore",
                 "dashboard": "डैशबोर्ड",
                 "customers": "ग्राहक सूची",
                 "measurements": "माप पुस्तिका",
@@ -289,9 +306,21 @@
                 "items": "सामान",
                 "no_orders": "आज के लिए कोई ऑर्डर नहीं है।",
                 "no_deliveries": "आज के लिए कोई डिलीवरी निर्धारित नहीं है।",
-                "order_pipeline": "ऑर्डर पाइपलाइन"
+                "order_pipeline": "ऑर्डर पाइपलाइन",
+                "urgent_alert_title": "⚠️ जरूरी: काम शुरू नहीं हुआ!",
+                "urgent_alert_subtitle": "इन ऑर्डरों की डिलीवरी 3 दिनों के अंदर है लेकिन सिलाई अभी तक शुरू नहीं हुई है।"
             },
             "customers": {
+                "id": "ग्राहक आईडी",
+                "name": "ग्राहक का नाम",
+                "total_orders": "कुल ऑर्डर",
+                "pending_amount": "बकाया राशि",
+                "last_order": "पिछला ऑर्डर",
+                "id": "Customer ID",
+                "name": "Customer Name",
+                "total_orders": "Total Orders",
+                "pending_amount": "Pending Amount",
+                "last_order": "Last Order",
                 "title": "ग्राहक प्रबंधन",
                 "subtitle": "अपने दर्जी की दुकान के ग्राहक प्रोफाइल देखें और प्रबंधित करें",
                 "add_customer": "ग्राहक जोड़ें",
@@ -366,6 +395,14 @@
                 "save_ticket": "माप सहेजें"
             },
             "orders": {
+                "order_info": "ऑर्डर जानकारी",
+                "customer_item": "ग्राहक और कपड़े",
+                "dates": "तारीख",
+                "financials": "वित्तीय विवरण",
+                "order_info": "Order Info",
+                "customer_item": "Customer & Item",
+                "dates": "Dates",
+                "financials": "Financials",
                 "title": "ऑर्डर ट्रैकर",
                 "subtitle": "दुकान की सक्रिय ऑर्डर स्थिति पर नज़र रखें",
                 "add_order": "नया ऑर्डर",
@@ -488,11 +525,11 @@
                 const btnHi = document.getElementById('lang-btn-hi');
                 if (btnEn && btnHi) {
                     if (lang === 'en') {
-                        btnEn.className = "flex-1 py-1 rounded text-xs font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container";
-                        btnHi.className = "flex-1 py-1 rounded text-xs font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary";
+                        btnEn.className = "flex-1 py-2.5 rounded-lg font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container";
+                        btnHi.className = "flex-1 py-2.5 rounded-lg font-bold border transition-colors bg-transparent text-on-surface-variant border-outline-variant hover:text-on-surface";
                     } else {
-                        btnHi.className = "flex-1 py-1 rounded text-xs font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container";
-                        btnEn.className = "flex-1 py-1 rounded text-xs font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary";
+                        btnHi.className = "flex-1 py-2.5 rounded-lg font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container";
+                        btnEn.className = "flex-1 py-2.5 rounded-lg font-bold border transition-colors bg-transparent text-on-surface-variant border-outline-variant hover:text-on-surface";
                     }
                 }
             }

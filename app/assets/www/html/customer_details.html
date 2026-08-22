@@ -212,9 +212,6 @@
 <div>
 <div class="flex items-center gap-3 mb-2">
 <h1 class="font-headline-lg text-headline-lg text-on-surface" id="cd-name">Loading...</h1>
-<span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px] icon-fill">star</span> VIP
-                    </span>
 </div>
 <p class="font-body-md text-on-surface-variant" id="cd-subtitle">Loading...</p>
 </div>
@@ -228,9 +225,9 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">contact_page</span>
-<span data-i18n="customer_details.contact_details">Contact Details</span>
-</h2>
-<button class="text-primary hover:bg-surface-container px-4 py-2 rounded-lg font-label-lg text-label-lg transition-colors border border-outline-variant/30 flex items-center gap-2">
+                            <span data-i18n="customer_details.contact_details">Contact Details</span>
+                        </h2>
+<button class="text-primary hover:bg-surface-container px-4 py-2 rounded-lg font-label-lg text-label-lg transition-colors border border-outline-variant/30 flex items-center gap-2" onclick="editCustomer()">
 <span class="material-symbols-outlined text-[18px]">edit</span> Edit
                         </button>
 </div>
@@ -277,9 +274,9 @@
 <h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-2"><span data-i18n="common.actions">Actions</span></h3>
 <button class="w-full bg-primary text-on-primary h-14 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity" onclick="gotoNewOrder()">
 <span class="material-symbols-outlined">add_circle</span>
-<span data-i18n="new_order.title">New Order</span>
-</button>
-<button class="w-full bg-surface text-on-surface-variant border border-outline-variant h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors mt-2">
+                        <span data-i18n="new_order.title">New Order</span>
+                    </button>
+<button class="w-full bg-surface text-on-surface-variant border border-outline-variant h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors mt-2" onclick="editCustomer()">
 <span class="material-symbols-outlined">edit</span>
 <span data-i18n="customer_details.edit_customer">Edit Customer</span>
 </button>
@@ -302,9 +299,9 @@
 <div class="grid grid-cols-2 gap-4 mb-6" id="cd-measurements-grid">
 <div class="col-span-2 text-center text-on-surface-variant p-4">No measurements available.</div>
 </div>
-<a class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:underline p-2" href="#">
-<span data-i18n="customer_details.view_all_measurements">View All Measurements</span>
-<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+<a class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:underline p-2" href="#" data-nav="measurements_list">
+                        <span data-i18n="customer_details.view_all_measurements">View All Measurements</span>
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
 </a>
 </section>
 </div>
@@ -332,12 +329,46 @@
 </div>
 </div>
 </div>
+<!-- Edit Customer Modal -->
+<div class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center opacity-0 transition-opacity" id="edit-modal">
+<div class="bg-surface rounded-2xl w-full max-w-lg p-6 shadow-xl transform scale-95 transition-transform" id="edit-modal-content">
+    <div class="flex items-center gap-4 text-primary mb-6">
+        <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[24px]">edit</span>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-on-surface">Edit Customer</h3>
+    </div>
+    <form class="space-y-4" id="edit-customer-form">
+        <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Customer Name *</label>
+            <input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface" id="edit-name" type="text" required/>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Mobile Number</label>
+            <input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface" id="edit-mobile" type="tel"/>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Address</label>
+            <textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface resize-none" id="edit-address" rows="2"></textarea>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Notes</label>
+            <textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface resize-none" id="edit-notes" rows="2"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant/20">
+            <button class="px-5 py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-variant transition-colors" type="button" onclick="hideEditModal()">Cancel</button>
+            <button class="px-5 py-2.5 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary hover:opacity-90 transition-opacity flex items-center gap-2" id="btn-save-edit" type="button" onclick="saveCustomerEdit()">
+                <span class="material-symbols-outlined text-[18px]">save</span> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+</div>
 <script>
     function showDeleteModal() {
         const modal = document.getElementById('delete-modal');
         const content = document.getElementById('delete-modal-content');
         modal.classList.remove('hidden');
-        // trigger reflow
         void modal.offsetWidth;
         modal.classList.remove('opacity-0');
         content.classList.remove('scale-95');
@@ -348,19 +379,31 @@
         const content = document.getElementById('delete-modal-content');
         modal.classList.add('opacity-0');
         content.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 200);
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
     
     function confirmDeleteCustomer() {
         const btn = document.getElementById('btn-confirm-delete');
         btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span> Deleting...';
         btn.disabled = true;
-        
-        if (window.deleteCustomer) {
-            window.deleteCustomer();
-        }
+        if (window.deleteCustomer) { window.deleteCustomer(); }
+    }
+
+    function showEditModal() {
+        const modal = document.getElementById('edit-modal');
+        const content = document.getElementById('edit-modal-content');
+        modal.classList.remove('hidden');
+        void modal.offsetWidth;
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+    }
+
+    function hideEditModal() {
+        const modal = document.getElementById('edit-modal');
+        const content = document.getElementById('edit-modal-content');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 </script>
 <script src="../js/i18n.js"></script>
