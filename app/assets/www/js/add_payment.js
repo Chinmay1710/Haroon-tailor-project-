@@ -166,11 +166,21 @@ async function submitPayment(orderId) {
         btn.innerHTML = '<span class="material-symbols-outlined" data-weight="fill">done_all</span> Payment Saved';
         btn.classList.replace('bg-primary', 'bg-[#16a34a]');
         
-        window.API.toast("Payment recorded successfully", "success");
+        let navParamsStr = sessionStorage.getItem("nav_params");
+        let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
         
-        setTimeout(() => {
-            window.API.navigate('payments');
-        }, 1500);
+        if (navParams && navParams.complete_after) {
+            await window.API.request('update_order_status', {order_id: orderId, status: 'DELIVERED'});
+            window.API.toast("Payment recorded & Order Completed!", "success");
+            setTimeout(() => {
+                window.API.navigate('orders_list');
+            }, 1500);
+        } else {
+            window.API.toast("Payment recorded successfully", "success");
+            setTimeout(() => {
+                window.API.navigate('payments');
+            }, 1500);
+        }
         
     } catch (e) {
         console.error(e);
