@@ -231,7 +231,7 @@
                         Back to Customers
                     </a>
 </div>
-<h1 class="font-headline-lg text-headline-lg text-primary">Add New Customer</h1>
+<h1 class="font-headline-lg text-headline-lg text-primary"><span data-i18n="add_customer.title">Add New Customer</span></h1>
 <p class="font-body-md text-body-md text-on-surface-variant mt-1">Create a new profile to track measurements and order history.</p>
 </div>
 <!-- Success Message Placeholder (Initially Hidden) -->
@@ -277,10 +277,10 @@
 </div>
 <!-- Address Textarea -->
 <div class="flex flex-col gap-2 mt-2">
-<label class="font-label-lg text-label-lg text-on-surface" for="customerAddress">Address</label>
+<label class="font-label-lg text-label-lg text-on-surface" for="customerAddress"><span data-i18n="add_customer.address">Address</span></label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant">location_on</span>
-<textarea class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow resize-y" id="customerAddress" placeholder="Street address, City, ZIP" rows="3"></textarea>
+<textarea class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow resize-y" id="customerAddress" placeholder="Street address, City, ZIP" data-i18n-ph="add_customer.address_ph" rows="3"></textarea>
 </div>
 </div>
 <!-- Notes Textarea -->
@@ -314,7 +314,8 @@
 </main>
 <!-- Lightweight JS for Interaction -->
 <!-- End of Form -->
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/add_customer.js"></script>
 </body></html>

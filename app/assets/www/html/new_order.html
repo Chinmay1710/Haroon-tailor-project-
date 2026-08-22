@@ -121,7 +121,7 @@
                 <button onclick="window.API.request('navigate_to', {page: 'orders_list'})" class="mr-4 w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface-variant">
                     <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
                 </button>
-                <h1 class="font-headline-sm text-headline-sm text-on-surface">New Order</h1>
+                <h1 class="font-headline-sm text-headline-sm text-on-surface"><span data-i18n="new_order.title">New Order</span></h1>
             </div>
             <button onclick="saveOrder()" id="btn-save-top" class="bg-primary text-on-primary font-label-lg py-2 px-6 rounded-lg hover:opacity-90 transition-all ambient-shadow flex items-center gap-2">
                 <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
@@ -138,7 +138,7 @@
                         <span class="material-symbols-outlined" data-icon="person">person</span>
                         Customer Details
                     </h2>
-                    <button onclick="openCustomerSelect()" id="btn-change-customer" class="text-primary font-label-lg hover:underline hidden">Change Customer</button>
+                    <button onclick="openCustomerSelect()" id="btn-change-customer" class="text-primary font-label-lg hover:underline hidden"><span data-i18n="new_order.change_cust">Change Customer</span></button>
                 </div>
                 
                 <div id="customer-selected-view" class="hidden flex items-center justify-between bg-surface-container-low p-4 rounded-lg border border-outline-variant">
@@ -199,12 +199,12 @@
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block font-label-lg text-on-surface mb-2">Delivery Date <span class="text-error">*</span></label>
+                        <label class="block font-label-lg text-on-surface mb-2"><span data-i18n="new_order.delivery_date">Delivery Date</span> <span class="text-error">*</span></label>
                         <input id="order-date" type="date" class="w-full p-3 bg-surface rounded-lg border border-outline-variant focus:border-primary outline-none">
                     </div>
                     <div>
-                        <label class="block font-label-lg text-on-surface mb-2">Special Instructions</label>
-                        <textarea id="order-notes" class="w-full p-3 bg-surface rounded-lg border border-outline-variant focus:border-primary outline-none" rows="2" placeholder="Rush order, special requirements, etc."></textarea>
+                        <label class="block font-label-lg text-on-surface mb-2"><span data-i18n="new_order.special_instr">Special Instructions</span></label>
+                        <textarea id="order-notes" class="w-full p-3 bg-surface rounded-lg border border-outline-variant focus:border-primary outline-none" rows="2" placeholder="Rush order, special requirements, etc." data-i18n-ph="new_order.notes_ph"></textarea>
                     </div>
                 </div>
             </section>
@@ -234,7 +234,7 @@
                             <input id="order-advance" type="number" min="0" value="0" class="w-full p-3 bg-surface rounded-lg border border-outline-variant focus:border-primary outline-none text-right font-body-lg">
                         </div>
                         <div>
-                            <label class="block font-label-lg text-on-surface mb-2">Payment Method</label>
+                            <label class="block font-label-lg text-on-surface mb-2"><span data-i18n="new_order.payment_method">Payment Method</span></label>
                             <select id="order-payment-method" class="w-full p-3 bg-surface rounded-lg border border-outline-variant focus:border-primary outline-none">
                                 <option value="CASH">Cash</option>
                                 <option value="UPI">UPI</option>
@@ -364,7 +364,7 @@
             
             <div class="p-6 border-t border-outline-variant flex justify-end gap-3 bg-surface-container-low">
                 <button onclick="closeAddItemModal()" class="px-6 py-2.5 font-label-lg text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-colors">Cancel</button>
-                <button onclick="saveModalItem()" id="btn-save-modal-item" class="px-6 py-2.5 font-label-lg bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity ambient-shadow shadow-sm">Add Item</button>
+                <button onclick="saveModalItem()" id="btn-save-modal-item" class="px-6 py-2.5 font-label-lg bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity ambient-shadow shadow-sm"><span data-i18n="new_order.add_item">Add Item</span></button>
             </div>
         </div>
     </div>

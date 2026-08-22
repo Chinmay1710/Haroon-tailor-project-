@@ -127,42 +127,49 @@
 </div>
 <div>
 <h2 class="text-headline-md font-headline-md font-bold text-on-primary tracking-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
-<p class="font-body-md text-body-md text-on-primary/70">Premium Tailoring</p>
+<p class="font-body-md text-body-md text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 </div>
 <!-- Main Navigation -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto sidebar-scroll py-stack_md flex flex-col gap-1 px-4">
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
-<span>Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
-<span>Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">straighten</span>
-<span>Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
-<span>Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
-<span>Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
-<span>Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
-<span>Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
-<span>Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
 <!-- Active Tab -->
 <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
@@ -170,7 +177,7 @@
 <span class="font-label-lg text-label-lg">Workers</span>
 </a><a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
-<span>Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Navigation -->
@@ -254,35 +261,35 @@
 <form class="space-y-stack_md">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Shop Name</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.shop_name">Shop Name</span></label>
 <input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" id="shop_name" type="text" value=""/>
 </div>
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Owner Name</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.owner_name">Owner Name</span></label>
 <input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="text" value="Eleanor Vance"/>
 </div>
 </div>
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Contact Phone</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.contact_phone">Contact Phone</span></label>
 <input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="tel" value="+1 (555) 019-2837"/>
 </div>
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Physical Address</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.address">Physical Address</span></label>
 <textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline resize-none" rows="3">124 Tailor's Row, Maker District
 Metropolis, NY 10001</textarea>
 </div>
 <div class="pt-6 flex justify-end border-t border-outline-variant/20">
-<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors" onclick="saveSettings()">Save Changes</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors" onclick="saveSettings()"><span data-i18n="settings.save_changes">Save Changes</span></button>
 </div>
 </form>
 </section>
 <!-- TAB 2: Application -->
 <section class="tab-content" id="application">
-<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Application Preferences</h2>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6"><span data-i18n="settings.preferences">Application Preferences</span></h2>
 <form class="space-y-stack_md">
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Currency</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.currency">Currency</span></label>
 <div class="relative">
 <select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
 <option selected="" value="INR">₹ Indian Rupee (INR)</option>
@@ -294,7 +301,7 @@ Metropolis, NY 10001</textarea>
 </div>
 </div>
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Measurement Units</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.units">Measurement Units</span></label>
 <div class="relative">
 <select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
 <option selected="" value="in">Inches (in)</option>
@@ -334,7 +341,7 @@ Metropolis, NY 10001</textarea>
 </div>
 <form class="space-y-stack_md">
 <div class="flex flex-col gap-1.5 max-w-md">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Printer</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.printer">Active Printer</span></label>
 <div class="relative">
 <select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
 <option selected="" value="epson_tm">Epson TM-T88VI (USB)</option>
@@ -345,7 +352,7 @@ Metropolis, NY 10001</textarea>
 </div>
 </div>
 <div class="flex flex-col gap-1.5 max-w-md">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Paper Size</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.paper_size">Paper Size</span></label>
 <div class="relative">
 <select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
 <option selected="" value="80mm">80mm Roll (Standard Receipt)</option>
@@ -445,7 +452,8 @@ Metropolis, NY 10001</textarea>
             activeBtn.querySelector('span').style.fontVariationSettings = "'FILL' 1";
         }
     </script>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/settings.js"></script>
 </body></html>

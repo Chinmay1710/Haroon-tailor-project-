@@ -120,50 +120,57 @@
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
-<p class="text-on-primary/70 font-body-md text-sm">Premium Tailoring</p>
+<p class="text-on-primary/70 font-body-md text-sm" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 </div>
 <!-- Main Tabs -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto px-4 py-4 space-y-2">
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span>Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <!-- Active Tab: Customers -->
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" data-icon="person">person</span>
-<span>Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
-<span>Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-<span>Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span>Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
-<span>Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-<span>Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span>Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
 <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
 <span class="font-label-lg text-label-lg">Workers</span>
 </a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span>Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Tabs -->
@@ -185,7 +192,7 @@
 <!-- TopAppBar (JSON Component) -->
 <header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm">
 <div class="flex items-center gap-6">
-<h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
+<h2 class="font-headline-md text-headline-md text-primary"><span data-i18n="dashboard.title">Tailor Manager</span></h2>
 <div class="relative w-64 hidden lg:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
 <input class="w-full pl-10 pr-4 py-2 rounded-lg border-outline-variant bg-surface-container-lowest text-on-surface focus:ring-2 focus:ring-primary focus:border-primary border transition-colors" placeholder="Search..." type="text"/>
@@ -230,7 +237,7 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">contact_page</span>
-                            Contact Details
+                            <span data-i18n="customer_details.contact_details">Contact Details</span>
                         </h2>
 <button class="text-primary hover:bg-surface-container px-4 py-2 rounded-lg font-label-lg text-label-lg transition-colors border border-outline-variant/30 flex items-center gap-2">
 <span class="material-symbols-outlined text-[18px]">edit</span> Edit
@@ -238,20 +245,20 @@
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Mobile Phone</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider"><span data-i18n="customer_details.mobile_phone">Mobile Phone</span></p>
 <p class="font-body-lg text-body-lg text-on-surface" id="cd-mobile">Loading...</p>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Email Address</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider"><span data-i18n="customer_details.email_address">Email Address</span></p>
 <p class="font-body-lg text-body-lg text-on-surface" id="cd-email">N/A</p>
 </div>
 <div class="md:col-span-2">
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Shipping Address</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider"><span data-i18n="customer_details.shipping_address">Shipping Address</span></p>
 <p class="font-body-lg text-body-lg text-on-surface" id="cd-address">Loading...</p>
 </div>
 <div class="md:col-span-2 bg-surface p-4 rounded-lg border border-surface-container-high">
 <p class="font-label-sm text-label-sm text-on-surface-variant mb-1 flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]">notes</span> Notes
+<span class="material-symbols-outlined text-[16px]">notes</span> <span data-i18n="customer_details.notes">Notes</span>
                             </p>
 <p class="font-body-md text-body-md text-on-surface" id="cd-notes">Loading...</p>
 </div>
@@ -262,7 +269,7 @@
 <div class="flex justify-between items-center mb-4">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">history</span>
-                            Recent Orders
+                            <span data-i18n="dashboard.recent_orders">Recent Orders</span>
                         </h2>
 <a class="font-label-lg text-label-lg text-primary hover:underline" href="#">View All</a>
 </div>
@@ -276,18 +283,18 @@
 <div class="flex flex-col gap-stack_md">
 <!-- Quick Actions Card -->
 <section class="bg-surface-container-lowest rounded-xl p-gutter shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-container-high/50 flex flex-col gap-3">
-<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-2">Actions</h3>
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-2"><span data-i18n="common.actions">Actions</span></h3>
 <button class="w-full bg-primary text-on-primary h-14 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity" onclick="gotoNewOrder()">
 <span class="material-symbols-outlined">add_circle</span>
-                        New Order
+                        <span data-i18n="new_order.title">New Order</span>
                     </button>
 <button class="w-full bg-surface text-on-surface-variant border border-outline-variant h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors mt-2">
 <span class="material-symbols-outlined">edit</span>
-                        Edit Customer
+                        <span data-i18n="customer_details.edit_customer">Edit Customer</span>
                     </button>
 <button class="w-full bg-error-container text-error border border-error/20 h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-error hover:text-on-error transition-colors mt-2" onclick="showDeleteModal()">
 <span class="material-symbols-outlined">delete</span>
-                        Delete Customer
+                        <span data-i18n="customer_details.delete_customer">Delete Customer</span>
                     </button>
 </section>
 <!-- Saved Measurements Card -->
@@ -295,7 +302,7 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">design_services</span>
-                            Master Profile
+                            <span data-i18n="customer_details.master_profile">Master Profile</span>
                         </h2>
 <span class="text-on-surface-variant text-sm flex items-center gap-1" title="Last updated">
 <span class="material-symbols-outlined text-[16px]">update</span> 2w ago
@@ -305,7 +312,7 @@
 <div class="col-span-2 text-center text-on-surface-variant p-4">No measurements available.</div>
 </div>
 <a class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:underline p-2" href="#">
-                        View All Measurements
+                        <span data-i18n="customer_details.view_all_measurements">View All Measurements</span>
                         <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
 </a>
 </section>
@@ -365,7 +372,8 @@
         }
     }
 </script>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/customer_details.js"></script>
 </body></html>
