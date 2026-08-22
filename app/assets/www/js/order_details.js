@@ -53,18 +53,30 @@ document.addEventListener("DOMContentLoaded", function() {
             window.API.request('navigate_to', {page: 'new_order', order_id: navParams.id, action: 'edit'});
         });
         
-        document.getElementById('od-mark-complete-btn').addEventListener('click', function() {
+        document.getElementById('od-mark-complete-btn').addEventListener('click', async function() {
             if (currentOrder) {
                 if (currentOrder.remaining_amount > 0) {
-                    const collect = confirm(`This order has a remaining balance of ${window.API.formatCurrency(currentOrder.remaining_amount)}. Would you like to collect the payment now before completing the order?`);
+                    const collect = await window.API.request('show_confirm', {
+                        title: 'Pending Payment',
+                        message: `This order has a remaining balance of ₹${currentOrder.remaining_amount}. Would you like to collect the payment now before completing the order?`
+                    });
                     if (collect) {
                         window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id, complete_after: true});
                         return;
                     }
                 }
-                updateOrderStatus(navParams.id, 'DELIVERED').then(() => {
-                    loadOrderDetails(navParams.id);
+                
+                const confirmComplete = await window.API.request('show_confirm', {
+                    title: 'Complete Order?',
+                    message: 'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
                 });
+                
+                if (confirmComplete) {
+                    updateOrderStatus(navParams.id, 'DELIVERED').then(() => {
+                        window.API.toast("Order marked as Complete", "success");
+                        loadOrderDetails(navParams.id);
+                    });
+                }
             }
         });
     }

@@ -80,19 +80,29 @@ async function loadOrders() {
 
 window.markOrderComplete = async function(id, remainingAmount) {
     if (remainingAmount > 0) {
-        const collect = confirm(`This order has a remaining balance of ${window.API.formatCurrency(remainingAmount)}. Would you like to collect the payment now before completing the order?`);
+        const collect = await window.API.request('show_confirm', {
+            title: 'Pending Payment',
+            message: `This order has a remaining balance of ₹${remainingAmount}. Would you like to collect the payment now before completing the order?`
+        });
         if (collect) {
             window.API.request('navigate_to', {page: 'add_payment', order_id: id, complete_after: true});
             return;
         }
     }
     
-    try {
-        await window.API.request('update_order_status', {order_id: id, status: 'DELIVERED'});
-        window.API.toast("Order marked as Complete", "success");
-        loadOrders();
-    } catch (e) {
-        window.API.toast("Failed to update status: " + e, "error");
+    const confirmComplete = await window.API.request('show_confirm', {
+        title: 'Complete Order?',
+        message: 'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
+    });
+    
+    if (confirmComplete) {
+        try {
+            await window.API.request('update_order_status', {order_id: id, status: 'DELIVERED'});
+            window.API.toast("Order marked as Complete", "success");
+            loadOrders();
+        } catch (e) {
+            window.API.toast("Failed to update status: " + e, "error");
+        }
     }
 };
 
