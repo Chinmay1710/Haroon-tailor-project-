@@ -182,10 +182,17 @@
 </div>
 <div>
 <h2 class="text-headline-md font-headline-md font-bold text-on-primary leading-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
-<p class="font-body-md text-body-md text-on-primary/70">Premium Tailoring</p>
+<p class="font-body-md text-body-md text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 </div>
 <!-- Main Tabs -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto py-stack_sm px-stack_sm space-y-1">
 <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
@@ -247,7 +254,7 @@
 <!-- TopAppBar -->
 <header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm">
 <div class="flex items-center gap-gutter flex-1">
-<h1 class="font-headline-md text-headline-md text-primary">Tailor Manager</h1>
+<h1 class="font-headline-md text-headline-md text-primary"><span data-i18n="dashboard.title">Tailor Manager</span></h1>
 </div>
 <div class="flex items-center gap-stack_md">
 <div class="relative flex items-center justify-center">
@@ -272,7 +279,7 @@
 <!-- Welcome Header -->
 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-stack_md">
 <div>
-<h2 class="font-display text-display text-on-surface">Good Morning, Artisan!</h2>
+<h2 class="font-display text-display text-on-surface"><span data-i18n="dashboard.welcome">Good Morning, Artisan!</span></h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mt-1">Today is Thursday, October 26, 2023. Let's see what needs to be done.</p>
 </div>
 </div>
@@ -284,8 +291,8 @@
 <span class="material-symbols-outlined">shopping_bag</span>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Orders Today</p>
-<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-orders-today">12</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.orders_today">Orders Today</span></p>
+<p id="stat-orders-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">12</p>
 </div>
 </div>
 <!-- Today's Sales -->
@@ -294,8 +301,8 @@
 <span class="material-symbols-outlined">payments</span>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Today's Sales</p>
-<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-sales-today">₹4,500</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.sales_today">Today's Sales</span></p>
+<p id="stat-sales-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹4,500</p>
 </div>
 </div>
 <!-- Pending Payments -->
@@ -304,8 +311,8 @@
 <span class="material-symbols-outlined">account_balance_wallet</span>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Pending Payments</p>
-<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-pending-payments">₹12,200</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.pending_payments">Pending Payments</span></p>
+<p id="stat-pending-payments" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹12,200</p>
 </div>
 </div>
 <!-- Deliveries Today -->
@@ -314,8 +321,8 @@
 <span class="material-symbols-outlined">local_shipping</span>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Deliveries Today</p>
-<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-deliveries-today">8</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.deliveries_today">Deliveries Today</span></p>
+<p id="stat-deliveries-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">8</p>
 </div>
 </div>
 </div>
@@ -326,7 +333,7 @@
 <!-- Order Status Bento -->
 <section>
 <div class="flex items-center justify-between mb-stack_sm">
-<h3 class="font-headline-md text-headline-md text-on-surface">Order Pipeline</h3>
+<h3 class="font-headline-md text-headline-md text-on-surface"><span data-i18n="dashboard.order_pipeline">Order Pipeline</span></h3>
 <button class="text-primary font-label-sm text-label-sm hover:underline">View All</button>
 </div>
 <div class="grid grid-cols-2 md:grid-cols-5 gap-stack_sm">
@@ -354,7 +361,7 @@
 </section>
 <!-- Today's Deliveries Table -->
 <section>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-stack_sm">Today's Deliveries</h3>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack_sm"><span data-i18n="dashboard.today_deliveries">Today's Deliveries</span></h3>
 <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-low overflow-hidden">
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
@@ -452,7 +459,7 @@
 <!-- Recent Orders List -->
 <section>
 <div class="flex items-center justify-between mb-stack_sm">
-<h3 class="font-headline-md text-headline-md text-on-surface">Recent Orders</h3>
+<h3 class="font-headline-md text-headline-md text-on-surface"><span data-i18n="dashboard.recent_orders">Recent Orders</span></h3>
 </div>
 <div class="space-y-3" id="recent-orders-list">
 <!-- Order Item -->
@@ -506,7 +513,8 @@
 </div>
 </div>
 </main>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/dashboard.js"></script>
 </body></html>

@@ -114,57 +114,64 @@
 <div class="flex flex-col items-center justify-center p-gutter border-b border-primary-container/30">
 <img alt='\"Tailor' class="w-16 h-16 rounded-full bg-primary-container mb-4 object-cover" data-alt="A minimalist line-art logo of a needle and thread forming an elegant abstract shape. The logo is rendered in crisp white against a deep navy blue background, exuding a premium, modern artisan craft aesthetic. The lighting is flat and graphic, emphasizing clean lines." logo\"="" shop="" src='\"../img/logo.png\"/'/>
 <h1 class="font-headline-md text-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
-<p class="font-label-sm text-label-sm text-on-primary/70 mt-1">Premium Tailoring</p>
+<p class="font-label-sm text-label-sm text-on-primary/70 mt-1" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 <!-- Main Tabs -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto py-stack_md">
 <ul class="space-y-1 px-stack_sm">
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="dashboard">dashboard</span>
-<span>Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="person">person</span>
-<span>Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="straighten" data-weight="fill">straighten</span>
-<span>Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="shopping_bag">shopping_bag</span>
-<span>Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="payments">payments</span>
-<span>Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="local_shipping">local_shipping</span>
-<span>Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="receipt_long">receipt_long</span>
-<span>Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
 </li>
 <li>
 <a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="analytics">analytics</span>
-<span>Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
 </li>
 <li>
@@ -173,7 +180,7 @@
 <span class="font-label-lg text-label-lg">Workers</span>
 </a><a class="flex items-center px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined mr-4" data-icon="settings">settings</span>
-<span>Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </li>
 </ul>
@@ -304,7 +311,8 @@
 </div>
 </div>
 </main>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/add_measurement.js"></script>
 </body></html>

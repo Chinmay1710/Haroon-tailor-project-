@@ -197,50 +197,57 @@
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary truncate"><span class="global-shop-name">Artisan Stitch</span></h1>
-<p class="font-label-sm text-label-sm text-on-primary/70">Premium Tailoring</p>
+<p class="font-label-sm text-label-sm text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 </div>
 <!-- Scrollable Tabs -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto no-scrollbar py-stack_md flex flex-col gap-2 px-4">
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span>Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="person">person</span>
-<span>Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
-<span>Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-<span>Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span>Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
 <!-- ACTIVE TAB -->
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined filled" data-icon="local_shipping">local_shipping</span>
-<span>Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-<span>Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span>Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
 <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
 <span class="font-label-lg text-label-lg">Workers</span>
 </a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span>Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer -->
@@ -487,7 +494,8 @@
 <div class="h-24 md:h-12"></div>
 </main>
 </div>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/deliveries.js"></script>
 </body></html>

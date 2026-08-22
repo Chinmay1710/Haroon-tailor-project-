@@ -135,10 +135,17 @@
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
-<p class="text-label-sm font-label-sm text-on-primary/70">Premium Tailoring</p>
+<p class="text-label-sm font-label-sm text-on-primary/70" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
 </div>
 </div>
 <!-- Main Tabs -->
+
+<!-- Language Switcher -->
+<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
+    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
+    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+</div>
+
 <div class="flex-1 overflow-y-auto py-stack_sm custom-scrollbar flex flex-col gap-1 px-4 mt-4">
 <a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
@@ -269,7 +276,8 @@
 </div>
 </div>
 </main>
-<script src="../js/api.js"></script>
+<script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/backup.js"></script>
 </body></html>
