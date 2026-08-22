@@ -313,13 +313,37 @@
 <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest overflow-hidden">
 <div class="px-6 py-4 border-b border-surface-container-highest flex justify-between items-center bg-surface/50">
 <h3 class="font-headline-md text-[20px] font-semibold text-on-surface">Recent Transactions</h3>
-<div class="flex gap-2">
-<button class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
-                    </button>
-<button class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">download</span> Export
-                    </button>
+<div class="flex gap-2 relative">
+    <div class="relative inline-block">
+        <button id="filter-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+        </button>
+        <!-- Filter Dropdown -->
+        <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-surface-container-highest rounded-xl shadow-xl z-10 text-left">
+            <div class="p-4">
+                <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Time Range</label>
+                <select id="filter-time" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 mb-4 text-sm text-on-surface outline-none focus:border-primary transition-colors">
+                    <option value="today">Today</option>
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days">Last 30 Days</option>
+                    <option value="all">All Time</option>
+                </select>
+                
+                <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Payment Method</label>
+                <select id="filter-method" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface outline-none focus:border-primary transition-colors">
+                    <option value="all">All Methods</option>
+                    <option value="CASH">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="CARD">Card</option>
+                    <option value="BANK">Bank Transfer</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <button id="export-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">download</span> Export
+    </button>
 </div>
 </div>
 <!-- List Cards (Alternative to dense table) -->
