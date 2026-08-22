@@ -147,18 +147,6 @@ class WebBridge(QObject):
                         "items": "Various"
                     })
 
-                urgent_alerts = []
-                for o in dash_data.get("urgent_not_started", []):
-                    days_left = (o.delivery_date - date.today()).days
-                    urgent_alerts.append({
-                        "id": o.id,
-                        "order_number": o.order_number,
-                        "customer_name": o.customer.name if o.customer else "Unknown",
-                        "delivery_date": o.delivery_date.strftime("%d/%m/%Y") if o.delivery_date else "",
-                        "days_left": days_left,
-                        "items": ", ".join([item.clothing_type for item in o.items]) if o.items else "Various"
-                    })
-
                 data = {
                     "orders_today": dash_data["orders_today"],
                     "sales_today": dash_data["today_sales"],
@@ -166,8 +154,7 @@ class WebBridge(QObject):
                     "deliveries_today": dash_data["deliveries_today"],
                     "status_counts": dash_data["status_counts"],
                     "recent_orders": recent_orders,
-                    "deliveries": deliveries,
-                    "urgent_alerts": urgent_alerts
+                    "deliveries": deliveries
                 }
                 response = {"status": "success", "data": data}
 

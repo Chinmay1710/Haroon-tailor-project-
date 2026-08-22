@@ -104,40 +104,7 @@ async function loadDashboardStats(date_str = null) {
             }
         }
 
-        // 5. Render Urgent Deadline Alerts (work not started, delivery within 3 days)
-        const alertsContainer = document.getElementById('urgent-alerts-container');
-        const alertsList = document.getElementById('urgent-alerts-list');
-        if (alertsContainer && alertsList) {
-            if (data.urgent_alerts && data.urgent_alerts.length > 0) {
-                alertsContainer.classList.remove('hidden');
-                alertsList.innerHTML = '';
-                data.urgent_alerts.forEach(alert => {
-                    const daysText = alert.days_left === 0 ? '⏰ TODAY!' 
-                                   : alert.days_left === 1 ? '1 day left' 
-                                   : `${alert.days_left} days left`;
-                    const urgencyColor = alert.days_left === 0 ? 'bg-red-600 text-white' 
-                                       : alert.days_left === 1 ? 'bg-orange-500 text-white' 
-                                       : 'bg-yellow-500 text-white';
-                    
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center justify-between bg-white/80 rounded-lg px-4 py-3 border border-red-100 hover:bg-white cursor-pointer transition-colors';
-                    div.onclick = () => window.API.request('navigate_to', {page: 'order_details', id: alert.id});
-                    div.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-red-500">assignment_late</span>
-                            <div>
-                                <p class="font-bold text-[14px] text-red-900">${alert.customer_name} — ${alert.items}</p>
-                                <p class="text-[12px] text-red-600">Order ${alert.order_number} • Delivery: ${alert.delivery_date}</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-[11px] font-bold ${urgencyColor}">${daysText}</span>
-                    `;
-                    alertsList.appendChild(div);
-                });
-            } else {
-                alertsContainer.classList.add('hidden');
-            }
-        }
+
         
     } catch (e) {
         console.error("Failed to load dashboard stats", e);
