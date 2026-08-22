@@ -62,7 +62,13 @@ class WebBridge(QObject):
 
             elif action == "add_worker":
                 worker_srv = self.services["worker"]
-                w = worker_srv.add_worker(payload.get("name"), payload.get("phone"), payload.get("pin"))
+                w = worker_srv.add_worker(
+                    payload.get("name"), 
+                    payload.get("phone"), 
+                    payload.get("pin"),
+                    payload.get("worker_type", "PIECE_RATE"),
+                    float(payload.get("daily_rate", 0.0))
+                )
                 response = {"status": "success", "data": {"worker": w}}
 
             elif action == "assign_task":
@@ -74,6 +80,36 @@ class WebBridge(QObject):
                 worker_srv = self.services["worker"]
                 t = worker_srv.get_worker_tasks(payload.get("worker_id"))
                 response = {"status": "success", "data": {"tasks": t}}
+
+            elif action == "get_garment_rates":
+                worker_srv = self.services["worker"]
+                rates = worker_srv.get_garment_rates()
+                response = {"status": "success", "data": {"rates": rates}}
+
+            elif action == "set_garment_rate":
+                worker_srv = self.services["worker"]
+                rate = worker_srv.set_garment_rate(payload.get("garment_type"), float(payload.get("rate", 0)))
+                response = {"status": "success", "data": {"rate": rate}}
+
+            elif action == "get_all_pending_entries":
+                worker_srv = self.services["worker"]
+                entries = worker_srv.get_all_pending_entries()
+                response = {"status": "success", "data": {"entries": entries}}
+
+            elif action == "approve_entry":
+                worker_srv = self.services["worker"]
+                success = worker_srv.approve_entry(payload.get("entry_id"), payload.get("status"))
+                response = {"status": "success" if success else "error"}
+
+            elif action == "record_advance":
+                worker_srv = self.services["worker"]
+                advance = worker_srv.record_advance(payload.get("worker_id"), float(payload.get("amount", 0)), payload.get("notes", ""))
+                response = {"status": "success", "data": {"advance": advance}}
+
+            elif action == "get_worker_ledger":
+                worker_srv = self.services["worker"]
+                ledger = worker_srv.get_worker_ledger(payload.get("worker_id"))
+                response = {"status": "success", "data": {"ledger": ledger}}
 
 
             # ────────────────────────────────────────────────────────────

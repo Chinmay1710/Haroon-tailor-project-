@@ -7,19 +7,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="manifest" href="/static/manifest.json">
     <style>
-        body { font-family: 'Public Sans', sans-serif; }
+        body { font-family: 'Public Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-20">
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col">
 
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
-        <div class="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+    <div id="login-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 bg-white overflow-y-auto">
+        <div class="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-lg shrink-0">
             <span class="material-symbols-outlined text-white text-4xl">content_cut</span>
         </div>
         <h1 class="text-2xl font-bold mb-2">Worker Portal</h1>
-        <p class="text-slate-500 mb-8 text-center">Log in to view your tasks and track your piece-rate earnings.</p>
+        <p class="text-slate-500 mb-8 text-center">Log in to submit work and track earnings.</p>
         
         <div class="w-full max-w-sm space-y-4">
             <div>
@@ -35,37 +45,171 @@
         <p id="login-error" class="text-red-500 text-sm mt-4 hidden">Invalid name or PIN.</p>
     </div>
 
-    <!-- MAIN PORTAL SCREEN -->
-    <div id="portal-screen" class="hidden">
-        <header class="bg-slate-900 text-white p-6 pb-8 rounded-b-[2rem] shadow-md sticky top-0 z-20">
-            <div class="flex items-center justify-between mb-6">
+    <!-- MAIN PORTAL WRAPPER -->
+    <div id="portal-screen" class="hidden flex-col h-full">
+        <!-- HEADER -->
+        <header class="bg-slate-900 text-white p-5 pb-6 rounded-b-[1.5rem] shadow-md shrink-0 relative z-20">
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-slate-400 text-sm">Welcome back,</p>
+                    <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-0.5">Welcome back</p>
                     <h2 id="worker-name-display" class="text-xl font-bold">Worker</h2>
+                    <span id="worker-type-badge" class="inline-block mt-1 px-2 py-0.5 bg-slate-800 text-slate-300 text-[10px] rounded font-semibold uppercase tracking-wider">Type</span>
                 </div>
-                <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-slate-300">
                     <span class="material-symbols-outlined text-sm">logout</span>
                 </button>
             </div>
-            
-            <div class="bg-white/10 rounded-xl p-4 flex items-center justify-between">
-                <div>
-                    <p class="text-slate-300 text-xs font-medium uppercase tracking-wider mb-1">Pending Payout</p>
-                    <div class="text-2xl font-bold" id="total-earnings">₹0</div>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center">
-                    <span class="material-symbols-outlined">payments</span>
-                </div>
-            </div>
         </header>
 
-        <main class="p-4 space-y-4 -mt-4 relative z-10" id="tasks-container">
-            <!-- Tasks will be injected here -->
+        <!-- CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto no-scrollbar relative z-10 -mt-2 pt-6 px-4 pb-24" id="main-content">
+            
+            <!-- TAB 1: SUBMIT WORK (PIECE RATE & DAILY SALARY) -->
+            <div id="tab-submit" class="tab-content active">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-blue-500">add_task</span>
+                        Submit Work
+                    </h3>
+                    
+                    <form id="work-form" class="space-y-4" onsubmit="submitWork(event)">
+                        
+                        <!-- Piece Rate Fields -->
+                        <div id="piece-rate-fields" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Garment Type <span class="text-red-500">*</span></label>
+                                <select id="garment-type" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 bg-slate-50 outline-none">
+                                    <option value="">Select Garment</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Quantity <span class="text-red-500">*</span></label>
+                                    <input type="number" id="quantity" min="1" value="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Bill/Order #</label>
+                                    <input type="text" id="bill-number" placeholder="Optional" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Salary Note -->
+                        <div id="daily-salary-fields" class="hidden bg-blue-50 text-blue-800 p-3 rounded-xl text-sm mb-4">
+                            <p class="font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">info</span> Daily Work Log</p>
+                            <p class="opacity-90">Enter details of what you worked on today.</p>
+                        </div>
+
+                        <div class="h-px bg-slate-100 my-4"></div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Extra Work Description</label>
+                            <textarea id="extra-desc" rows="2" placeholder="Alterations, repairs, etc. (Optional)" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none resize-none"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Extra Amount (₹)</label>
+                            <input type="number" id="extra-amount" min="0" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                        </div>
+
+                        <button type="submit" id="submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 active:scale-[0.98] transition-all mt-6 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">send</span> Submit Entry
+                        </button>
+                        <p id="submit-msg" class="text-sm text-center font-medium mt-2 hidden"></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 2: LEDGER (EARNINGS) -->
+            <div id="tab-ledger" class="tab-content space-y-4">
+                
+                <!-- Ledger Summary -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 shadow-lg text-white">
+                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wide mb-4">Earnings Balance</p>
+                    
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-widest font-semibold">Remaining</p>
+                            <h3 class="text-4xl font-bold" id="lbl-remaining">₹0</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
+                        <div>
+                            <p class="text-xs text-slate-400">Total Earned</p>
+                            <p class="font-semibold text-lg" id="lbl-earned">₹0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Advance Given</p>
+                            <p class="font-semibold text-lg text-orange-300" id="lbl-advance">₹0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History -->
+                <h3 class="font-bold text-slate-800 mt-6 mb-2 px-1">Recent Work</h3>
+                <div id="history-container" class="space-y-3">
+                    <!-- History cards injected here -->
+                </div>
+
+            </div>
+
         </main>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bg-white border-t border-slate-200 fixed bottom-0 w-full pb-safe flex justify-around px-2 pt-2 pb-3 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+            <button onclick="switchTab('submit')" id="nav-submit" class="nav-btn flex-1 flex flex-col items-center gap-1 p-2 text-slate-900 transition-colors">
+                <div class="nav-indicator px-4 py-1 rounded-full bg-blue-100 transition-all">
+                    <span class="material-symbols-outlined text-blue-700" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                </div>
+                <span class="text-[11px] font-semibold text-slate-900">Submit</span>
+            </button>
+            
+            <button onclick="switchTab('ledger')" id="nav-ledger" class="nav-btn flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 transition-colors">
+                <div class="nav-indicator px-4 py-1 rounded-full transition-all">
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+                <span class="text-[11px] font-semibold">Earnings</span>
+            </button>
+        </nav>
     </div>
 
     <script>
         let currentWorker = null;
+        let garmentRates = [];
+
+        // Initialization
+        window.onload = () => {
+            fetchGarmentRates();
+            
+            // Check local storage for session
+            const savedWorker = localStorage.getItem('worker_session');
+            if(savedWorker) {
+                currentWorker = JSON.parse(savedWorker);
+                showPortal();
+            }
+        };
+
+        async function fetchGarmentRates() {
+            try {
+                const res = await fetch('/api/garment-rates');
+                const data = await res.json();
+                garmentRates = data.rates;
+                
+                const select = document.getElementById('garment-type');
+                select.innerHTML = '<option value="">Select Garment</option>';
+                garmentRates.forEach(r => {
+                    select.innerHTML += `<option value="${r.garment_type}">${r.garment_type} (₹${r.rate})</option>`;
+                });
+            } catch(e) {
+                console.error("Failed to load rates", e);
+            }
+        }
 
         async function login() {
             const name = document.getElementById('login-name').value;
@@ -76,6 +220,7 @@
             if (!name || pin.length !== 4) return;
             
             btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span>';
+            error.classList.add('hidden');
             
             try {
                 const res = await fetch('/api/login', {
@@ -88,102 +233,179 @@
                 
                 const data = await res.json();
                 currentWorker = data.worker;
+                localStorage.setItem('worker_session', JSON.stringify(currentWorker));
                 
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('portal-screen').classList.remove('hidden');
-                document.getElementById('worker-name-display').textContent = currentWorker.name;
-                
-                loadTasks();
+                showPortal();
             } catch(e) {
                 error.classList.remove('hidden');
             } finally {
                 btn.innerHTML = 'Login';
             }
         }
-        
+
         function logout() {
             currentWorker = null;
+            localStorage.removeItem('worker_session');
             document.getElementById('login-name').value = '';
             document.getElementById('login-pin').value = '';
-            document.getElementById('portal-screen').classList.add('hidden');
+            document.getElementById('portal-screen').classList.replace('flex', 'hidden');
             document.getElementById('login-screen').classList.remove('hidden');
         }
 
-        async function loadTasks() {
-            try {
-                const res = await fetch(`/api/tasks/${currentWorker.id}`);
-                const data = await res.json();
-                
-                const container = document.getElementById('tasks-container');
-                container.innerHTML = '<h3 class="text-slate-500 font-medium px-2 mb-2">Your Assigned Tasks</h3>';
-                
-                let totalEarnings = 0;
-                let activeTasksCount = 0;
-                
-                if (data.tasks.length === 0) {
-                    container.innerHTML += `
-                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100">
-                            <span class="material-symbols-outlined text-slate-300 text-4xl mb-2">check_circle</span>
-                            <p class="text-slate-500 font-medium">You have no assigned tasks right now.</p>
-                        </div>
-                    `;
-                }
-                
-                data.tasks.forEach(t => {
-                    if (t.status === 'COMPLETED' || t.status === 'PAID') {
-                        if (t.status === 'COMPLETED') totalEarnings += t.payout_amount;
-                    }
-                    
-                    if (t.status === 'ASSIGNED') {
-                        activeTasksCount++;
-                        container.innerHTML += `
-                            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col gap-3 relative overflow-hidden">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-slate-900"></div>
-                                <div class="flex justify-between items-start pl-2">
-                                    <div>
-                                        <p class="text-xs font-semibold text-slate-900 bg-slate-100 px-2 py-1 rounded inline-block mb-2">${t.order_number}</p>
-                                        <h4 class="font-bold text-slate-800 text-lg">${t.clothing_type}</h4>
-                                        <p class="text-sm text-slate-500">${t.customer_name}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-xs text-slate-400 font-medium uppercase">Piece Rate</p>
-                                        <p class="font-bold text-slate-900">₹${t.payout_amount}</p>
-                                    </div>
-                                </div>
-                                <button onclick="completeTask(${t.id})" class="mt-2 w-full py-3 rounded-xl bg-slate-900 text-white font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-                                    <span class="material-symbols-outlined text-[20px]">done_all</span> Mark Completed
-                                </button>
-                            </div>
-                        `;
-                    }
-                });
-                
-                document.getElementById('total-earnings').textContent = `₹${totalEarnings}`;
-                
-                if (activeTasksCount === 0 && data.tasks.length > 0) {
-                    container.innerHTML += `
-                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100">
-                            <span class="material-symbols-outlined text-green-400 text-4xl mb-2">task_alt</span>
-                            <p class="text-slate-800 font-bold text-lg mb-1">All Caught Up!</p>
-                            <p class="text-slate-500 text-sm">You have completed all your assigned tasks.</p>
-                        </div>
-                    `;
-                }
-                
-            } catch(e) {
-                console.error(e);
+        function showPortal() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('portal-screen').classList.replace('hidden', 'flex');
+            
+            document.getElementById('worker-name-display').textContent = currentWorker.name;
+            
+            const isDaily = currentWorker.worker_type === 'DAILY_SALARY';
+            document.getElementById('worker-type-badge').textContent = isDaily ? 'Daily Salary' : 'Piece Rate';
+            
+            if(isDaily) {
+                document.getElementById('piece-rate-fields').classList.add('hidden');
+                document.getElementById('daily-salary-fields').classList.remove('hidden');
+                document.getElementById('garment-type').required = false;
+                document.getElementById('quantity').required = false;
+            } else {
+                document.getElementById('piece-rate-fields').classList.remove('hidden');
+                document.getElementById('daily-salary-fields').classList.add('hidden');
+                document.getElementById('garment-type').required = true;
+                document.getElementById('quantity').required = true;
+            }
+
+            switchTab('submit');
+        }
+
+        function switchTab(tabId) {
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            // Update Nav UI
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.replace('text-slate-900', 'text-slate-400');
+                btn.querySelector('.nav-indicator').classList.remove('bg-blue-100');
+                btn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0";
+                btn.querySelector('.material-symbols-outlined').classList.replace('text-blue-700', 'text-inherit');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            activeBtn.classList.replace('text-slate-400', 'text-slate-900');
+            activeBtn.querySelector('.nav-indicator').classList.add('bg-blue-100');
+            activeBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+            activeBtn.querySelector('.material-symbols-outlined').classList.add('text-blue-700');
+
+            if(tabId === 'ledger') {
+                loadLedger();
+                loadHistory();
             }
         }
-        
-        async function completeTask(taskId) {
-            if(!confirm("Are you sure you have finished this item?")) return;
+
+        async function submitWork(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const msg = document.getElementById('submit-msg');
             
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Submitting...';
+            btn.disabled = true;
+            
+            const payload = {
+                garment_type: document.getElementById('garment-type').value || null,
+                quantity: parseInt(document.getElementById('quantity').value) || 0,
+                bill_number: document.getElementById('bill-number').value || null,
+                extra_work_description: document.getElementById('extra-desc').value || null,
+                extra_amount: parseFloat(document.getElementById('extra-amount').value) || 0.0
+            };
+
             try {
-                await fetch(`/api/tasks/${taskId}/complete`, {method: 'POST'});
-                loadTasks();
-            } catch(e) {
-                alert("Failed to update task");
+                const res = await fetch(`/api/worker/${currentWorker.id}/work-entry`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                
+                if(res.ok) {
+                    msg.textContent = "Work submitted successfully!";
+                    msg.classList.remove('hidden', 'text-red-500');
+                    msg.classList.add('text-green-500');
+                    e.target.reset(); // Clear form
+                    
+                    // Keep type intact for piece rate
+                    document.getElementById('quantity').value = "1";
+                    document.getElementById('extra-amount').value = "0";
+                    
+                    setTimeout(() => msg.classList.add('hidden'), 3000);
+                } else {
+                    throw new Error("Failed to submit");
+                }
+            } catch(err) {
+                msg.textContent = "Error submitting work. Try again.";
+                msg.classList.remove('hidden', 'text-green-500');
+                msg.classList.add('text-red-500');
+            } finally {
+                btn.innerHTML = '<span class="material-symbols-outlined">send</span> Submit Entry';
+                btn.disabled = false;
             }
+        }
+
+        async function loadLedger() {
+            try {
+                const res = await fetch(`/api/worker/${currentWorker.id}/ledger`);
+                const data = await res.json();
+                const l = data.ledger;
+                
+                document.getElementById('lbl-earned').textContent = `₹${l.total_earned.toFixed(0)}`;
+                document.getElementById('lbl-advance').textContent = `₹${l.total_advance.toFixed(0)}`;
+                document.getElementById('lbl-remaining').textContent = `₹${l.remaining_balance.toFixed(0)}`;
+            } catch(e) { console.error(e); }
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch(`/api/worker/${currentWorker.id}/entries`);
+                const data = await res.json();
+                const container = document.getElementById('history-container');
+                
+                if(data.entries.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-6 bg-white rounded-xl border border-slate-100 shadow-sm">
+                            <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">history</span>
+                            <p class="text-sm text-slate-500">No work history found.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.entries.map(e => {
+                    let statusColor = "bg-yellow-100 text-yellow-800";
+                    let statusIcon = "schedule";
+                    if(e.status === 'APPROVED') { statusColor = "bg-green-100 text-green-800"; statusIcon = "check_circle"; }
+                    if(e.status === 'REJECTED') { statusColor = "bg-red-100 text-red-800"; statusIcon = "cancel"; }
+                    
+                    const date = new Date(e.entry_date).toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+                    
+                    let title = currentWorker.worker_type === 'DAILY_SALARY' ? "Daily Work" : `${e.quantity}x ${e.garment_type}`;
+                    
+                    return `
+                        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-semibold ${statusColor} px-2 py-0.5 rounded flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[12px]">${statusIcon}</span> ${e.status}
+                                    </span>
+                                    <span class="text-xs text-slate-400">${date}</span>
+                                </div>
+                                <p class="font-bold text-slate-800">${title}</p>
+                                ${e.bill_number ? `<p class="text-xs text-slate-500">Bill: ${e.bill_number}</p>` : ''}
+                                ${e.extra_work_description ? `<p class="text-xs text-slate-500 truncate w-48">${e.extra_work_description}</p>` : ''}
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-slate-900 text-lg">₹${e.total_amount}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch(e) { console.error(e); }
         }
     </script>
 </body>

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.database.engine import get_session
-from app.models.worker import Worker, WorkerTask
+from app.models.worker import Worker, WorkerTask, GarmentRate, WorkEntry, WorkerAdvance, WorkerType
 from app.models.order import OrderItem, Order
 
 logger = logging.getLogger(__name__)
@@ -24,63 +24,147 @@ class WorkerService:
                     "name": w.name,
                     "phone": w.phone,
                     "pin": w.pin,
+                    "worker_type": w.worker_type,
+                    "daily_rate": w.daily_rate,
                     "is_active": w.is_active,
                     "created_at": w.created_at.isoformat() if w.created_at else None
                 }
                 for w in workers
             ]
 
-    def add_worker(self, name: str, phone: str, pin: str) -> Dict[str, Any]:
+    def add_worker(self, name: str, phone: str, pin: str, worker_type: str = WorkerType.PIECE_RATE.value, daily_rate: float = 0.0) -> Dict[str, Any]:
         with get_session() as session:
-            worker = Worker(name=name, phone=phone, pin=pin)
+            worker = Worker(name=name, phone=phone, pin=pin, worker_type=worker_type, daily_rate=daily_rate)
             session.add(worker)
             session.commit()
             session.refresh(worker)
             return {"id": worker.id, "name": worker.name}
 
-    def assign_task(self, worker_id: int, order_item_id: int, payout_amount: float) -> Dict[str, Any]:
-        with get_session() as session:
-            task = WorkerTask(worker_id=worker_id, order_item_id=order_item_id, payout_amount=payout_amount)
-            session.add(task)
-            session.commit()
-            session.refresh(task)
-            return {"id": task.id, "status": task.status}
-
-    def get_worker_tasks(self, worker_id: int) -> List[Dict[str, Any]]:
-        with get_session() as session:
-            tasks = session.query(WorkerTask).filter(WorkerTask.worker_id == worker_id).all()
-            result = []
-            for t in tasks:
-                order_item = t.order_item
-                order = order_item.order if order_item else None
-                result.append({
-                    "id": t.id,
-                    "worker_id": t.worker_id,
-                    "payout_amount": t.payout_amount,
-                    "status": t.status,
-                    "assigned_at": t.assigned_at.isoformat() if t.assigned_at else None,
-                    "completed_at": t.completed_at.isoformat() if t.completed_at else None,
-                    "clothing_type": order_item.clothing_type if order_item else "Unknown",
-                    "order_number": order.order_number if order else "Unknown",
-                    "customer_name": order.customer.name if order and order.customer else "Unknown"
-                })
-            return result
-
-    def complete_task(self, task_id: int) -> bool:
-        with get_session() as session:
-            task = session.query(WorkerTask).get(task_id)
-            if task and task.status == "ASSIGNED":
-                task.status = "COMPLETED"
-                task.completed_at = datetime.now(timezone.utc)
-                session.commit()
-                return True
-            return False
-
     def authenticate_worker(self, name: str, pin: str) -> Optional[Dict[str, Any]]:
         with get_session() as session:
             worker = session.query(Worker).filter(func.lower(Worker.name) == name.lower(), Worker.pin == pin, Worker.is_active == True).first()
             if worker:
-                return {"id": worker.id, "name": worker.name}
+                return {"id": worker.id, "name": worker.name, "worker_type": worker.worker_type}
             return None
+
+    # --- Garment Rates ---
+
+    def get_garment_rates(self) -> List[Dict[str, Any]]:
+        with get_session() as session:
+            rates = session.query(GarmentRate).all()
+            return [{"id": r.id, "garment_type": r.garment_type, "rate": r.rate} for r in rates]
+
+    def set_garment_rate(self, garment_type: str, rate: float) -> Dict[str, Any]:
+        with get_session() as session:
+            g_rate = session.query(GarmentRate).filter(GarmentRate.garment_type == garment_type).first()
+            if g_rate:
+                g_rate.rate = rate
+            else:
+                g_rate = GarmentRate(garment_type=garment_type, rate=rate)
+                session.add(g_rate)
+            session.commit()
+            session.refresh(g_rate)
+            return {"id": g_rate.id, "garment_type": g_rate.garment_type, "rate": g_rate.rate}
+
+    # --- Work Entries ---
+
+    def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float) -> Dict[str, Any]:
+        with get_session() as session:
+            worker = session.query(Worker).get(worker_id)
+            if not worker:
+                return {"error": "Worker not found"}
+
+            total_amount = extra_amount
+            if worker.worker_type == WorkerType.PIECE_RATE.value and garment_type:
+                g_rate = session.query(GarmentRate).filter(GarmentRate.garment_type == garment_type).first()
+                if g_rate:
+                    total_amount += (g_rate.rate * quantity)
+            elif worker.worker_type == WorkerType.DAILY_SALARY.value:
+                total_amount += worker.daily_rate
+
+            entry = WorkEntry(
+                worker_id=worker_id,
+                garment_type=garment_type,
+                quantity=quantity,
+                bill_number=bill_number,
+                extra_work_description=extra_work_description,
+                extra_amount=extra_amount,
+                total_amount=total_amount,
+                status="PENDING"
+            )
+            session.add(entry)
+            session.commit()
+            session.refresh(entry)
+            return {"id": entry.id, "status": entry.status}
+
+    def get_worker_entries(self, worker_id: int) -> List[Dict[str, Any]]:
+        with get_session() as session:
+            entries = session.query(WorkEntry).filter(WorkEntry.worker_id == worker_id).order_by(WorkEntry.entry_date.desc()).all()
+            return [{
+                "id": e.id,
+                "entry_date": e.entry_date.isoformat(),
+                "garment_type": e.garment_type,
+                "quantity": e.quantity,
+                "bill_number": e.bill_number,
+                "extra_work_description": e.extra_work_description,
+                "extra_amount": e.extra_amount,
+                "total_amount": e.total_amount,
+                "status": e.status
+            } for e in entries]
+
+    def get_all_pending_entries(self) -> List[Dict[str, Any]]:
+         with get_session() as session:
+            entries = session.query(WorkEntry).filter(WorkEntry.status == "PENDING").order_by(WorkEntry.entry_date.desc()).all()
+            return [{
+                "id": e.id,
+                "worker_id": e.worker_id,
+                "worker_name": e.worker.name if e.worker else "Unknown",
+                "entry_date": e.entry_date.isoformat(),
+                "garment_type": e.garment_type,
+                "quantity": e.quantity,
+                "bill_number": e.bill_number,
+                "extra_work_description": e.extra_work_description,
+                "extra_amount": e.extra_amount,
+                "total_amount": e.total_amount,
+                "status": e.status
+            } for e in entries]
+
+    def approve_entry(self, entry_id: int, status: str) -> bool:
+        with get_session() as session:
+            entry = session.query(WorkEntry).get(entry_id)
+            if entry and status in ["APPROVED", "REJECTED"]:
+                entry.status = status
+                session.commit()
+                return True
+            return False
+
+    # --- Advances ---
+
+    def record_advance(self, worker_id: int, amount: float, notes: str = "") -> Dict[str, Any]:
+        with get_session() as session:
+            advance = WorkerAdvance(worker_id=worker_id, amount=amount, notes=notes)
+            session.add(advance)
+            session.commit()
+            session.refresh(advance)
+            return {"id": advance.id, "amount": advance.amount}
+
+    # --- Ledger ---
+
+    def get_worker_ledger(self, worker_id: int) -> Dict[str, Any]:
+        with get_session() as session:
+            worker = session.query(Worker).get(worker_id)
+            if not worker:
+                return {}
+
+            total_earned = session.query(func.sum(WorkEntry.total_amount)).filter(WorkEntry.worker_id == worker_id, WorkEntry.status == "APPROVED").scalar() or 0.0
+            total_advance = session.query(func.sum(WorkerAdvance.amount)).filter(WorkerAdvance.worker_id == worker_id).scalar() or 0.0
+
+            return {
+                "worker_id": worker_id,
+                "worker_name": worker.name,
+                "total_earned": total_earned,
+                "total_advance": total_advance,
+                "remaining_balance": total_earned - total_advance
+            }
 
 worker_service = WorkerService()

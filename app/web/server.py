@@ -2,9 +2,11 @@ import os
 import uvicorn
 import logging
 from threading import Thread
+from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.services.worker_service import worker_service
@@ -13,6 +15,14 @@ from app.config import ASSETS_DIR
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Haroon Tailor Worker Portal")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # We will serve mobile web assets from app/assets/mobile
 mobile_assets_dir = os.path.join(ASSETS_DIR, "mobile")
@@ -30,16 +40,41 @@ def login(req: LoginRequest):
         raise HTTPException(status_code=401, detail="Invalid name or PIN")
     return {"status": "success", "worker": worker}
 
-@app.get("/api/tasks/{worker_id}")
-def get_tasks(worker_id: int):
-    tasks = worker_service.get_worker_tasks(worker_id)
-    return {"status": "success", "tasks": tasks}
+class WorkEntryRequest(BaseModel):
+    garment_type: Optional[str] = None
+    quantity: int = 0
+    bill_number: Optional[str] = None
+    extra_work_description: Optional[str] = None
+    extra_amount: float = 0.0
 
-@app.post("/api/tasks/{task_id}/complete")
-def complete_task(task_id: int):
-    if worker_service.complete_task(task_id):
-        return {"status": "success"}
-    raise HTTPException(status_code=400, detail="Failed to complete task")
+@app.post("/api/worker/{worker_id}/work-entry")
+def submit_work_entry(worker_id: int, req: WorkEntryRequest):
+    res = worker_service.submit_work_entry(
+        worker_id=worker_id,
+        garment_type=req.garment_type,
+        quantity=req.quantity,
+        bill_number=req.bill_number,
+        extra_work_description=req.extra_work_description,
+        extra_amount=req.extra_amount
+    )
+    if "error" in res:
+        raise HTTPException(status_code=400, detail=res["error"])
+    return {"status": "success", "entry": res}
+
+@app.get("/api/worker/{worker_id}/entries")
+def get_worker_entries(worker_id: int):
+    entries = worker_service.get_worker_entries(worker_id)
+    return {"status": "success", "entries": entries}
+
+@app.get("/api/worker/{worker_id}/ledger")
+def get_worker_ledger(worker_id: int):
+    ledger = worker_service.get_worker_ledger(worker_id)
+    return {"status": "success", "ledger": ledger}
+
+@app.get("/api/garment-rates")
+def get_garment_rates():
+    rates = worker_service.get_garment_rates()
+    return {"status": "success", "rates": rates}
 
 @app.get("/", response_class=HTMLResponse)
 def index():
