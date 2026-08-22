@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     else if (text.includes("deliver")) window.dispatchToPython("navigate_to", {page: "deliveries"});
                     else if (text.includes("expense")) window.dispatchToPython("navigate_to", {page: "expenses_list"});
                     else if (text.includes("report")) window.dispatchToPython("navigate_to", {page: "reports"});
+                    else if (text.includes("worker")) window.dispatchToPython("navigate_to", {page: "workers"});
                     else if (text.includes("setting")) window.dispatchToPython("navigate_to", {page: "settings"});
                     else if (text.includes("backup")) window.dispatchToPython("navigate_to", {page: "backup_restore"});
                 });

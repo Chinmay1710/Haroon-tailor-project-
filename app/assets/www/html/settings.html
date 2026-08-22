@@ -5,11 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Settings - Tailor Manager</title>
 <!-- Fonts & Icons -->
-
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-
-
-
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <script id="tailwind-config">
@@ -119,7 +115,7 @@
         .toggle-checkbox:checked + .toggle-label { background-color: #091426; }
         .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-surface min-h-screen text-on-surface antialiased overflow-x-hidden">
 <!-- SideNavBar (Shared Component) -->
@@ -127,7 +123,7 @@
 <!-- Header -->
 <div class="p-gutter flex items-center gap-4 border-b border-primary-container/30">
 <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-highest/20">
-<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A macro photography shot of a sleek, modern sewing machine needle and dark blue thread, illuminated by soft, warm studio lighting. The aesthetic is premium, tactile, and highly detailed, reflecting high-quality artisan tailoring. The background is a deeply blurred dark navy." src=\"../img/logo.png\"/>
+<img alt='\"Tailor' class="w-full h-full object-cover" data-alt="A macro photography shot of a sleek, modern sewing machine needle and dark blue thread, illuminated by soft, warm studio lighting. The aesthetic is premium, tactile, and highly detailed, reflecting high-quality artisan tailoring. The background is a deeply blurred dark navy." logo\"="" shop="" src='\"../img/logo.png\"/'/>
 </div>
 <div>
 <h2 class="text-headline-md font-headline-md font-bold text-on-primary tracking-tight"><span class="global-shop-name">Artisan Stitch</span></h2>
@@ -169,7 +165,10 @@
 <span>Reports</span>
 </a>
 <!-- Active Tab -->
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg">Workers</span>
+</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
 <span>Settings</span>
 </a>
@@ -197,7 +196,7 @@
 </div>
 <div class="flex items-center gap-6">
 <!-- Trailing Primary Action -->
-<button onclick="window.API.navigate('new_order')" class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg text-label-lg transition-colors flex items-center gap-2 shadow-sm">
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg text-label-lg transition-colors flex items-center gap-2 shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">add</span>
                 New Order
             </button>
@@ -209,7 +208,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
 </button>
 <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30 ml-2 cursor-pointer hover:ring-2 ring-primary/20 transition-all">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A soft-focus portrait of a polished tailor shop interior during daytime, focusing on a beautifully crafted wooden mannequin. The light is diffused, creating a serene, professional, and tactile corporate-modern aesthetic with warm beige and crisp white tones." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A soft-focus portrait of a polished tailor shop interior during daytime, focusing on a beautifully crafted wooden mannequin. The light is diffused, creating a serene, professional, and tactile corporate-modern aesthetic with warm beige and crisp white tones." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </div>
@@ -256,7 +255,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Shop Name</label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="text" id="shop_name" value=""/>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" id="shop_name" type="text" value=""/>
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Owner Name</label>
@@ -273,7 +272,7 @@
 Metropolis, NY 10001</textarea>
 </div>
 <div class="pt-6 flex justify-end border-t border-outline-variant/20">
-<button onclick="saveSettings()" class="bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">Save Changes</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors" onclick="saveSettings()">Save Changes</button>
 </div>
 </form>
 </section>
@@ -360,7 +359,7 @@ Metropolis, NY 10001</textarea>
 <button class="bg-surface hover:bg-secondary-container text-primary px-6 py-2.5 rounded-lg font-label-lg transition-colors border border-outline-variant/50" type="button">
                                     Print Test Page
                                 </button>
-<button id=\"btn-save-settings\"<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg transition-colors shadow-sm active:scale-95" type="button">Save Settings</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg transition-colors shadow-sm active:scale-95" id='\"btn-save-settings\"&lt;button' type="button">Save Settings</button>
 </div>
 </form>
 </section>

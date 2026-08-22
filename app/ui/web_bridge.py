@@ -13,8 +13,8 @@ class WebBridge(QObject):
     backup_requested = Signal()
     restore_requested = Signal()
     
-    def __init__(self, services):
-        super().__init__()
+    def __init__(self, services, parent=None):
+        super().__init__(parent)
         self.services = services
 
     @Slot(str)
@@ -44,6 +44,37 @@ class WebBridge(QObject):
                 page = payload.get("page", "dashboard")
                 self.navigate_requested.emit(page)
                 response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
+            # WORKER PORTAL
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_worker_portal_url":
+                tunnel_url = getattr(self.parent(), "tunnel_url", None)
+                if tunnel_url:
+                    response = {"status": "success", "data": {"url": tunnel_url}}
+                else:
+                    response = {"status": "error", "message": "Portal is not running"}
+
+            elif action == "get_all_workers":
+                worker_srv = self.services["worker"]
+                workers = worker_srv.get_all_workers()
+                response = {"status": "success", "data": {"workers": workers}}
+
+            elif action == "add_worker":
+                worker_srv = self.services["worker"]
+                w = worker_srv.add_worker(payload.get("name"), payload.get("phone"), payload.get("pin"))
+                response = {"status": "success", "data": {"worker": w}}
+
+            elif action == "assign_task":
+                worker_srv = self.services["worker"]
+                t = worker_srv.assign_task(payload.get("worker_id"), payload.get("order_item_id"), payload.get("payout_amount"))
+                response = {"status": "success", "data": {"task": t}}
+                
+            elif action == "get_worker_tasks":
+                worker_srv = self.services["worker"]
+                t = worker_srv.get_worker_tasks(payload.get("worker_id"))
+                response = {"status": "success", "data": {"tasks": t}}
+
 
             # ────────────────────────────────────────────────────────────
             # DASHBOARD

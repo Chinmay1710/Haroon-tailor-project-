@@ -17,6 +17,7 @@ from app.services.measurement_service import MeasurementService
 from app.services.expense_service import ExpenseService
 from app.services.report_service import ReportService
 from app.services.backup_service import BackupService
+from app.services.worker_service import worker_service
 from app.utils.logger import get_logger
 from app.ui.web_bridge import WebBridge
 
@@ -64,7 +65,21 @@ class MainWindow(QMainWindow):
             'expense': ExpenseService(),
             'report': ReportService(),
             'backup': BackupService(),
+            'worker': worker_service
         }
+
+        # Start Worker Portal Server
+        try:
+            from app.web.server import WebServerThread
+            self.web_server = WebServerThread()
+            self.web_server.start()
+            
+            from app.web.tunnel import NgrokTunnel
+            self.tunnel = NgrokTunnel()
+            self.tunnel_url = self.tunnel.start()
+        except Exception as e:
+            logger.error(f"Failed to start web server/tunnel: {e}")
+            self.tunnel_url = None
 
         self._build_web_ui()
 
@@ -86,7 +101,7 @@ class MainWindow(QMainWindow):
 
         # Setup QWebChannel for JS-Python communication
         self.channel = QWebChannel()
-        self.bridge = WebBridge(self.services)
+        self.bridge = WebBridge(self.services, parent=self)
         self.bridge.navigate_requested.connect(self._navigate_to)
         
         # Register the bridge object to be accessible as `bridge` in javascript

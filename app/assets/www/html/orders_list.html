@@ -6,9 +6,6 @@
 <title>Orders List - Tailor Manager</title>
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -105,14 +102,14 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .icon-fill { font-variation-settings: 'FILL' 1; }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-surface text-on-surface flex w-full min-h-screen">
 <!-- SideNavBar -->
 <nav class="fixed inset-y-0 left-0 w-[280px] flex flex-col z-40 bg-primary text-on-primary shadow-md docked left-0 h-full w-[280px]">
 <div class="p-stack_md flex items-center gap-stack_sm">
 <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden shrink-0">
-<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A macro shot of a vintage gold sewing thimble and a spool of dark navy thread resting on a warm, textured wooden tailor's workbench. Soft, focused light highlights the metallic details and thread texture, emphasizing craftsmanship and premium tailoring." src=\"../img/logo.png\"/>
+<img alt='\"Tailor' class="w-full h-full object-cover" data-alt="A macro shot of a vintage gold sewing thimble and a spool of dark navy thread resting on a warm, textured wooden tailor's workbench. Soft, focused light highlights the metallic details and thread texture, emphasizing craftsmanship and premium tailoring." logo\"="" shop="" src='\"../img/logo.png\"/'/>
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
@@ -152,7 +149,10 @@
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
 <span>Reports</span>
 </a>
-<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg">Workers</span>
+</a><a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span>Settings</span>
 </a>
@@ -190,12 +190,12 @@
 <button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
-<button onclick="window.API.navigate('new_order')" class="bg-primary text-on-primary flex items-center gap-2 px-6 py-2 rounded-lg font-label-lg text-label-lg hover:opacity-90 transition-opacity shadow-sm">
+<button class="bg-primary text-on-primary flex items-center gap-2 px-6 py-2 rounded-lg font-label-lg text-label-lg hover:opacity-90 transition-opacity shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[18px]">add</span>
                     New Order
                 </button>
 <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant cursor-pointer ml-2">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A close up shot of a stylish tailor in a crisp white shirt adjusting a soft measuring tape around a dress form. The background is a gently blurred, well-lit modern tailor workshop with neutral colors and warm lighting." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A close up shot of a stylish tailor in a crisp white shirt adjusting a soft measuring tape around a dress form. The background is a gently blurred, well-lit modern tailor workshop with neutral colors and warm lighting." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </header>
@@ -207,14 +207,14 @@
 <p class="font-body-md text-body-md text-on-surface-variant">Manage and track all customer orders across production stages.</p>
 </div>
 <!-- Filter Tabs -->
-<div id="order-filter-buttons" class="flex space-x-2 bg-surface-container-lowest p-1 rounded-xl shadow-sm border border-outline-variant/30 overflow-x-auto hide-scrollbar">
-<button data-filter="All Orders" class="px-4 py-2 rounded-lg bg-surface-container-highest text-primary font-label-lg text-label-lg whitespace-nowrap">All Orders</button>
-<button data-filter="Incomplete" class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap">Incomplete Orders</button>
-<button data-filter="Complete" class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap">Complete Orders</button>
+<div class="flex space-x-2 bg-surface-container-lowest p-1 rounded-xl shadow-sm border border-outline-variant/30 overflow-x-auto hide-scrollbar" id="order-filter-buttons">
+<button class="px-4 py-2 rounded-lg bg-surface-container-highest text-primary font-label-lg text-label-lg whitespace-nowrap" data-filter="All Orders">All Orders</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap" data-filter="Incomplete">Incomplete Orders</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-colors whitespace-nowrap" data-filter="Complete">Complete Orders</button>
 </div>
 </div>
 <!-- List Cards Wrapper -->
-<div id="orders-container" class="flex flex-col gap-stack_sm">
+<div class="flex flex-col gap-stack_sm" id="orders-container">
 <!-- Headers (Hidden on small, shown on md up) -->
 <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-2 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
 <div class="col-span-2">Order Info</div>

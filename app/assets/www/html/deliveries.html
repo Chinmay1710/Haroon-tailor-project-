@@ -6,9 +6,6 @@
 <title>Tailor Manager - Deliveries</title>
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -188,7 +185,7 @@
             scrollbar-width: none;
         }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="font-body-md text-body-md antialiased overflow-hidden flex h-screen w-full">
 <!-- SideNavBar -->
@@ -196,7 +193,7 @@
 <!-- Header -->
 <div class="p-gutter border-b border-primary-container/30 flex items-center gap-4">
 <div class="w-12 h-12 rounded-lg bg-surface-container-highest/20 flex items-center justify-center overflow-hidden flex-shrink-0">
-<img class="w-full h-full object-cover" data-alt="A minimalist line art logo of a needle and thread forming an elegant monogram, colored in soft cream against a dark navy background. The style is modern, premium, and sophisticated, suitable for a high-end tailor shop." src=\"../img/logo.png\"/>
+<img class="w-full h-full object-cover" data-alt="A minimalist line art logo of a needle and thread forming an elegant monogram, colored in soft cream against a dark navy background. The style is modern, premium, and sophisticated, suitable for a high-end tailor shop." src='\"../img/logo.png\"/'/>
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary truncate"><span class="global-shop-name">Artisan Stitch</span></h1>
@@ -238,7 +235,10 @@
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
 <span>Reports</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg">Workers</span>
+</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span>Settings</span>
 </a>
@@ -288,13 +288,13 @@
 </button>
 </div>
 <!-- Primary Action -->
-<button onclick="window.API.navigate('new_order')" class="hidden sm:flex items-center gap-2 bg-primary text-on-primary px-4 h-10 rounded-lg hover:bg-primary/90 hover:scale-95 transition-all active:scale-95 shadow-sm font-label-lg text-label-lg">
+<button class="hidden sm:flex items-center gap-2 bg-primary text-on-primary px-4 h-10 rounded-lg hover:bg-primary/90 hover:scale-95 transition-all active:scale-95 shadow-sm font-label-lg text-label-lg" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
                     New Order
                 </button>
 <!-- Profile -->
 <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container cursor-pointer hover:border-primary transition-colors">
-<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling artisan tailor in a bright, modern studio. The lighting is soft and flattering, creating a warm, inviting atmosphere. The style is realistic and high-quality." src=\"../img/logo.png\"/>
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling artisan tailor in a bright, modern studio. The lighting is soft and flattering, creating a warm, inviting atmosphere. The style is realistic and high-quality." src='\"../img/logo.png\"/'/>
 </div>
 </div>
 </header>

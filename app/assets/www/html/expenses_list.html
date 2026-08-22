@@ -6,9 +6,6 @@
 <title>Tailor Manager - Expenses</title>
 <script src="../js/tailwindcss.js"></script>
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -159,7 +156,7 @@
           }
         }
     </script>
-    <link href="../css/fonts.css" rel="stylesheet" />
+<link href="../css/fonts.css" rel="stylesheet"/>
 </head>
 <body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
 <!-- SideNavBar -->
@@ -167,7 +164,7 @@
 <!-- Header -->
 <div class="p-gutter flex items-center gap-4 border-b border-primary-container/20">
 <div class="w-12 h-12 rounded-full overflow-hidden bg-primary-container shrink-0">
-<img alt=\"Tailor Shop Logo\" class="w-full h-full object-cover" data-alt="A macro shot of a stylized, premium golden needle and a spool of deep navy thread resting on a piece of high-quality textured beige linen fabric. The lighting is soft and studio-quality, emphasizing the craftsmanship and elegance of a boutique tailor shop. Corporate modern aesthetic." src=\"../img/logo.png\"/>
+<img alt='\"Tailor' class="w-full h-full object-cover" data-alt="A macro shot of a stylized, premium golden needle and a spool of deep navy thread resting on a piece of high-quality textured beige linen fabric. The lighting is soft and studio-quality, emphasizing the craftsmanship and elegance of a boutique tailor shop. Corporate modern aesthetic." logo\"="" shop="" src='\"../img/logo.png\"/'/>
 </div>
 <div>
 <h1 class="text-headline-md font-headline-md font-bold text-on-primary"><span class="global-shop-name">Artisan Stitch</span></h1>
@@ -208,7 +205,10 @@
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
 <span class="font-label-lg text-label-lg">Reports</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg">Workers</span>
+</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span class="font-label-lg text-label-lg">Settings</span>
 </a>
@@ -235,7 +235,7 @@
 <h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
 </div>
 <div class="flex items-center gap-6">
-<button onclick="window.API.navigate('new_order')" class="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all">
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined" data-icon="add">add</span>
                 New Order
             </button>
@@ -247,7 +247,7 @@
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
 <div class="w-10 h-10 rounded-full overflow-hidden bg-secondary-container ml-2 cursor-pointer shadow-[0px_4px_20px_rgba(0,0,0,0.05)]">
-<img alt=\"Shop Profile\" class="w-full h-full object-cover" data-alt="A portrait of a meticulously organized tailor's workspace, featuring a vintage measuring tape neatly coiled next to a pair of sharp tailor's scissors on a pristine white oak table. Soft, diffused natural light pouring in from a nearby window creates a bright, modern, and reliable corporate aesthetic." src=\"../img/profile.png\"/>
+<img alt='\"Shop' class="w-full h-full object-cover" data-alt="A portrait of a meticulously organized tailor's workspace, featuring a vintage measuring tape neatly coiled next to a pair of sharp tailor's scissors on a pristine white oak table. Soft, diffused natural light pouring in from a nearby window creates a bright, modern, and reliable corporate aesthetic." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
 </div>
 </div>
@@ -260,7 +260,7 @@
 <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Expenses</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Manage and track your workshop expenditures.</p>
 </div>
-<button onclick="window.API.navigate('add_expense')" class="flex items-center gap-2 bg-primary text-on-primary px-5 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] hover:bg-primary/90 transition-all active:scale-95">
+<button class="flex items-center gap-2 bg-primary text-on-primary px-5 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] hover:bg-primary/90 transition-all active:scale-95" onclick="window.API.navigate('add_expense')">
 <span class="material-symbols-outlined" data-icon="add">add</span>
                 Add Expense
             </button>
