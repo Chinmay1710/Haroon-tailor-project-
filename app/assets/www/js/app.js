@@ -11,23 +11,30 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             };
             
-            // Example: hook up navigation links (assuming href="#" is used for nav)
+            // Hook up navigation links using data-nav attributes (language-independent)
             const navLinks = document.querySelectorAll('a[href="#"]');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    let text = this.innerText.toLowerCase().trim();
-                    if (text.includes("dashboard")) window.dispatchToPython("navigate_to", {page: "dashboard"});
-                    else if (text.includes("customer")) window.dispatchToPython("navigate_to", {page: "customers_list"});
-                    else if (text.includes("measurement")) window.dispatchToPython("navigate_to", {page: "measurements_list"});
-                    else if (text.includes("order")) window.dispatchToPython("navigate_to", {page: "orders_list"});
-                    else if (text.includes("payment")) window.dispatchToPython("navigate_to", {page: "payments"});
-                    else if (text.includes("deliver")) window.dispatchToPython("navigate_to", {page: "deliveries"});
-                    else if (text.includes("expense")) window.dispatchToPython("navigate_to", {page: "expenses_list"});
-                    else if (text.includes("report")) window.dispatchToPython("navigate_to", {page: "reports"});
-                    else if (text.includes("worker")) window.dispatchToPython("navigate_to", {page: "workers"});
-                    else if (text.includes("setting")) window.dispatchToPython("navigate_to", {page: "settings"});
-                    else if (text.includes("backup")) window.dispatchToPython("navigate_to", {page: "backup_restore"});
+                    const navTarget = this.getAttribute('data-nav');
+                    if (navTarget) {
+                        window.dispatchToPython("navigate_to", {page: navTarget});
+                    } else {
+                        // Fallback: try text-based matching for any untagged links
+                        let text = this.innerText.toLowerCase().trim();
+                        if (text.includes("dashboard") || text.includes("डैशबोर्ड")) window.dispatchToPython("navigate_to", {page: "dashboard"});
+                        else if (text.includes("customer") || text.includes("ग्राहक")) window.dispatchToPython("navigate_to", {page: "customers_list"});
+                        else if (text.includes("measurement") || text.includes("माप")) window.dispatchToPython("navigate_to", {page: "measurements_list"});
+                        else if (text.includes("order") || text.includes("ऑर्डर")) window.dispatchToPython("navigate_to", {page: "orders_list"});
+                        else if (text.includes("payment") || text.includes("भुगतान")) window.dispatchToPython("navigate_to", {page: "payments"});
+                        else if (text.includes("expense") || text.includes("खर्च")) window.dispatchToPython("navigate_to", {page: "expenses_list"});
+                        else if (text.includes("report") || text.includes("रिपोर्ट")) window.dispatchToPython("navigate_to", {page: "reports"});
+                        else if (text.includes("worker") || text.includes("कर्मचारी")) window.dispatchToPython("navigate_to", {page: "workers"});
+                        else if (text.includes("setting") || text.includes("सेटिंग")) window.dispatchToPython("navigate_to", {page: "settings"});
+                        else if (text.includes("backup") || text.includes("बैकअप")) window.dispatchToPython("navigate_to", {page: "backup_restore"});
+                        else if (text.includes("help") || text.includes("मदद")) window.dispatchToPython("navigate_to", {page: "help"});
+                        else if (text.includes("offline") || text.includes("ऑफ़लाइन")) { /* offline mode toggle */ }
+                    }
                 });
             });
             

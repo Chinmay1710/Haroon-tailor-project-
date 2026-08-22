@@ -141,67 +141,59 @@
 </div>
 <!-- Main Navigation -->
 
-<!-- Language Switcher -->
-<div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
-</div>
+
 
 <div class="flex-1 overflow-y-auto py-2 px-3 flex flex-col gap-1">
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="dashboard">
+<span class="material-symbols-outlined" data-icon="dashboard">Dashboard</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <!-- Active State: Customers -->
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="customers_list">
 <span class="material-symbols-outlined icon-fill" data-icon="person">person</span>
-<span class="font-label-lg text-label-lg">Customers</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.customers">Customers</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="measurements_list">
 <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
-<span class="font-label-lg text-label-lg">Measurements</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.measurements">Measurements</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="orders_list">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-lg text-label-lg">Orders</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.orders">Orders</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span class="font-label-lg text-label-lg">Payments</span>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="payments">
+<span class="material-symbols-outlined" data-icon="payments">Payments</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.payments">Payments</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
-<span class="font-label-lg text-label-lg">Deliveries</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="expenses_list">
 <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-<span class="font-label-lg text-label-lg">Expenses</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.expenses">Expenses</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="reports">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span class="font-label-lg text-label-lg">Reports</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.reports">Reports</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="workers">
 <span class="material-symbols-outlined">engineering</span>
-<span class="font-label-lg text-label-lg">Workers</span>
-</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span class="font-label-lg text-label-lg">Settings</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.workers">Workers</span>
+</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#" data-nav="settings">
+<span class="material-symbols-outlined" data-icon="settings">Settings</span>
+<span class="font-label-lg text-label-lg" data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Navigation -->
 <div class="mt-auto p-3 border-t border-on-primary/10 flex flex-col gap-1">
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#" data-nav="backup_restore">
 <span class="material-symbols-outlined text-sm" data-icon="backup">backup</span>
-<span class="font-label-sm text-label-sm">Backup &amp; Restore</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.backup_restore">Backup &amp; Restore</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
-<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
-<span class="font-label-sm text-label-sm">Help</span>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#" data-nav="help">
+<span class="material-symbols-outlined text-sm" data-icon="help">Help</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.help">Help</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#" data-nav="offline_mode">
 <span class="material-symbols-outlined text-sm" data-icon="cloud_off">cloud_off</span>
-<span class="font-label-sm text-label-sm">Offline Mode</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.offline_mode">Offline Mode</span>
 </a>
 </div>
 </nav>
@@ -237,7 +229,7 @@
 <!-- Page Header Section -->
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack_md mb-stack_lg">
 <div>
-<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Workers</h2>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight" data-i18n="sidebar.workers">Workers</h2>
 <p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your tailoring staff, task assignments, and piece-rate payouts.</p>
 </div>
 <div class="flex items-center gap-4">
@@ -281,11 +273,11 @@
 <table class="w-full text-left border-collapse min-w-[800px]">
 <thead>
 <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-<th class="px-6 py-4 font-medium">Name</th>
+<th class="px-6 py-4 font-medium" data-i18n="customers.name">Name</th>
 <th class="px-6 py-4 font-medium">Phone</th>
 <th class="px-6 py-4 font-medium">Login PIN</th>
-<th class="px-6 py-4 font-medium">Status</th>
-<th class="px-6 py-4 font-medium text-right">Actions</th>
+<th class="px-6 py-4 font-medium" data-i18n="common.status">Status</th>
+<th class="px-6 py-4 font-medium text-right" data-i18n="common.actions">Actions</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-surface-container-highest" id="workers-list">

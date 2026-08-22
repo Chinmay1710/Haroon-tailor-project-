@@ -270,6 +270,7 @@ class OrderService:
             status_counts = order_repo.count_by_status()
             recent_orders = order_repo.get_recent(5)
             overdue_orders = order_repo.get_overdue()
+            urgent_not_started = order_repo.get_urgent_not_started(3)
 
             return {
                 "orders_today": len(today_orders),
@@ -280,6 +281,7 @@ class OrderService:
                 "status_counts": status_counts,
                 "recent_orders": recent_orders,
                 "overdue_orders": overdue_orders,
+                "urgent_not_started": urgent_not_started,
             }
         finally:
             session.close()
