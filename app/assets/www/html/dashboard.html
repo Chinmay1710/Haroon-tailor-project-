@@ -186,68 +186,66 @@
 </div>
 </div>
 <!-- Main Tabs -->
-
 <!-- Language Switcher -->
 <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container" id="lang-btn-en" onclick="window.I18n.setLang('en')">English</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary" id="lang-btn-hi" onclick="window.I18n.setLang('hi')">हिन्दी</button>
 </div>
-
 <div class="flex-1 overflow-y-auto py-stack_sm px-stack_sm space-y-1">
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">person</span>
-<span class="font-label-lg text-label-lg">Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">straighten</span>
-<span class="font-label-lg text-label-lg">Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">shopping_bag</span>
-<span class="font-label-lg text-label-lg">Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">payments</span>
-<span class="font-label-lg text-label-lg">Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">local_shipping</span>
-<span class="font-label-lg text-label-lg">Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">receipt_long</span>
-<span class="font-label-lg text-label-lg">Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">analytics</span>
-<span class="font-label-lg text-label-lg">Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
-<span class="font-label-lg text-label-lg">Workers</span>
+<span data-i18n="sidebar.workers">Workers</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">settings</span>
-<span class="font-label-lg text-label-lg">Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Tabs -->
 <div class="p-stack_sm border-t border-on-primary/10 space-y-1">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined text-[20px]">backup</span>
-<span class="font-label-sm text-label-sm">Backup &amp; Restore</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.backup">Backup &amp; Restore</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined text-[20px]">help</span>
-<span class="font-label-sm text-label-sm">Help</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.help">Help</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined text-[20px]">cloud_off</span>
-<span class="font-label-sm text-label-sm">Offline Mode</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.offline">Offline Mode</span>
 </a>
 </div>
 </nav>
@@ -263,7 +261,6 @@
 <span class="material-symbols-outlined">calendar_today</span>
 </button>
 </div>
-
 <button class="ml-2 h-[40px] px-4 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
                 New Order
@@ -292,7 +289,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.orders_today">Orders Today</span></p>
-<p id="stat-orders-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">12</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-orders-today">12</p>
 </div>
 </div>
 <!-- Today's Sales -->
@@ -302,7 +299,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.sales_today">Today's Sales</span></p>
-<p id="stat-sales-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹4,500</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-sales-today">₹4,500</p>
 </div>
 </div>
 <!-- Pending Payments -->
@@ -312,7 +309,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.pending_payments">Pending Payments</span></p>
-<p id="stat-pending-payments" class="font-headline-lg text-headline-lg text-on-surface mt-1">₹12,200</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-pending-payments">₹12,200</p>
 </div>
 </div>
 <!-- Deliveries Today -->
@@ -322,7 +319,7 @@
 </div>
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="dashboard.deliveries_today">Deliveries Today</span></p>
-<p id="stat-deliveries-today" class="font-headline-lg text-headline-lg text-on-surface mt-1">8</p>
+<p class="font-headline-lg text-headline-lg text-on-surface mt-1" id="stat-deliveries-today">8</p>
 </div>
 </div>
 </div>
@@ -514,7 +511,7 @@
 </div>
 </main>
 <script src="../js/i18n.js"></script>
-    <script src="../js/api.js"></script>
+<script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/dashboard.js"></script>
 </body></html>

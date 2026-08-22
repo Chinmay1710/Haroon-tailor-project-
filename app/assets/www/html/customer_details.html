@@ -124,68 +124,66 @@
 </div>
 </div>
 <!-- Main Tabs -->
-
 <!-- Language Switcher -->
 <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container" id="lang-btn-en" onclick="window.I18n.setLang('en')">English</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary" id="lang-btn-hi" onclick="window.I18n.setLang('hi')">हिन्दी</button>
 </div>
-
 <div class="flex-1 overflow-y-auto px-4 py-4 space-y-2">
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
 <span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <!-- Active Tab: Customers -->
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" data-icon="person">person</span>
 <span data-i18n="sidebar.customers">Customers</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
 <span data-i18n="sidebar.measurements">Measurements</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
 <span data-i18n="sidebar.orders">Orders</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
 <span data-i18n="sidebar.payments">Payments</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
 <span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
 <span data-i18n="sidebar.expenses">Expenses</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
 <span data-i18n="sidebar.reports">Reports</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
-<span class="font-label-lg text-label-lg">Workers</span>
-</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span data-i18n="sidebar.workers">Workers</span>
+</a><a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Tabs -->
 <div class="px-4 py-6 border-t border-surface-container-highest/10 space-y-2">
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="backup">backup</span>
-<span>Backup &amp; Restore</span>
+<span data-i18n="sidebar.backup">Backup &amp; Restore</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="help">help</span>
-<span>Help</span>
+<span data-i18n="sidebar.help">Help</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="cloud_off">cloud_off</span>
-<span>Offline Mode</span>
+<span data-i18n="sidebar.offline">Offline Mode</span>
 </a>
 </div>
 </nav>
@@ -199,7 +197,6 @@
 </div>
 </div>
 <div class="flex items-center gap-4">
-
 <button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
@@ -235,8 +232,8 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">contact_page</span>
-                            <span data-i18n="customer_details.contact_details">Contact Details</span>
-                        </h2>
+<span data-i18n="customer_details.contact_details">Contact Details</span>
+</h2>
 <button class="text-primary hover:bg-surface-container px-4 py-2 rounded-lg font-label-lg text-label-lg transition-colors border border-outline-variant/30 flex items-center gap-2">
 <span class="material-symbols-outlined text-[18px]">edit</span> Edit
                         </button>
@@ -257,7 +254,7 @@
 <div class="md:col-span-2 bg-surface p-4 rounded-lg border border-surface-container-high">
 <p class="font-label-sm text-label-sm text-on-surface-variant mb-1 flex items-center gap-1">
 <span class="material-symbols-outlined text-[16px]">notes</span> <span data-i18n="customer_details.notes">Notes</span>
-                            </p>
+</p>
 <p class="font-body-md text-body-md text-on-surface" id="cd-notes">Loading...</p>
 </div>
 </div>
@@ -267,8 +264,8 @@
 <div class="flex justify-between items-center mb-4">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">history</span>
-                            <span data-i18n="dashboard.recent_orders">Recent Orders</span>
-                        </h2>
+<span data-i18n="dashboard.recent_orders">Recent Orders</span>
+</h2>
 <a class="font-label-lg text-label-lg text-primary hover:underline" href="#">View All</a>
 </div>
 <!-- List Cards Pattern (Avoiding dense tables) -->
@@ -284,24 +281,24 @@
 <h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-2"><span data-i18n="common.actions">Actions</span></h3>
 <button class="w-full bg-primary text-on-primary h-14 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:opacity-90 transition-opacity" onclick="gotoNewOrder()">
 <span class="material-symbols-outlined">add_circle</span>
-                        <span data-i18n="new_order.title">New Order</span>
-                    </button>
+<span data-i18n="new_order.title">New Order</span>
+</button>
 <button class="w-full bg-surface text-on-surface-variant border border-outline-variant h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors mt-2">
 <span class="material-symbols-outlined">edit</span>
-                        <span data-i18n="customer_details.edit_customer">Edit Customer</span>
-                    </button>
+<span data-i18n="customer_details.edit_customer">Edit Customer</span>
+</button>
 <button class="w-full bg-error-container text-error border border-error/20 h-12 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-error hover:text-on-error transition-colors mt-2" onclick="showDeleteModal()">
 <span class="material-symbols-outlined">delete</span>
-                        <span data-i18n="customer_details.delete_customer">Delete Customer</span>
-                    </button>
+<span data-i18n="customer_details.delete_customer">Delete Customer</span>
+</button>
 </section>
 <!-- Saved Measurements Card -->
 <section class="bg-surface-container-lowest rounded-xl p-gutter shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-container-high/50 flex-1">
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">design_services</span>
-                            <span data-i18n="customer_details.master_profile">Master Profile</span>
-                        </h2>
+<span data-i18n="customer_details.master_profile">Master Profile</span>
+</h2>
 <span class="text-on-surface-variant text-sm flex items-center gap-1" title="Last updated">
 <span class="material-symbols-outlined text-[16px]">update</span> 2w ago
                         </span>
@@ -310,8 +307,8 @@
 <div class="col-span-2 text-center text-on-surface-variant p-4">No measurements available.</div>
 </div>
 <a class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 hover:underline p-2" href="#">
-                        <span data-i18n="customer_details.view_all_measurements">View All Measurements</span>
-                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+<span data-i18n="customer_details.view_all_measurements">View All Measurements</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
 </a>
 </section>
 </div>
@@ -371,7 +368,7 @@
     }
 </script>
 <script src="../js/i18n.js"></script>
-    <script src="../js/api.js"></script>
+<script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/customer_details.js"></script>
 </body></html>

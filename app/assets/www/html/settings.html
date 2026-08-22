@@ -131,68 +131,66 @@
 </div>
 </div>
 <!-- Main Navigation -->
-
 <!-- Language Switcher -->
 <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container" id="lang-btn-en" onclick="window.I18n.setLang('en')">English</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary" id="lang-btn-hi" onclick="window.I18n.setLang('hi')">हिन्दी</button>
 </div>
-
 <div class="flex-1 overflow-y-auto sidebar-scroll py-stack_md flex flex-col gap-1 px-4">
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
 <span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
 <span data-i18n="sidebar.customers">Customers</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">straighten</span>
 <span data-i18n="sidebar.measurements">Measurements</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
 <span data-i18n="sidebar.orders">Orders</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">payments</span>
 <span data-i18n="sidebar.payments">Payments</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
 <span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
 <span data-i18n="sidebar.expenses">Expenses</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
 <span data-i18n="sidebar.reports">Reports</span>
 </a>
 <!-- Active Tab -->
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
-<span class="font-label-lg text-label-lg">Workers</span>
-</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
+<span data-i18n="sidebar.workers">Workers</span>
+</a><a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg bg-surface-container-highest/10 text-on-primary font-bold border-l-4 border-surface-container-highest opacity-90 transition-all" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
 <span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Navigation -->
 <div class="mt-auto border-t border-primary-container/30 py-4 px-4 flex flex-col gap-1">
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">backup</span>
-<span>Backup &amp; Restore</span>
+<span data-i18n="sidebar.backup">Backup &amp; Restore</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
-<span>Help</span>
+<span data-i18n="sidebar.help">Help</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">cloud_off</span>
-<span>Offline Mode</span>
+<span data-i18n="sidebar.offline">Offline Mode</span>
 </a>
 </div>
 </nav>
@@ -208,7 +206,6 @@
                 New Order
             </button>
 <div class="flex items-center gap-4 text-on-surface-variant">
-
 <button class="hover:text-primary transition-colors hover:scale-95 duration-200">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
 </button>
@@ -451,7 +448,7 @@ Metropolis, NY 10001</textarea>
         }
     </script>
 <script src="../js/i18n.js"></script>
-    <script src="../js/api.js"></script>
+<script src="../js/api.js"></script>
 <script src="../js/app.js?v=3"></script>
 <script src="../js/settings.js"></script>
 </body></html>

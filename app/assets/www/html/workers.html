@@ -140,68 +140,66 @@
 </div>
 </div>
 <!-- Main Navigation -->
-
 <!-- Language Switcher -->
 <div class="px-4 py-3 border-b border-on-primary/10 flex gap-2 justify-center">
-    <button onclick="window.I18n.setLang('en')" id="lang-btn-en" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container">English</button>
-    <button onclick="window.I18n.setLang('hi')" id="lang-btn-hi" class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary">हिन्दी</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-primary-container text-on-primary-container border-primary-container" id="lang-btn-en" onclick="window.I18n.setLang('en')">English</button>
+<button class="flex-1 py-1.5 rounded text-[11px] font-bold border transition-colors bg-transparent text-on-primary/70 border-on-primary/20 hover:text-on-primary" id="lang-btn-hi" onclick="window.I18n.setLang('hi')">हिन्दी</button>
 </div>
-
 <div class="flex-1 overflow-y-auto py-2 px-3 flex flex-col gap-1">
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
+<span data-i18n="sidebar.dashboard">Dashboard</span>
 </a>
 <!-- Active State: Customers -->
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined icon-fill" data-icon="person">person</span>
-<span class="font-label-lg text-label-lg">Customers</span>
+<span data-i18n="sidebar.customers">Customers</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
-<span class="font-label-lg text-label-lg">Measurements</span>
+<span data-i18n="sidebar.measurements">Measurements</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-lg text-label-lg">Orders</span>
+<span data-i18n="sidebar.orders">Orders</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="payments">payments</span>
-<span class="font-label-lg text-label-lg">Payments</span>
+<span data-i18n="sidebar.payments">Payments</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
-<span class="font-label-lg text-label-lg">Deliveries</span>
+<span data-i18n="sidebar.deliveries">Deliveries</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-<span class="font-label-lg text-label-lg">Expenses</span>
+<span data-i18n="sidebar.expenses">Expenses</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span class="font-label-lg text-label-lg">Reports</span>
+<span data-i18n="sidebar.reports">Reports</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<a class="flex items-center gap-stack_sm px-stack_md py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined">engineering</span>
-<span class="font-label-lg text-label-lg">Workers</span>
-</a><a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
+<span data-i18n="sidebar.workers">Workers</span>
+</a><a class="flex items-center gap-stack_sm px-4 py-stack_sm rounded-lg text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span class="font-label-lg text-label-lg">Settings</span>
+<span data-i18n="sidebar.settings">Settings</span>
 </a>
 </div>
 <!-- Footer Navigation -->
 <div class="mt-auto p-3 border-t border-on-primary/10 flex flex-col gap-1">
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
 <span class="material-symbols-outlined text-sm" data-icon="backup">backup</span>
-<span class="font-label-sm text-label-sm">Backup &amp; Restore</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.backup">Backup &amp; Restore</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
 <span class="material-symbols-outlined text-sm" data-icon="help">help</span>
-<span class="font-label-sm text-label-sm">Help</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.help">Help</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
+<a class="flex items-center gap-stack_sm px-4 py-2 rounded-lg text-on-primary/60 hover:text-on-primary/90 transition-colors" href="#">
 <span class="material-symbols-outlined text-sm" data-icon="cloud_off">cloud_off</span>
-<span class="font-label-sm text-label-sm">Offline Mode</span>
+<span class="font-label-sm text-label-sm" data-i18n="sidebar.offline">Offline Mode</span>
 </a>
 </div>
 </nav>
@@ -216,7 +214,6 @@
 <!-- Global Actions -->
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 text-on-surface-variant">
-
 <button class="p-2 rounded-full hover:bg-surface-container-highest/30 hover:text-primary transition-colors duration-200">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
@@ -453,6 +450,6 @@
         
         document.addEventListener("DOMContentLoaded", initWorkers);
     </script>
-    <script src="../js/i18n.js"></script>
+<script src="../js/i18n.js"></script>
 </body>
 </html>
