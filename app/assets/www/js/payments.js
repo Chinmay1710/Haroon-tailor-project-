@@ -52,20 +52,6 @@ async function loadPayments() {
         console.error(e);
         window.API.toast("Failed to load payments", "error");
     }
-    
-    try {
-        const dash = await window.API.request('get_payments_dashboard');
-        const tc = document.getElementById('dash-total-collected');
-        if (tc) tc.textContent = window.API.formatCurrency(dash.total_collected || 0);
-        
-        const pp = document.getElementById('dash-pending-payments');
-        if (pp) pp.textContent = window.API.formatCurrency(dash.pending_payments || 0);
-        
-        const tp = document.getElementById('dash-today-payments');
-        if (tp) tp.textContent = window.API.formatCurrency(dash.today_payments || 0);
-    } catch (e) {
-        console.error("Failed to load dashboard metrics", e);
-    }
 }
 
 function filterPayments(query) {
@@ -105,6 +91,45 @@ function applyFilters() {
     });
     
     currentlyRendered = filtered;
+    
+    // Update KPIs based on the filtered data
+    let totalCollected = 0;
+    let todayCollected = 0;
+    let pendingPayments = 0;
+    
+    const uniqueOrderIds = new Set();
+    const nowStr = now.toDateString();
+    let todayCount = 0;
+    
+    filtered.forEach(p => {
+        totalCollected += p.amount || 0;
+        
+        if (p.payment_date) {
+            const pDate = new Date(p.payment_date);
+            if (pDate.toDateString() === nowStr) {
+                todayCollected += p.amount || 0;
+                todayCount++;
+            }
+        }
+        
+        if (p.order_id && !uniqueOrderIds.has(p.order_id)) {
+            uniqueOrderIds.add(p.order_id);
+            pendingPayments += p.remaining_amount || 0;
+        }
+    });
+    
+    const tc = document.getElementById('dash-total-collected');
+    if (tc) tc.textContent = window.API.formatCurrency(totalCollected);
+    
+    const pp = document.getElementById('dash-pending-payments');
+    if (pp) pp.textContent = window.API.formatCurrency(pendingPayments);
+    
+    const tp = document.getElementById('dash-today-payments');
+    if (tp) tp.textContent = window.API.formatCurrency(todayCollected);
+    
+    const tcCount = document.getElementById('dash-today-transactions-count');
+    if (tcCount) tcCount.textContent = `${todayCount} transactions today`;
+    
     renderPayments(filtered);
 }
 
