@@ -56,20 +56,20 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('od-mark-complete-btn').addEventListener('click', async function() {
             if (currentOrder) {
                 if (currentOrder.remaining_amount > 0) {
-                    const collect = await window.API.request('show_confirm', {
-                        title: 'Pending Payment',
-                        message: `This order has a remaining balance of ₹${currentOrder.remaining_amount}. Would you like to collect the payment now before completing the order?`
-                    });
+                    const collect = await window.API.confirm(
+                        'Pending Payment',
+                        `This order has a remaining balance of ₹${currentOrder.remaining_amount}. Would you like to collect the payment now before completing the order?`
+                    );
                     if (collect) {
                         window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id, complete_after: true});
                         return;
                     }
                 }
                 
-                const confirmComplete = await window.API.request('show_confirm', {
-                    title: 'Complete Order?',
-                    message: 'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
-                });
+                const confirmComplete = await window.API.confirm(
+                    'Complete Order?',
+                    'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
+                );
                 
                 if (confirmComplete) {
                     updateOrderStatus(navParams.id, 'DELIVERED').then(() => {
