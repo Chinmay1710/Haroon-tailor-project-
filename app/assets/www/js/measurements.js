@@ -35,8 +35,10 @@ function filterMeasurements(query) {
     const q = query.toLowerCase();
     const filtered = allMeasurements.filter(m => 
         (m.customer_name && m.customer_name.toLowerCase().includes(q)) || 
+        (m.customer_mobile && String(m.customer_mobile).toLowerCase().includes(q)) ||
         (m.name && m.name.toLowerCase().includes(q)) ||
-        (m.template_type && m.template_type.toLowerCase().includes(q))
+        (m.template_type && m.template_type.toLowerCase().includes(q)) ||
+        (m.id && String(m.id).toLowerCase().includes(q))
     );
     renderMeasurements(filtered);
 }

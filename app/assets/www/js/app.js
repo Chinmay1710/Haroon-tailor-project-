@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         else if (text.includes("measurement") || text.includes("माप")) window.dispatchToPython("navigate_to", {page: "measurements_list"});
                         else if (text.includes("order") || text.includes("ऑर्डर")) window.dispatchToPython("navigate_to", {page: "orders_list"});
                         else if (text.includes("payment") || text.includes("भुगतान")) window.dispatchToPython("navigate_to", {page: "payments"});
+                        else if (text.includes("deliveries") || text.includes("डिलीवरी")) window.dispatchToPython("navigate_to", {page: "deliveries"});
                         else if (text.includes("expense") || text.includes("खर्च")) window.dispatchToPython("navigate_to", {page: "expenses_list"});
                         else if (text.includes("report") || text.includes("रिपोर्ट")) window.dispatchToPython("navigate_to", {page: "reports"});
                         else if (text.includes("worker") || text.includes("कर्मचारी")) window.dispatchToPython("navigate_to", {page: "workers"});
@@ -66,4 +67,36 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(window.applyGlobalSettings, 150);
         });
     }
+
+    // Global Input Validation for the entire project
+    document.addEventListener('input', function(e) {
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') return;
+        
+        const id = (e.target.id || '').toLowerCase();
+        
+        // Block numbers in person names (excludes shop name, garment names, etc)
+        if (id.includes('name') && !id.includes('shop') && !id.includes('garment') && !id.includes('item') && !id.includes('business')) {
+            e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
+        }
+        
+        // Restrict phone numbers to 10 digits and prefix with +91
+        if (id.includes('mobile') || id.includes('phone') || e.target.type === 'tel') {
+            let val = e.target.value;
+            if (!val) return;
+            if (val === '+' || val === '+9' || val === '+91') return;
+            
+            let raw = val.replace(/^\+91\s*/, '').replace(/[^0-9]/g, '');
+            if (raw.length > 10) {
+                raw = raw.slice(0, 10);
+            }
+            
+            if (raw.length > 0) {
+                e.target.value = '+91 ' + raw;
+            } else if (val === '+91 ') {
+                e.target.value = '+91 ';
+            } else {
+                e.target.value = '';
+            }
+        }
+    });
 });

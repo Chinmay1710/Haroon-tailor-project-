@@ -357,6 +357,7 @@ class WebBridge(QObject):
                             "id": m.id,
                             "name": m.name,
                             "customer_name": customer.name if customer else "Unknown",
+                            "customer_mobile": customer.mobile if customer else "",
                             "template_type": m.template_type,
                             "values_count": len(m.values), # Values are cascade-loaded or we can just let lazy load happen safely since session is open and clean
                             "updated_at": m.updated_at.isoformat()
@@ -547,7 +548,7 @@ class WebBridge(QObject):
             elif action == "update_order_status":
                 order_srv = self.services["order"]
                 status = payload.get("status")
-                order_id = payload.get("order_id")
+                order_id = payload.get("order_id") or payload.get("id")
                 order_srv.update_status(order_id, status)
                 response = {"status": "success"}
                 self._trigger_twilio_status(order_id, status)
@@ -569,6 +570,7 @@ class WebBridge(QObject):
                             "order_id": p.order_id,
                             "order_number": p.order.order_number if p.order else "",
                             "customer_name": p.customer.name if p.customer else "",
+                            "customer_mobile": p.customer.mobile if p.customer else "",
                             "amount": p.amount,
                             "payment_date": p.payment_date.isoformat() if p.payment_date else "",
                             "payment_method": p.payment_method
@@ -633,7 +635,8 @@ class WebBridge(QObject):
                 counts = {"due_today": 0, "due_tomorrow": 0, "upcoming": 0, "overdue": 0}
                 
                 for o in orders:
-                    if o.status in ["DELIVERED", "CANCELLED"]: continue
+                    # The user requested that the Deliveries dashboard ONLY show 'READY' products.
+                    if o.status != "READY": continue
                     
                     if o.delivery_date:
                         if o.delivery_date < today:
@@ -652,7 +655,9 @@ class WebBridge(QObject):
                         "mobile": o.customer.mobile if o.customer else "",
                         "items": "Various",
                         "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
-                        "status": o.status
+                        "status": o.status,
+                        "total_amount": o.total_amount,
+                        "advance_paid": getattr(o, "advance_amount", getattr(o, "paid_amount", 0))
                     })
                 
                 deliveries.sort(key=lambda x: x["delivery_date"])

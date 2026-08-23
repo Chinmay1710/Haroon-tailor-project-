@@ -82,6 +82,22 @@ window.saveCustomerEdit = async function() {
         window.API.toast("Customer name is required", "error");
         return;
     }
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+        window.API.toast("Name should contain only letters and spaces", "error");
+        return;
+    }
+
+    const mobile = document.getElementById('edit-mobile').value.trim();
+    if (!mobile) {
+        window.API.toast("Mobile is required", "error");
+        return;
+    }
+    const mobileRegex = /^\+91 [0-9]{10}$/;
+    if (!mobileRegex.test(mobile)) {
+        window.API.toast("Mobile number must be exactly 10 digits (e.g. +91 9876543210)", "error");
+        return;
+    }
     
     const btn = document.getElementById('btn-save-edit');
     const originalHTML = btn.innerHTML;

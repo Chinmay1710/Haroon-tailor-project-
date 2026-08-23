@@ -170,7 +170,9 @@ function applyFilters() {
     if (currentTab === 'pending') {
         const filtered = allPendingOrders.filter(o => 
             (o.customer_name && o.customer_name.toLowerCase().includes(q)) || 
-            (o.order_number && o.order_number.toLowerCase().includes(q))
+            (o.customer_mobile && String(o.customer_mobile).toLowerCase().includes(q)) ||
+            (o.order_number && String(o.order_number).toLowerCase().includes(q)) ||
+            (o.id && String(o.id).toLowerCase().includes(q))
         );
         renderPendingBalances(filtered);
         return;
@@ -183,7 +185,9 @@ function applyFilters() {
     
     const filtered = allPayments.filter(p => {
         const matchesSearch = (p.customer_name && p.customer_name.toLowerCase().includes(q)) || 
-                              (p.order_number && p.order_number.toLowerCase().includes(q));
+                              (p.customer_mobile && String(p.customer_mobile).toLowerCase().includes(q)) ||
+                              (p.order_number && String(p.order_number).toLowerCase().includes(q)) ||
+                              (p.order_id && String(p.order_id).toLowerCase().includes(q));
         if (!matchesSearch) return false;
         
         if (methodFilter !== 'all') {

@@ -78,27 +78,16 @@ async function loadOrders() {
     }
 }
 
-window.markOrderComplete = async function(id, remainingAmount) {
-    if (remainingAmount > 0) {
-        const collect = await window.API.confirm(
-            'Pending Payment',
-            `This order has a remaining balance of ₹${remainingAmount}. Would you like to collect the payment now before completing the order?`
-        );
-        if (collect) {
-            window.API.request('navigate_to', {page: 'add_payment', order_id: id, complete_after: true});
-            return;
-        }
-    }
-    
+window.markOrderComplete = async function(id) {
     const confirmComplete = await window.API.confirm(
-        'Complete Order?',
-        'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
+        'Order Ready?',
+        'Are you sure you want to mark this order as ready? This means the product is complete and waiting for the customer.'
     );
     
     if (confirmComplete) {
         try {
-            await window.API.request('update_order_status', {order_id: id, status: 'DELIVERED'});
-            window.API.toast("Order marked as Complete", "success");
+            await window.API.request('update_order_status', {order_id: id, status: 'READY'});
+            window.API.toast("Order marked as Ready", "success");
             loadOrders();
         } catch (e) {
             window.API.toast("Failed to update status: " + e, "error");
@@ -119,8 +108,9 @@ function filterOrders(resetPage = true) {
     const filtered = allOrders.filter(o => {
         const matchesSearch = 
             (o.customer_name && o.customer_name.toLowerCase().includes(q)) || 
-            (o.customer_mobile && o.customer_mobile.includes(q)) ||
-            (o.order_number && o.order_number.toLowerCase().includes(q));
+            (o.customer_mobile && String(o.customer_mobile).toLowerCase().includes(q)) ||
+            (o.order_number && String(o.order_number).toLowerCase().includes(q)) ||
+            (o.id && String(o.id).toLowerCase().includes(q));
             
         const isOverdue = o.status === 'OVERDUE' || (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.delivery_date && new Date(o.delivery_date) < new Date());
         
@@ -136,8 +126,27 @@ function filterOrders(resetPage = true) {
         return matchesSearch && matchesStatus;
     });
 
-    // Sort by closest delivery date first
+    // Sort red alert (overdue and urgent) orders to top, then by closest delivery date
     filtered.sort((a, b) => {
+        const checkAlert = (o) => {
+            if (o.status === 'OVERDUE' || (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.delivery_date && new Date(o.delivery_date) < new Date())) return true;
+            if (o.status === 'NEW' && o.delivery_date) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dDate = new Date(o.delivery_date);
+                dDate.setHours(0, 0, 0, 0);
+                const diffDays = Math.ceil((dDate - today) / (1000 * 60 * 60 * 24));
+                if (diffDays >= 0 && diffDays <= 3) return true;
+            }
+            return false;
+        };
+        
+        const isAAlert = checkAlert(a);
+        const isBAlert = checkAlert(b);
+        
+        if (isAAlert && !isBAlert) return -1;
+        if (!isAAlert && isBAlert) return 1;
+
         const dateA = a.delivery_date ? new Date(a.delivery_date).getTime() : Infinity;
         const dateB = b.delivery_date ? new Date(b.delivery_date).getTime() : Infinity;
         return dateA - dateB;
@@ -315,8 +324,8 @@ function renderOrders(orders) {
                 </span>
             </div>
             <div class="col-span-1 md:col-span-1 flex justify-end items-center gap-1">
-                ${(o.status !== 'DELIVERED' && o.status !== 'CANCELLED') ? `
-                <button class="mark-complete-btn w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors" title="Mark as Complete">
+                ${(o.status === 'NEW' || o.status === 'STITCHING') ? `
+                <button class="mark-complete-btn w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors" title="Mark as Ready">
                     <span class="material-symbols-outlined text-[18px]">check</span>
                 </button>
                 ` : ''}

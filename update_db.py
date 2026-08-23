@@ -1,7 +1,8 @@
 import sqlite3
 import os
+from app.config import DATABASE_PATH
 
-db_path = os.path.expanduser("~/Library/Application Support/TailorShopManager/data/tailor_shop.db")
+db_path = DATABASE_PATH
 print("DB Path:", db_path)
 
 def upgrade():

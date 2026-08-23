@@ -327,15 +327,32 @@ function populateSavedProfilesDropdown(type) {
     const select = document.getElementById('modal-saved-profile');
     let html = `<option value="">-- Start Fresh --</option>`;
     
-    // Show all profiles, but indicate their type
-    availableProfiles.forEach(p => {
+    // Deduplicate profiles by template_type (keep latest/last one)
+    const uniqueProfiles = [];
+    const seenTypes = new Set();
+    
+    for (let i = availableProfiles.length - 1; i >= 0; i--) {
+        const p = availableProfiles[i];
+        if (!seenTypes.has(p.template_type)) {
+            uniqueProfiles.push(p);
+            seenTypes.add(p.template_type);
+        }
+    }
+    
+    uniqueProfiles.reverse(); // Restore original chronological order if desired
+
+    uniqueProfiles.forEach(p => {
         const name = p.name || `${p.template_type} Profile`;
-        html += `<option value="${p.id}">${name} (${p.template_type})</option>`;
+        let dateStr = "";
+        if (p.updated_at) {
+            const dateObj = new Date(p.updated_at);
+            const formattedDate = dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            dateStr = ` - Last: ${formattedDate}`;
+        }
+        html += `<option value="${p.id}">${name} (${p.template_type})${dateStr}</option>`;
     });
     
     select.innerHTML = html;
-    
-    // Select a profile if it matches the current type and there's only one? No, just leave as Start Fresh.
 }
 
 function renderMeasurementFields(type, values) {

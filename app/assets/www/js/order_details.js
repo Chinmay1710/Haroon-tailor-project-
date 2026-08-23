@@ -12,13 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
         let navParamsStr = sessionStorage.getItem("nav_params");
         let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
         
-        if (!navParams || !navParams.id) {
+        let orderId = navParams ? (navParams.id || navParams.order_id) : null;
+        
+        if (!orderId) {
             window.API.toast("No order ID provided.", "error");
             document.getElementById('od-title').textContent = "Error: Order ID Missing";
             return;
         }
         
-        loadOrderDetails(navParams.id);
+        loadOrderDetails(orderId);
         
         document.getElementById('od-status-select').addEventListener('change', function(e) {
             const status = e.target.value;
@@ -28,29 +30,29 @@ document.addEventListener("DOMContentLoaded", function() {
                     const collect = confirm(`This order has a remaining balance of ${window.API.formatCurrency(currentOrder.remaining_amount)}. Would you like to collect the payment now before completing the order?`);
                     if (collect) {
                         e.target.value = currentOrder.status; // Revert select
-                        window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id});
+                        window.API.request('navigate_to', {page: 'add_payment', order_id: orderId});
                         return; // Stop update
                     }
                 }
             }
             
-            updateOrderStatus(navParams.id, status);
+            updateOrderStatus(orderId, status);
         });
         
         document.getElementById('od-add-payment-btn').addEventListener('click', function() {
-            window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id});
+            window.API.request('navigate_to', {page: 'add_payment', order_id: orderId});
         });
 
         document.getElementById('od-print-receipt-btn').addEventListener('click', function() {
-            window.API.request('navigate_to', {page: 'receipt_preview', order_id: navParams.id});
+            window.API.request('navigate_to', {page: 'receipt_preview', order_id: orderId});
         });
         
         document.getElementById('od-print-slip-btn').addEventListener('click', function() {
-            window.API.request('navigate_to', {page: 'stitching_slip_preview', order_id: navParams.id});
+            window.API.request('navigate_to', {page: 'stitching_slip_preview', order_id: orderId});
         });
         
         document.getElementById('od-edit-order-btn').addEventListener('click', function() {
-            window.API.request('navigate_to', {page: 'new_order', order_id: navParams.id, action: 'edit'});
+            window.API.request('navigate_to', {page: 'new_order', order_id: orderId, action: 'edit'});
         });
         
         document.getElementById('od-mark-complete-btn').addEventListener('click', async function() {
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         `This order has a remaining balance of ₹${currentOrder.remaining_amount}. Would you like to collect the payment now before completing the order?`
                     );
                     if (collect) {
-                        window.API.request('navigate_to', {page: 'add_payment', order_id: navParams.id, complete_after: true});
+                        window.API.request('navigate_to', {page: 'add_payment', order_id: orderId, complete_after: true});
                         return;
                     }
                 }
@@ -72,9 +74,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
                 
                 if (confirmComplete) {
-                    updateOrderStatus(navParams.id, 'DELIVERED').then(() => {
+                    updateOrderStatus(orderId, 'DELIVERED').then(() => {
                         window.API.toast("Order marked as Complete", "success");
-                        loadOrderDetails(navParams.id);
+                        loadOrderDetails(orderId);
                     });
                 }
             }

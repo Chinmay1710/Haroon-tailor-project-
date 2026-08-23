@@ -36,9 +36,9 @@ async function loadCustomers() {
 function filterCustomers(query) {
     const q = query.toLowerCase();
     const filtered = allCustomers.filter(c => 
-        c.name.toLowerCase().includes(q) || 
-        c.mobile.toLowerCase().includes(q) || 
-        (c.id && c.id.toString().includes(q))
+        (c.name && c.name.toLowerCase().includes(q)) || 
+        (c.mobile && String(c.mobile).toLowerCase().includes(q)) || 
+        (c.id && String(c.id).toLowerCase().includes(q))
     );
     renderCustomers(filtered);
 }

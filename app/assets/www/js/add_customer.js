@@ -33,8 +33,19 @@ async function saveCustomer(targetPage) {
         window.API.toast("Name is required", "error");
         return;
     }
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(payload.name)) {
+        window.API.toast("Name should contain only letters and spaces", "error");
+        return;
+    }
+
     if (!payload.mobile) {
         window.API.toast("Mobile is required", "error");
+        return;
+    }
+    const mobileRegex = /^\+91 [0-9]{10}$/;
+    if (!mobileRegex.test(payload.mobile)) {
+        window.API.toast("Mobile number must be exactly 10 digits (e.g. +91 9876543210)", "error");
         return;
     }
 
