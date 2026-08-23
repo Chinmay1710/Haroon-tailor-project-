@@ -40,7 +40,7 @@ def print_customer_receipt(order_id: int, parent_widget: QWidget = None):
     payments = payment_service.get_payments_for_order(order_id)
 
     # Create printer
-    printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+    printer = QPrinter(QPrinter.PrinterMode.ScreenResolution)
     printer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
 
     dialog = QPrintDialog(printer, parent_widget)
@@ -226,7 +226,7 @@ def generate_receipt_pdf(order_id: int, output_path: str) -> bool:
     payments = payment_service.get_payments_for_order(order_id)
 
     # Create printer
-    printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+    printer = QPrinter(QPrinter.PrinterMode.ScreenResolution)
     printer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
     printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
     printer.setOutputFileName(output_path)

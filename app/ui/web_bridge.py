@@ -5,7 +5,7 @@ from app.services.report_service import ReportService
 from app.services.customer_service import CustomerService
 from app.services.order_service import OrderService
 from app.services.payment_service import PaymentService
-from app.services.twilio_service import TwilioService
+from app.services.whatsapp_service import WhatsAppService
 import threading
 import os
 from app.config import APP_DATA_DIR
@@ -27,40 +27,65 @@ class WebBridge(QObject):
     def log(self, message):
         print(f"[JS] {message}")
 
-    def _trigger_twilio_receipt(self, order_id: int):
+    def _get_shop_name(self) -> str:
+        try:
+            from app.database.engine import get_session
+            from app.repositories.settings_repo import SettingsRepository
+            session = get_session()
+            try:
+                settings = SettingsRepository(session).get_settings()
+                return settings.shop_name or "Tailor Shop"
+            finally:
+                session.close()
+        except Exception:
+            return "Tailor Shop"
+
+    def _trigger_whatsapp_receipt(self, order_id: int):
         def _run():
             try:
                 receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
                 os.makedirs(receipts_dir, exist_ok=True)
                 pdf_path = os.path.join(receipts_dir, f"receipt_{order_id}.pdf")
                 if generate_receipt_pdf(order_id, pdf_path):
-                    twilio = TwilioService()
+                    whatsapp = WhatsAppService()
                     order = OrderService().get_order(order_id)
+                    shop_name = self._get_shop_name()
                     if order and order.customer and order.customer.mobile:
-                        media_url = None
-                        if GLOBAL_TUNNEL_URL:
-                            media_url = f"{GLOBAL_TUNNEL_URL}/receipts/receipt_{order_id}.pdf"
-                        
-                        msg = f"Hello {order.customer.name}! Here is your bill for Order #{order.order_number}. Total: {order.total_amount}. Remaining: {order.remaining_amount}."
-                        if media_url:
-                            msg += "\nYou can view your receipt PDF here or attached above."
-                        twilio.send_message(order.customer.mobile, msg, media_url=media_url)
+                        paid_amt = order.total_amount - order.remaining_amount
+                        msg = (
+                            f"✨ नमस्ते {order.customer.name}! ✨\n\n"
+                            f"{shop_name} को चुनने के लिए धन्यवाद! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
+                            f"👔 कुल बिल: ₹{order.total_amount}\n"
+                            f"✅ जमा किए: ₹{paid_amt}\n"
+                            f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
+                            f"हमने आपका आधिकारिक रसीद (Receipt) पीडीएफ नीचे संलग्न कर दिया है।\n"
+                            f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
+                            f"धन्यवाद,\n{shop_name}"
+                        )
+                        whatsapp.send_whatsapp_message(order.customer.mobile, msg, pdf_path=pdf_path)
             except Exception as e:
-                print(f"Twilio trigger error: {e}")
+                print(f"WhatsApp receipt trigger error: {e}")
         threading.Thread(target=_run, daemon=True).start()
 
-    def _trigger_twilio_status(self, order_id: int, status: str):
+    def _trigger_whatsapp_status(self, order_id: int, status: str):
         if status != "COMPLETED" and status != "READY":
             return
         def _run():
             try:
-                twilio = TwilioService()
+                whatsapp = WhatsAppService()
                 order = OrderService().get_order(order_id)
+                shop_name = self._get_shop_name()
                 if order and order.customer and order.customer.mobile:
-                    msg = f"Hello {order.customer.name}! Your order #{order.order_number} is now {status} and ready for pickup!"
-                    twilio.send_message(order.customer.mobile, msg)
+                    items_str = ", ".join(f"{item.quantity} {item.clothing_type}" for item in order.items) if order.items else "कपड़े"
+                    msg = (
+                        f"🎉 खुशखबरी, {order.customer.name}! 🎉\n\n"
+                        f"आपका ऑर्डर #{order.order_number} ({items_str}) अब बिल्कुल तैयार है! आप इसे {shop_name} से ले जा सकते हैं।\n\n"
+                        f"कृपया अपनी सुविधा अनुसार दुकान पर आएं और अपने सिले हुए कपड़े प्राप्त करें।\n\n"
+                        f"जल्द मिलेंगे!\n{shop_name}"
+                    )
+                    whatsapp.send_whatsapp_message(order.customer.mobile, msg)
             except Exception as e:
-                print(f"Twilio status trigger error: {e}")
+                print(f"WhatsApp status trigger error: {e}")
         threading.Thread(target=_run, daemon=True).start()
 
     @Slot(str, str, result=str)
@@ -443,7 +468,7 @@ class WebBridge(QObject):
                     "status": "success", 
                     "data": {"id": order.id, "order_number": order.order_number}
                 }
-                self._trigger_twilio_receipt(order.id)
+                self._trigger_whatsapp_receipt(order.id)
                 
             elif action == "update_order":
                 order_srv = self.services["order"]
@@ -551,7 +576,16 @@ class WebBridge(QObject):
                 order_id = payload.get("order_id") or payload.get("id")
                 order_srv.update_status(order_id, status)
                 response = {"status": "success"}
-                self._trigger_twilio_status(order_id, status)
+                self._trigger_whatsapp_status(order_id, status)
+
+            elif action == "connect_whatsapp":
+                import threading
+                from app.services.whatsapp_service import WhatsAppService
+                def _run():
+                    whatsapp = WhatsAppService()
+                    whatsapp.connect_whatsapp()
+                threading.Thread(target=_run, daemon=True).start()
+                response = {"status": "success"}
 
             # ────────────────────────────────────────────────────────────
             # PAYMENTS
@@ -619,7 +653,7 @@ class WebBridge(QObject):
                     payment_date=date.today()
                 )
                 response = {"status": "success"}
-                self._trigger_twilio_receipt(order_id)
+                self._trigger_whatsapp_receipt(order_id)
 
             # ────────────────────────────────────────────────────────────
             # DELIVERIES

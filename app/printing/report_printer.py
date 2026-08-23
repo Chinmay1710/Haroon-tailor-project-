@@ -24,7 +24,7 @@ def print_report(report_data: dict, parent_widget: QWidget = None):
     finally:
         session.close()
 
-    printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+    printer = QPrinter(QPrinter.PrinterMode.ScreenResolution)
     printer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
 
     dialog = QPrintDialog(printer, parent_widget)
