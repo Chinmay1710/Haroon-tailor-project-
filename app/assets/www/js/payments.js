@@ -56,6 +56,15 @@ async function loadPayments() {
     try {
         const data = await window.API.request('get_all_payments');
         allPayments = data;
+        
+        // Also fetch pending orders in the background so KPI is accurate right away
+        try {
+            const ordersData = await window.API.request('get_all_orders');
+            allPendingOrders = ordersData.filter(o => o.remaining_amount > 0 && o.status !== 'DELIVERED');
+        } catch (e) {
+            console.error("Failed to load pending balances for KPIs", e);
+        }
+        
         applyFilters();
     } catch (e) {
         console.error(e);
@@ -79,12 +88,13 @@ function switchTab(tab) {
     if (tab === 'pending') {
         if(controls) controls.classList.add('hidden');
         if(headerRow) {
-            headerRow.className = "hidden md:grid grid-cols-5 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider";
+            headerRow.className = "hidden md:grid grid-cols-6 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider";
             headerRow.innerHTML = `
                 <div>Due Date</div>
                 <div>Order No.</div>
                 <div>Customer</div>
                 <div>Total Amount</div>
+                <div>Pending</div>
                 <div class="text-right">Action</div>
             `;
         }
@@ -133,7 +143,7 @@ function renderPendingBalances(orders) {
     
     orders.forEach(o => {
         const div = document.createElement('div');
-        div.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-white p-4 rounded-lg border border-surface-container-highest hover:shadow-md transition-shadow cursor-pointer';
+        div.className = 'grid grid-cols-1 md:grid-cols-6 gap-4 items-center bg-white p-4 rounded-lg border border-surface-container-highest hover:shadow-md transition-shadow cursor-pointer';
         div.onclick = () => window.API.request('navigate_to', {page: 'order_details', id: o.id});
         
         div.innerHTML = `
@@ -141,8 +151,8 @@ function renderPendingBalances(orders) {
             <div class="font-label-lg text-label-lg text-primary">${o.order_number}</div>
             <div class="font-body-md text-body-md text-on-surface">${o.customer_name || 'Customer'}</div>
             <div class="font-label-lg text-label-lg text-on-surface">${window.API.formatCurrency(o.total_amount)}</div>
-            <div class="text-right font-body-md text-body-md text-error font-bold flex items-center justify-end gap-3">
-                ${window.API.formatCurrency(o.remaining_amount)}
+            <div class="font-label-lg text-label-lg text-error font-bold">${window.API.formatCurrency(o.remaining_amount)}</div>
+            <div class="text-right font-body-md text-body-md flex items-center justify-end gap-3">
                 <button onclick="event.stopPropagation(); window.API.request('navigate_to', {page: 'add_payment', order_id: ${o.id}});" class="px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium border border-primary">Collect</button>
             </div>
         `;
@@ -198,16 +208,23 @@ function applyFilters() {
     
     currentlyRendered = filtered;
     
+    // Calculate pending payments using allPendingOrders if loaded, otherwise we wait for it
+    let totalPendingPayments = 0;
+    if (allPendingOrders.length > 0) {
+        allPendingOrders.forEach(o => {
+            totalPendingPayments += o.remaining_amount || 0;
+        });
+    }
+    
     // Update KPIs based on the filtered data
     let totalCollected = 0;
     let todayCollected = 0;
-    let pendingPayments = 0;
     
     const uniqueOrderIds = new Set();
     const nowStr = now.toDateString();
     let todayCount = 0;
     
-    filtered.forEach(p => {
+    allPayments.forEach(p => {
         totalCollected += p.amount || 0;
         
         if (p.payment_date) {
@@ -217,18 +234,13 @@ function applyFilters() {
                 todayCount++;
             }
         }
-        
-        if (p.order_id && !uniqueOrderIds.has(p.order_id)) {
-            uniqueOrderIds.add(p.order_id);
-            pendingPayments += p.remaining_amount || 0;
-        }
     });
     
     const tc = document.getElementById('dash-total-collected');
     if (tc) tc.textContent = window.API.formatCurrency(totalCollected);
     
     const pp = document.getElementById('dash-pending-payments');
-    if (pp) pp.textContent = window.API.formatCurrency(pendingPayments);
+    if (pp) pp.textContent = window.API.formatCurrency(totalPendingPayments);
     
     const tp = document.getElementById('dash-today-payments');
     if (tp) tp.textContent = window.API.formatCurrency(todayCollected);

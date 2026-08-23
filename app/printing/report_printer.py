@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QWidget
 from PySide6.QtPrintSupport import QPrinter, QPrintDialog
-from PySide6.QtGui import QPainter, QFont, QColor, QPen
+from PySide6.QtGui import QPainter, QFont, QColor, QPen, QPageSize
 from PySide6.QtCore import Qt, QRectF, QPointF
 
 from app.utils.formatters import format_currency, format_date_display
@@ -25,7 +25,7 @@ def print_report(report_data: dict, parent_widget: QWidget = None):
         session.close()
 
     printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-    printer.setPageSize(QPrinter.PageSize.A4)
+    printer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
 
     dialog = QPrintDialog(printer, parent_widget)
     dialog.setWindowTitle("Print Report")

@@ -24,6 +24,11 @@ class ShopSettings(Base):
     backup_location = Column(Text, default=BACKUP_DEFAULT_DIR)
     auto_backup = Column(Boolean, default=False)
     is_setup_done = Column(Boolean, default=False)
+    
+    # Twilio Integration Settings
+    twilio_account_sid = Column(String(255), default="")
+    twilio_auth_token = Column(String(255), default="")
+    twilio_sender_number = Column(String(20), default="")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
                         onupdate=lambda: datetime.now(timezone.utc), nullable=False)

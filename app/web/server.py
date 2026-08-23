@@ -29,6 +29,11 @@ mobile_assets_dir = os.path.join(ASSETS_DIR, "mobile")
 os.makedirs(mobile_assets_dir, exist_ok=True)
 app.mount("/static", StaticFiles(directory=mobile_assets_dir), name="static")
 
+from app.config import APP_DATA_DIR
+receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
+os.makedirs(receipts_dir, exist_ok=True)
+app.mount("/receipts", StaticFiles(directory=receipts_dir), name="receipts")
+
 class LoginRequest(BaseModel):
     name: str
     pin: str

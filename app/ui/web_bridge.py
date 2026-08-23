@@ -5,6 +5,12 @@ from app.services.report_service import ReportService
 from app.services.customer_service import CustomerService
 from app.services.order_service import OrderService
 from app.services.payment_service import PaymentService
+from app.services.twilio_service import TwilioService
+import threading
+import os
+from app.config import APP_DATA_DIR
+from app.printing.receipt_printer import generate_receipt_pdf
+from app.web.tunnel import GLOBAL_TUNNEL_URL
 
 class WebBridge(QObject):
     """Bridge between Javascript and Python."""
@@ -20,6 +26,42 @@ class WebBridge(QObject):
     @Slot(str)
     def log(self, message):
         print(f"[JS] {message}")
+
+    def _trigger_twilio_receipt(self, order_id: int):
+        def _run():
+            try:
+                receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
+                os.makedirs(receipts_dir, exist_ok=True)
+                pdf_path = os.path.join(receipts_dir, f"receipt_{order_id}.pdf")
+                if generate_receipt_pdf(order_id, pdf_path):
+                    twilio = TwilioService()
+                    order = OrderService().get_order(order_id)
+                    if order and order.customer and order.customer.mobile:
+                        media_url = None
+                        if GLOBAL_TUNNEL_URL:
+                            media_url = f"{GLOBAL_TUNNEL_URL}/receipts/receipt_{order_id}.pdf"
+                        
+                        msg = f"Hello {order.customer.name}! Here is your bill for Order #{order.order_number}. Total: {order.total_amount}. Remaining: {order.remaining_amount}."
+                        if media_url:
+                            msg += "\nYou can view your receipt PDF here or attached above."
+                        twilio.send_message(order.customer.mobile, msg, media_url=media_url)
+            except Exception as e:
+                print(f"Twilio trigger error: {e}")
+        threading.Thread(target=_run, daemon=True).start()
+
+    def _trigger_twilio_status(self, order_id: int, status: str):
+        if status != "COMPLETED" and status != "READY":
+            return
+        def _run():
+            try:
+                twilio = TwilioService()
+                order = OrderService().get_order(order_id)
+                if order and order.customer and order.customer.mobile:
+                    msg = f"Hello {order.customer.name}! Your order #{order.order_number} is now {status} and ready for pickup!"
+                    twilio.send_message(order.customer.mobile, msg)
+            except Exception as e:
+                print(f"Twilio status trigger error: {e}")
+        threading.Thread(target=_run, daemon=True).start()
 
     @Slot(str, str, result=str)
     def dispatch(self, action, payload_str):
@@ -400,6 +442,7 @@ class WebBridge(QObject):
                     "status": "success", 
                     "data": {"id": order.id, "order_number": order.order_number}
                 }
+                self._trigger_twilio_receipt(order.id)
                 
             elif action == "update_order":
                 order_srv = self.services["order"]
@@ -503,8 +546,11 @@ class WebBridge(QObject):
                 
             elif action == "update_order_status":
                 order_srv = self.services["order"]
-                order_srv.update_status(payload.get("order_id"), payload.get("status"))
+                status = payload.get("status")
+                order_id = payload.get("order_id")
+                order_srv.update_status(order_id, status)
                 response = {"status": "success"}
+                self._trigger_twilio_status(order_id, status)
 
             # ────────────────────────────────────────────────────────────
             # PAYMENTS
@@ -563,13 +609,15 @@ class WebBridge(QObject):
             elif action == "create_payment":
                 pay_srv = self.services["payment"]
                 from datetime import date
+                order_id = payload.get("order_id")
                 pay_srv.add_payment(
-                    order_id=payload.get("order_id"),
+                    order_id=order_id,
                     amount=float(payload.get("amount")),
                     payment_method=payload.get("payment_method", "Cash"),
                     payment_date=date.today()
                 )
                 response = {"status": "success"}
+                self._trigger_twilio_receipt(order_id)
 
             # ────────────────────────────────────────────────────────────
             # DELIVERIES
@@ -683,7 +731,10 @@ class WebBridge(QObject):
                         "phone": s.phone,
                         "address": s.address,
                         "currency_symbol": s.currency,
-                        "measurement_unit": s.measurement_unit
+                        "measurement_unit": s.measurement_unit,
+                        "twilio_account_sid": s.twilio_account_sid,
+                        "twilio_auth_token": s.twilio_auth_token,
+                        "twilio_sender_number": s.twilio_sender_number
                     }}
                 finally:
                     session.close()

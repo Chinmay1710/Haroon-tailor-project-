@@ -4,6 +4,8 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
+GLOBAL_TUNNEL_URL = None
+
 class NgrokTunnel:
     def __init__(self, port=8000):
         self.port = port
@@ -11,11 +13,13 @@ class NgrokTunnel:
         self.tunnel = None
 
     def start(self) -> Optional[str]:
+        global GLOBAL_TUNNEL_URL
         try:
             from pyngrok import ngrok
             logger.info(f"Starting ngrok tunnel for port {self.port}")
             self.tunnel = ngrok.connect(self.port)
             self.public_url = self.tunnel.public_url
+            GLOBAL_TUNNEL_URL = self.public_url
             logger.info(f"Ngrok tunnel established: {self.public_url}")
             return self.public_url
         except Exception as e:
@@ -27,11 +31,13 @@ class NgrokTunnel:
                 local_ip = s.getsockname()[0]
                 s.close()
                 self.public_url = f"http://{local_ip}:{self.port}"
+                GLOBAL_TUNNEL_URL = self.public_url
                 logger.info(f"Using local IP fallback for worker portal: {self.public_url}")
                 return self.public_url
             except Exception as e2:
                 logger.error(f"Failed to get local IP: {e2}")
                 self.public_url = f"http://localhost:{self.port}"
+                GLOBAL_TUNNEL_URL = self.public_url
                 return self.public_url
 
     def stop(self):
