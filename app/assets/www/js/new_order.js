@@ -251,6 +251,7 @@ window.openAddItemModal = function(itemId = null) {
     
     // Reset modal
     document.getElementById('modal-save-profile').checked = true;
+    document.getElementById('modal-special-instructions').value = '';
     
     if (itemId) {
         document.getElementById('modal-title').textContent = "Edit Item";
@@ -260,6 +261,8 @@ window.openAddItemModal = function(itemId = null) {
         document.getElementById('modal-item-type').value = item.clothing_type;
         document.getElementById('modal-item-qty').value = item.quantity;
         document.getElementById('modal-item-price').value = item.price;
+        
+        document.getElementById('modal-special-instructions').value = item.notes || '';
         
         if (item.image_base64) {
             currentImageBase64 = item.image_base64;
@@ -388,6 +391,7 @@ window.saveModalItem = function() {
     const qty = parseInt(document.getElementById('modal-item-qty').value) || 1;
     const price = parseFloat(document.getElementById('modal-item-price').value) || 0;
     const saveProfile = document.getElementById('modal-save-profile').checked;
+    const specialInstructions = (document.getElementById('modal-special-instructions').value || '').trim();
     
     if (price <= 0) {
         window.API.toast("Please enter a valid price", "error");
@@ -418,7 +422,8 @@ window.saveModalItem = function() {
                 price: price,
                 measurements: measurements,
                 save_profile: saveProfile,
-                image_base64: currentImageBase64
+                image_base64: currentImageBase64,
+                notes: specialInstructions
             };
         }
     } else {
@@ -430,7 +435,8 @@ window.saveModalItem = function() {
             price: price,
             measurements: measurements,
             save_profile: saveProfile,
-            image_base64: currentImageBase64
+            image_base64: currentImageBase64,
+            notes: specialInstructions
         });
     }
     
@@ -557,6 +563,7 @@ function renderOrderItems() {
                         <div class="flex flex-wrap gap-1 mt-2">
                             ${measHtml}
                         </div>
+                        ${item.notes ? `<div class="mt-2 flex items-start gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[16px] mt-0.5 flex-shrink-0">edit_note</span><span class="font-body-sm text-[12px] italic">${item.notes}</span></div>` : ''}
                     </div>
                 </div>
                 
@@ -635,7 +642,8 @@ window.saveOrder = async function() {
         price: i.price,
         measurements: i.measurements,
         save_profile: i.save_profile,
-        image_base64: i.image_base64 || null
+        image_base64: i.image_base64 || null,
+        notes: i.notes || ''
     }));
     
     const sendWhatsappCheckbox = document.getElementById('order-send-whatsapp');

@@ -22,12 +22,17 @@ async function loadSettings() {
     try {
         const data = await window.API.request('get_settings');
         
-        document.getElementById('set-shop-name').value = data.shop_name || '';
-        document.getElementById('set-owner-name').value = data.owner_name || '';
-        document.getElementById('set-phone').value = data.phone || '';
-        document.getElementById('set-address').value = data.address || '';
-        document.getElementById('set-currency').value = data.currency_symbol || '₹';
-        document.getElementById('set-unit').value = data.measurement_unit || 'inches';
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val || '';
+        };
+        
+        setVal('set-shop-name', data.shop_name);
+        setVal('set-owner-name', data.owner_name);
+        setVal('set-phone', data.phone);
+        setVal('set-address', data.address);
+        setVal('set-currency', data.currency_symbol);
+        setVal('set-unit', data.measurement_unit);
         
         const dictationSelect = document.getElementById('dictationLanguageSelect');
         if (dictationSelect) {
@@ -40,13 +45,18 @@ async function loadSettings() {
 }
 
 async function saveSettings() {
+    const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value : '';
+    };
+    
     const payload = {
-        shop_name: document.getElementById('set-shop-name').value,
-        owner_name: document.getElementById('set-owner-name').value,
-        phone: document.getElementById('set-phone').value,
-        address: document.getElementById('set-address').value,
-        currency_symbol: document.getElementById('set-currency').value,
-        measurement_unit: document.getElementById('set-unit').value
+        shop_name: getVal('set-shop-name'),
+        owner_name: getVal('set-owner-name'),
+        phone: getVal('set-phone'),
+        address: getVal('set-address'),
+        currency: getVal('set-currency'),
+        measurement_unit: getVal('set-unit')
     };
     
     const dictationSelect = document.getElementById('dictationLanguageSelect');
@@ -57,6 +67,11 @@ async function saveSettings() {
     try {
         await window.API.request('update_settings', payload);
         window.API.toast("Settings saved successfully!", "success");
+        
+        // Update the shop name in the sidebar globally
+        document.querySelectorAll('.global-shop-name').forEach(el => {
+            el.textContent = payload.shop_name || 'My Tailor Shop';
+        });
     } catch (e) {
         window.API.toast(e.toString(), "error");
     }
