@@ -87,6 +87,18 @@ async function loadSlipData(orderId) {
         if (!hasMeasurements) {
             mContainer.innerHTML = '<div class="p-4 bg-surface-container-low text-center text-on-surface-variant rounded-lg">No measurement profile attached to this order.</div>';
         }
+
+        if (o.scan_url) {
+            document.getElementById('ss-qrcode').innerHTML = '';
+            new QRCode(document.getElementById("ss-qrcode"), {
+                text: o.scan_url,
+                width: 75,
+                height: 75,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+        }
         
     } catch (e) {
         console.error(e);

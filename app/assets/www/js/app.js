@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     window.pyBridge.dispatch(action, JSON.stringify(payload || {}));
                 }
             };
+
+            // Listen for notifications from python
+            if (window.pyBridge.notification_requested) {
+                window.pyBridge.notification_requested.connect(function(msg, type) {
+                    if (window.API && window.API.toast) {
+                        window.API.toast(msg, type);
+                    }
+                });
+            }
             
             // Hook up navigation links using data-nav attributes (language-independent)
             const navLinks = document.querySelectorAll('a[href="#"]');

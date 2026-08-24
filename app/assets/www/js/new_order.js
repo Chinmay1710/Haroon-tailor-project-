@@ -69,6 +69,11 @@ document.addEventListener("DOMContentLoaded", function() {
             wizardState.advance = parseFloat(e.target.value) || 0;
             updateTotals();
         });
+        
+        // Attach Dictation Mic
+        setTimeout(() => {
+            window.API.attachMic('order-notes');
+        }, 100);
     }
     init();
 });
@@ -633,14 +638,26 @@ window.saveOrder = async function() {
         image_base64: i.image_base64 || null
     }));
     
+    const sendWhatsappCheckbox = document.getElementById('order-send-whatsapp');
+    const sendWhatsapp = sendWhatsappCheckbox ? sendWhatsappCheckbox.checked : false;
+    
     const payload = {
         customerId: wizardState.customerId,
         items: payloadItems,
         deliveryDate: date,
         notes: notes,
         advance: wizardState.advance,
-        paymentMethod: method
+        paymentMethod: method,
+        send_whatsapp: sendWhatsapp
     };
+    
+    const saveBtn = document.getElementById('save-order-btn');
+    const saveBtnText = document.getElementById('save-order-text');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.classList.add('opacity-50');
+        saveBtnText.innerText = sendWhatsapp ? "SENDING MESSAGE..." : "SAVING ORDER...";
+    }
     
     try {
         if (editingOrderModeId) {
@@ -659,5 +676,10 @@ window.saveOrder = async function() {
         }
     } catch (e) {
         window.API.toast(e.toString(), "error");
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.classList.remove('opacity-50');
+            saveBtnText.innerText = "SAVE ORDER";
+        }
     }
 }

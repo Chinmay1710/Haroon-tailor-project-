@@ -108,9 +108,42 @@ class PrintService:
                 for snap in item.measurements:
                     c.drawString(50, y, f"{snap.field_name}: {snap.field_value} {snap.unit}")
                     y -= 15
-                    if y < 50:
+                    if y < 150:
                         c.showPage()
                         y = height - 50
+
+            # --- ADD QR CODE ---
+            try:
+                import qrcode
+                from reportlab.lib.utils import ImageReader
+                from app.web.tunnel import GLOBAL_TUNNEL_URL
+                import tempfile
+
+                tunnel_url = GLOBAL_TUNNEL_URL or "http://localhost:8000"
+                scan_url = f"{tunnel_url}/scan?order_id={order.id}"
+
+                qr = qrcode.QRCode(version=1, box_size=3, border=1)
+                qr.add_data(scan_url)
+                qr.make(fit=True)
+                img = qr.make_image(fill_color="black", back_color="white")
+
+                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tf:
+                    img.save(tf.name)
+                    qr_path = tf.name
+
+                qr_size = 80
+                qr_y = 50
+                if y < (qr_y + qr_size + 20):
+                    c.showPage()
+                    qr_y = height - qr_size - 40
+
+                c.drawImage(ImageReader(qr_path), width/2.0 - qr_size/2, qr_y, width=qr_size, height=qr_size)
+                c.setFont("Helvetica", 8)
+                c.drawCentredString(width/2.0, qr_y - 10, "Scan to update status")
+                os.remove(qr_path)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Failed to generate QR code: {e}")
 
             c.showPage()
             c.save()

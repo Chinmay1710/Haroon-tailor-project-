@@ -245,10 +245,14 @@
                 </div>
             </section>
             
-            <div class="flex justify-end pt-4 pb-12">
-                <button onclick="saveOrder()" class="bg-primary text-on-primary font-label-lg text-lg py-4 px-12 rounded-xl hover:opacity-90 transition-all ambient-shadow flex items-center gap-3 w-full md:w-auto justify-center">
+            <div class="flex flex-col items-end gap-4 pt-4 pb-12">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" id="order-send-whatsapp" checked class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary">
+                    <span class="font-label-lg text-on-surface">Send WhatsApp Receipt</span>
+                </label>
+                <button id="save-order-btn" onclick="saveOrder()" class="bg-primary text-on-primary font-label-lg text-lg py-4 px-12 rounded-xl hover:opacity-90 transition-all ambient-shadow flex items-center gap-3 w-full md:w-auto justify-center">
                     <span class="material-symbols-outlined text-[24px]" data-icon="check_circle">check_circle</span>
-                    SAVE ORDER
+                    <span id="save-order-text">SAVE ORDER</span>
                 </button>
             </div>
             

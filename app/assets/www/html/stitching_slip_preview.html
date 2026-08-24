@@ -189,11 +189,16 @@ None
 <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center uppercase">Sewn By</span>
 </div>
 </div>
-<div id="ss-generated-date" class="font-body-md text-body-md text-on-surface-variant">
-                Generated: ...
-            </div>
+<div class="flex flex-col items-center gap-2">
+    <div id="ss-qrcode" class="p-1 bg-white rounded-md border shadow-sm h-[90px] w-[90px] flex items-center justify-center"></div>
+    <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Scan to Update</span>
+    <div id="ss-generated-date" class="font-body-sm text-[10px] text-on-surface-variant mt-1">
+        Generated: ...
+    </div>
+</div>
 </footer>
 </main>
+<script src="../js/qrcode.min.js"></script>
 <script src="../js/api.js?v=1787471943"></script>
 <script src="../js/app.js?v=1787471943"></script>
 <script src="../js/stitching_slip_preview.js?v=1787471943"></script>

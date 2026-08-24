@@ -16,9 +16,10 @@ logger = get_logger(__name__)
 
 # Valid status transitions
 VALID_TRANSITIONS = {
-    "NEW": ["STITCHING", "READY", "DELIVERED", "CANCELLED"],
+    "NEW": ["CUTTING", "STITCHING", "READY", "DELIVERED", "CANCELLED"],
+    "CUTTING": ["STITCHING", "READY", "DELIVERED", "CANCELLED"],
     "STITCHING": ["NEW", "READY", "DELIVERED", "CANCELLED"],
-    "READY": ["NEW", "STITCHING", "DELIVERED", "CANCELLED"],
+    "READY": ["NEW", "CUTTING", "STITCHING", "DELIVERED", "CANCELLED"],
     "DELIVERED": ["READY", "CANCELLED"],  # Allow reverting if accidental
     "CANCELLED": ["NEW"],  # Allow reopening
 }
@@ -231,6 +232,75 @@ class OrderService:
         session = get_session()
         try:
             return OrderRepository(session).get_by_id(order_id)
+        finally:
+            session.close()
+
+    def mark_stage_complete(self, order_id: int, stage_name: str, worker_id: int, extra_amount: float = 0.0, extra_desc: str = "") -> Order:
+        """Mark a specific stage (CUTTING or READY) as complete for an order by a worker."""
+        session = get_session()
+        try:
+            order_repo = OrderRepository(session)
+            order = order_repo.get_by_id(order_id)
+            if not order:
+                raise ValueError(f"Order {order_id} not found")
+                
+            from app.services.worker_service import worker_service
+            
+            # 1. Log WorkEntry for each item in the order
+            for item in order.items:
+                garment_label = f"{item.clothing_type} - {stage_name}"
+                
+                # Assign extra_amount only to the first item so we don't duplicate it
+                amt = extra_amount if item == order.items[0] else 0.0
+                desc = extra_desc if item == order.items[0] else None
+                
+                worker_service.submit_work_entry(
+                    worker_id=worker_id,
+                    garment_type=garment_label,
+                    quantity=item.quantity,
+                    bill_number=order.order_number,
+                    extra_work_description=desc,
+                    extra_amount=amt
+                )
+            
+            # 2. Update Order Status
+            new_status = "CUTTING" if stage_name.upper() == "CUTTING" else "READY"
+            if new_status in VALID_TRANSITIONS.get(order.status, []):
+                order = order_repo.update_status(order_id, new_status)
+            elif order.status == new_status:
+                pass # already in this state
+            else:
+                # Force status update if invalid transition but worker completed it anyway
+                order = order_repo.update_status(order_id, new_status)
+                
+            # Pre-load customer details before commit
+            customer_name = order.customer.name if order.customer else None
+            customer_mobile = order.customer.mobile if order.customer else None
+            order_number = order.order_number
+
+            session.commit()
+            
+            # 3. Send WhatsApp if READY
+            if new_status == "READY" and customer_mobile:
+                from app.services.whatsapp_service import WhatsAppService
+                try:
+                    msg = (
+                        f"✨ नमस्ते {customer_name}! ✨\n\n"
+                        f"खुशखबरी! आपका ऑर्डर #{order_number} अब पूरी तरह से तैयार है।\n"
+                        f"आप इसे हमारी दुकान से प्राप्त कर सकते हैं।\n\n"
+                        f"धन्यवाद!"
+                    )
+                    wa = WhatsAppService()
+                    wa.send_whatsapp_message(customer_mobile, msg)
+                except Exception as wa_err:
+                    logger.error(f"Failed to send WhatsApp ready message: {wa_err}")
+
+            return order
+            
+        except Exception as e:
+            session.rollback()
+            logger.error(f"Failed to mark stage complete: {e}")
+            raise
         finally:
             session.close()
 

@@ -81,6 +81,72 @@ def get_garment_rates():
     rates = worker_service.get_garment_rates()
     return {"status": "success", "rates": rates}
 
+@app.get("/scan", response_class=HTMLResponse)
+def scan_order(order_id: int):
+    # Return the mobile portal HTML specifically for scanning
+    scan_path = os.path.join(mobile_assets_dir, "scan.html")
+    if os.path.exists(scan_path):
+        with open(scan_path, "r") as f:
+            return f.read()
+    return "<h1>Worker Portal (Scan) not found</h1>"
+
+@app.get("/api/orders/{order_id}")
+def get_order_details(order_id: int):
+    from app.services.order_service import OrderService
+    srv = OrderService()
+    order = srv.get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    items = []
+    for item in order.items:
+        items.append({"clothing_type": item.clothing_type, "quantity": item.quantity})
+        
+    return {
+        "status": "success", 
+        "order": {
+            "id": order.id,
+            "order_number": order.order_number,
+            "customer_name": order.customer.name if order.customer else "Unknown",
+            "status": order.status,
+            "items": items
+        }
+    }
+
+class StageRequest(BaseModel):
+    pin: str
+    stage: str
+    extra_amount: float = 0.0
+    extra_desc: str = ""
+
+@app.post("/api/orders/{order_id}/stage")
+def submit_order_stage(order_id: int, req: StageRequest):
+    # 1. Verify PIN by checking all workers
+    workers = worker_service.get_all_workers()
+    matched_worker = None
+    for w in workers:
+        if w["pin"] == req.pin and w["is_active"]:
+            matched_worker = w
+            break
+            
+    if not matched_worker:
+        raise HTTPException(status_code=401, detail="Invalid PIN")
+        
+    # 2. Update the order
+    from app.services.order_service import OrderService
+    srv = OrderService()
+    try:
+        srv.mark_stage_complete(
+            order_id=order_id,
+            stage_name=req.stage,
+            worker_id=matched_worker["id"],
+            extra_amount=req.extra_amount,
+            extra_desc=req.extra_desc
+        )
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     # Return the mobile portal HTML

@@ -79,14 +79,15 @@ async function loadOrders() {
 }
 
 window.markOrderComplete = async function(id) {
-    const confirmComplete = await window.API.confirm(
+    const confirmResult = await window.API.confirmWithCheckbox(
         'Order Ready?',
-        'Are you sure you want to mark this order as ready? This means the product is complete and waiting for the customer.'
+        'Are you sure you want to mark this order as ready? This means the product is complete and waiting for the customer.',
+        'Send WhatsApp Notification'
     );
     
-    if (confirmComplete) {
+    if (confirmResult.confirmed) {
         try {
-            await window.API.request('update_order_status', {order_id: id, status: 'READY'});
+            await window.API.request('update_order_status', {order_id: id, status: 'READY', send_whatsapp: confirmResult.checked});
             window.API.toast("Order marked as Ready", "success");
             loadOrders();
         } catch (e) {

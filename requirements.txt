@@ -5,3 +5,5 @@ PySide6>=6.5.0
 SQLAlchemy>=2.0.0
 reportlab>=4.0.0
 pyinstaller>=6.0.0
+SpeechRecognition>=3.10.0
+qrcode>=7.4.2

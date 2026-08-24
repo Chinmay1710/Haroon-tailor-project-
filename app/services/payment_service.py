@@ -60,6 +60,29 @@ class PaymentService:
         finally:
             session.close()
 
+    def delete_payment(self, payment_id: int):
+        session = get_session()
+        try:
+            pay_repo = PaymentRepository(session)
+            payment = pay_repo.get_by_id(payment_id)
+            if not payment:
+                return
+            
+            # Revert order's paid amount
+            order_repo = OrderRepository(session)
+            order = order_repo.get_by_id(payment.order_id)
+            if order:
+                order.paid_amount = (order.paid_amount or 0) - payment.amount
+            
+            session.delete(payment)
+            session.commit()
+            logger.info(f"Payment {payment_id} deleted and order updated.")
+        except Exception as e:
+            session.rollback()
+            logger.error(f"Failed to delete payment: {e}")
+        finally:
+            session.close()
+
     def get_all_payments(self) -> list[Payment]:
         session = get_session()
         try:

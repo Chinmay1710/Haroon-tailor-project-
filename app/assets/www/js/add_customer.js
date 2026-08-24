@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
     if (btnSaveAddMeas) {
         btnSaveAddMeas.addEventListener('click', () => saveCustomer('new_order'));
     }
+    
+    // Attach Dictation Mic to large textareas
+    setTimeout(() => {
+        if (window.API && window.API.attachMic) {
+            window.API.attachMic('customerName');
+            window.API.attachMic('customerAddress');
+            window.API.attachMic('customerNotes');
+        }
+    }, 100);
 });
 
 async function saveCustomer(targetPage) {

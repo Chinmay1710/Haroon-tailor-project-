@@ -285,7 +285,15 @@
 <!-- Note -->
 <div class="space-y-stack_sm">
 <label class="block font-label-lg text-label-lg text-on-surface">Note (Optional)</label>
-<textarea class="w-full p-4 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md min-h-[100px] resize-y" placeholder="Add any details about this transaction..."></textarea>
+<textarea id="ap-note" class="w-full p-4 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md min-h-[100px] resize-y" placeholder="Add any details about this transaction..."></textarea>
+</div>
+
+<!-- Send WhatsApp Checkbox -->
+<div class="flex items-center justify-end pt-2">
+    <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" id="ap-send-whatsapp" checked class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary">
+        <span class="font-label-lg text-on-surface">Send WhatsApp Receipt</span>
+    </label>
 </div>
 <!-- Submit Button -->
 <div class="pt-4 flex gap-4">

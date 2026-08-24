@@ -253,21 +253,20 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.shop_name">Shop Name</span></label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" id="shop_name" type="text" value=""/>
+<input id="set-shop-name" class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="text" value=""/>
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.owner_name">Owner Name</span></label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="text" value="Eleanor Vance"/>
+<input id="set-owner-name" class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="text" value=""/>
 </div>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label-lg text-label-lg text-on-surface">Phone Number</label>
-<input class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="tel" value="9876543210"/>
+<input id="set-phone" class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline" type="tel" value=""/>
 </div>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.address">Physical Address</span></label>
-<textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline resize-none" rows="3">124 Tailor's Row, Maker District
-Metropolis, NY 10001</textarea>
+<textarea id="set-address" class="w-full px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface placeholder:text-outline resize-none" rows="3"></textarea>
 </div>
 <div class="pt-6 flex justify-end border-t border-outline-variant/20">
 <button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors" onclick="saveSettings()"><span data-i18n="settings.save_changes">Save Changes</span></button>
@@ -282,7 +281,7 @@ Metropolis, NY 10001</textarea>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.currency">Currency</span></label>
 <div class="relative">
-<select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
+<select id="set-currency" class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
 <option selected="" value="INR">₹ Indian Rupee (INR)</option>
 <option value="USD">$ US Dollar (USD)</option>
 <option value="EUR">€ Euro (EUR)</option>
@@ -294,11 +293,29 @@ Metropolis, NY 10001</textarea>
 <div class="flex flex-col gap-1.5">
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><span data-i18n="settings.units">Measurement Units</span></label>
 <div class="relative">
-<select class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
-<option selected="" value="in">Inches (in)</option>
+<select id="set-unit" class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
+<option selected="" value="inches">Inches (in)</option>
 <option value="cm">Centimeters (cm)</option>
 </select>
 <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- App Configuration (Dictation Language) -->
+<div class="mt-6 border-t border-outline-variant/20 pt-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Features Configuration</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Dictation Language</label>
+<div class="relative">
+<select id="dictationLanguageSelect" class="w-full appearance-none px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-md text-on-surface pr-10">
+<option value="en-IN">English (India)</option>
+<option value="hi-IN">Hindi</option>
+<option value="mr-IN">Marathi</option>
+<option value="ur-IN">Urdu</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
 </div>
 </div>
 </div>
@@ -336,7 +353,7 @@ Metropolis, NY 10001</textarea>
 </div>
 
 <div class="pt-6 flex justify-end border-t border-outline-variant/20 mt-4">
-<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg transition-colors shadow-sm active:scale-95" type="button">
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-label-lg transition-colors shadow-sm active:scale-95" type="button" onclick="saveSettings()">
                                     Save Preferences
                                 </button>
 </div>

@@ -57,6 +57,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             submitPayment(currentOrderData.id);
         });
+        
+        // Attach Dictation Mic
+        setTimeout(() => {
+            window.API.attachMic('ap-note');
+        }, 100);
     }
     init();
 });
@@ -150,17 +155,25 @@ async function submitPayment(orderId) {
         }
     }
     
+    const sendWhatsappCheckbox = document.getElementById('ap-send-whatsapp');
+    const sendWhatsapp = sendWhatsappCheckbox ? sendWhatsappCheckbox.checked : false;
+    
     const btn = document.getElementById('ap-submit-btn');
     const originalContent = btn.innerHTML;
     
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
+    if (sendWhatsapp) {
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Sending Message...';
+    } else {
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
+    }
     btn.disabled = true;
     
     try {
         await window.API.request('create_payment', {
             order_id: orderId,
             amount: amount,
-            payment_method: selectedMethod
+            payment_method: selectedMethod,
+            send_whatsapp: sendWhatsapp
         });
         
         btn.innerHTML = '<span class="material-symbols-outlined" data-weight="fill">done_all</span> Payment Saved';

@@ -68,16 +68,25 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
                 
-                const confirmComplete = await window.API.confirm(
-                    'Complete Order?',
-                    'Are you sure you want to mark this order as complete? This action will mark it as delivered.'
-                );
+                let confirmResult;
+                if (newVal === 'COMPLETED' || newVal === 'READY' || newVal === 'DELIVERED') {
+                    confirmResult = await window.API.confirmWithCheckbox(
+                        'Complete Order?',
+                        'Are you sure you want to mark this order as complete? This action will mark it as delivered.',
+                        'Send WhatsApp Notification'
+                    );
+                } else {
+                    const ans = await window.API.confirm('Change Status?', `Are you sure you want to change the status to ${newVal}?`);
+                    confirmResult = { confirmed: ans, checked: false };
+                }
                 
-                if (confirmComplete) {
-                    updateOrderStatus(orderId, 'DELIVERED').then(() => {
-                        window.API.toast("Order marked as Complete", "success");
+                if (confirmResult.confirmed) {
+                    updateOrderStatus(orderId, newVal, confirmResult.checked).then(() => {
+                        window.API.toast(`Order marked as ${newVal}`, "success");
                         loadOrderDetails(orderId);
                     });
+                } else {
+                    e.target.value = oldVal;
                 }
             }
         });
@@ -99,12 +108,14 @@ async function loadOrderDetails(id) {
     }
 }
 
-async function updateOrderStatus(id, status) {
+async function updateOrderStatus(id, status, send_whatsapp = false) {
     try {
-        await window.API.request('update_order_status', {order_id: id, status: status});
+        await window.API.request('update_order_status', {order_id: id, status: status, send_whatsapp: send_whatsapp});
         window.API.toast("Status updated successfully", "success");
     } catch (e) {
         window.API.toast("Failed to update status: " + e, "error");
+        // Reload order details to revert the UI to the actual state
+        loadOrderDetails(id);
     }
 }
 

@@ -22,6 +22,14 @@ document.addEventListener("DOMContentLoaded", function() {
         
         currentCustomerId = navParams.id;
         loadCustomerDetails(navParams.id);
+        
+        // Attach Dictation Mic to large textareas
+        setTimeout(() => {
+            if (window.API && window.API.attachMic) {
+                window.API.attachMic('edit-address');
+                window.API.attachMic('edit-notes');
+            }
+        }, 100);
     }
     init();
 });

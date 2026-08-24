@@ -29,6 +29,10 @@ async function loadSettings() {
         document.getElementById('set-currency').value = data.currency_symbol || '₹';
         document.getElementById('set-unit').value = data.measurement_unit || 'inches';
         
+        const dictationSelect = document.getElementById('dictationLanguageSelect');
+        if (dictationSelect) {
+            dictationSelect.value = localStorage.getItem('dictationLanguage') || 'en-IN';
+        }
     } catch (e) {
         console.error(e);
         window.API.toast("Failed to load settings", "error");
@@ -45,8 +49,13 @@ async function saveSettings() {
         measurement_unit: document.getElementById('set-unit').value
     };
     
+    const dictationSelect = document.getElementById('dictationLanguageSelect');
+    if (dictationSelect) {
+        localStorage.setItem('dictationLanguage', dictationSelect.value);
+    }
+    
     try {
-        await window.API.request('save_settings', payload);
+        await window.API.request('update_settings', payload);
         window.API.toast("Settings saved successfully!", "success");
     } catch (e) {
         window.API.toast(e.toString(), "error");

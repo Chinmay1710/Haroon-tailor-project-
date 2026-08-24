@@ -103,6 +103,7 @@ class MainWindow(QMainWindow):
         self.channel = QWebChannel()
         self.bridge = WebBridge(self.services, parent=self)
         self.bridge.navigate_requested.connect(self._navigate_to)
+        self.bridge.dictation_result_requested.connect(self._handle_dictation_result)
         
         # Register the bridge object to be accessible as `bridge` in javascript
         self.channel.registerObject("bridge", self.bridge)
@@ -132,6 +133,15 @@ class MainWindow(QMainWindow):
             logger.info(f"Navigating to {file_path}")
         else:
             logger.error(f"Page {page_name} not found at {file_path}")
+
+    def _handle_dictation_result(self, textarea_id: str, text: str, error: str):
+        """Sends the transcription result to the Javascript frontend."""
+        # Escape strings for safe JS injection
+        import json
+        text_json = json.dumps(text)
+        error_json = json.dumps(error)
+        script = f"if (window.API && window.API.handleDictationResult) {{ window.API.handleDictationResult('{textarea_id}', {text_json}, {error_json}); }}"
+        self.web_view.page().runJavaScript(script)
 
     # ─── Close Event ───
     def closeEvent(self, event):

@@ -154,11 +154,25 @@ function renderDeliveries(deliveries) {
 }
 
 window.updateStatus = async function(orderId, newStatus) {
-    try {
-        await window.API.request('update_order_status', {id: orderId, status: newStatus});
-        window.API.toast(`Order marked as ${newStatus}`, "success");
-        loadDeliveries();
-    } catch (e) {
-        window.API.toast(e.toString(), "error");
+    let confirmResult;
+    if (newStatus === 'COMPLETED' || newStatus === 'READY' || newStatus === 'DELIVERED') {
+        confirmResult = await window.API.confirmWithCheckbox(
+            `Mark ${newStatus}?`,
+            `Are you sure you want to mark this order as ${newStatus}?`,
+            'Send WhatsApp Notification'
+        );
+    } else {
+        const ans = await window.API.confirm(`Mark ${newStatus}?`, `Are you sure you want to mark this order as ${newStatus}?`);
+        confirmResult = { confirmed: ans, checked: false };
+    }
+    
+    if (confirmResult.confirmed) {
+        try {
+            await window.API.request('update_order_status', {id: orderId, status: newStatus, send_whatsapp: confirmResult.checked});
+            window.API.toast(`Order marked as ${newStatus}`, "success");
+            loadDeliveries();
+        } catch (e) {
+            window.API.toast(e.toString(), "error");
+        }
     }
 }
