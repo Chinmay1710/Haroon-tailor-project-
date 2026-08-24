@@ -1,5 +1,7 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 const args = process.argv.slice(2);
 if (args.length < 2) {
@@ -11,27 +13,44 @@ const phoneNumber = args[0];
 const message = args[1];
 const pdfPath = args[2];
 
-const os = require('os');
+// Use Puppeteer's bundled Chromium for compatibility, fall back to system Chrome
 let chromePath = '';
-if (os.platform() === 'darwin') {
-    chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-} else if (os.platform() === 'win32') {
-    const winPath1 = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-    const winPath2 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe';
-    chromePath = fs.existsSync(winPath1) ? winPath1 : winPath2;
+try {
+    const puppeteer = require('puppeteer');
+    chromePath = puppeteer.executablePath();
+} catch(e) {
+    if (os.platform() === 'darwin') {
+        chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    } else if (os.platform() === 'win32') {
+        const winPath1 = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+        const winPath2 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe';
+        chromePath = fs.existsSync(winPath1) ? winPath1 : winPath2;
+    }
 }
 
-const path = require('path');
 const authPath = path.join(__dirname, '..', '..', '..', '.wwebjs_auth');
 
-const client = new Client({
-    authStrategy: new LocalAuth({ dataPath: authPath }),
-    puppeteer: {
-        executablePath: chromePath,
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    }
-});
+function createClient() {
+    return new Client({
+        authStrategy: new LocalAuth({ dataPath: authPath }),
+        webVersionCache: {
+            type: 'none',
+        },
+        puppeteer: {
+            executablePath: chromePath,
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--disable-extensions',
+            ]
+        }
+    });
+}
 
 // Clear any zombie lock files
 try {
@@ -43,76 +62,87 @@ try {
     if (fs.existsSync(lock3)) fs.unlinkSync(lock3);
 } catch (e) {}
 
-client.on('ready', async () => {
+function killBrowser(client) {
     try {
-        const chatId = `${phoneNumber}@c.us`;
-        
-        if (pdfPath && fs.existsSync(pdfPath)) {
-            console.log("Preparing PDF: " + pdfPath);
-            const media = MessageMedia.fromFilePath(pdfPath);
-            console.log("Sending PDF...");
-            await client.sendMessage(chatId, media, { caption: message, sendMediaAsDocument: true });
-            console.log("PDF sent successfully via wwebjs!");
-        } else {
-            console.log("Sending text only...");
-            await client.sendMessage(chatId, message);
+        if (client.pupBrowser) {
+            const pid = client.pupBrowser.process()?.pid;
+            if (pid) process.kill(pid, 'SIGKILL');
         }
-        console.log("Message sent successfully!");
-        
-        // Wait 5 seconds to ensure the browser finishes transmitting to WhatsApp servers
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        
+    } catch(e) {}
+}
+
+const MAX_RETRIES = 3;
+let attempt = 0;
+
+async function startClient() {
+    attempt++;
+    
+    const client = createClient();
+
+    client.on('ready', async () => {
         try {
-            if (client.pupBrowser) {
-                const pid = client.pupBrowser.process().pid;
-                process.kill(pid, 'SIGKILL');
+            const chatId = `${phoneNumber}@c.us`;
+            
+            if (pdfPath && fs.existsSync(pdfPath)) {
+                console.log("Preparing PDF: " + pdfPath);
+                const media = MessageMedia.fromFilePath(pdfPath);
+                console.log("Sending PDF...");
+                await client.sendMessage(chatId, media, { caption: message, sendMediaAsDocument: true });
+                console.log("PDF sent successfully via wwebjs!");
+            } else {
+                console.log("Sending text only...");
+                await client.sendMessage(chatId, message);
             }
-        } catch(e) {}
-        setTimeout(() => process.exit(0), 1000);
-    } catch (error) {
-        console.error("Failed to send message:", error);
-        try {
-            if (client.pupBrowser) {
-                const pid = client.pupBrowser.process().pid;
-                process.kill(pid, 'SIGKILL');
-            }
-        } catch(e) {}
-        setTimeout(() => process.exit(1), 1000);
+            console.log("Message sent successfully!");
+            
+            // Wait 5 seconds to ensure the browser finishes transmitting to WhatsApp servers
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            
+            killBrowser(client);
+            setTimeout(() => process.exit(0), 1000);
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            killBrowser(client);
+            setTimeout(() => process.exit(1), 1000);
+        }
+    });
+
+    client.on('qr', async () => {
+        console.error('Session invalid, QR code requested. Please login again.');
+        try { await client.destroy(); } catch(e) {}
+        setTimeout(() => process.exit(1), 2000);
+    });
+
+    client.on('auth_failure', async msg => {
+        console.error('AUTHENTICATION FAILURE', msg);
+        killBrowser(client);
+        try { await client.destroy(); } catch(e) {}
+        setTimeout(() => process.exit(1), 2000);
+    });
+
+    try {
+        await client.initialize();
+    } catch (err) {
+        console.error(`❌ Initialization failed (attempt ${attempt}/${MAX_RETRIES}):`, err.message);
+        
+        killBrowser(client);
+        try { await client.destroy(); } catch(e) {}
+        
+        if (attempt < MAX_RETRIES) {
+            console.log(`⏳ Retrying in 5 seconds...`);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            return startClient();
+        } else {
+            console.error(`❌ Failed after ${MAX_RETRIES} attempts.`);
+            process.exit(1);
+        }
     }
-});
-
-client.on('qr', async () => {
-    console.error('Session invalid, QR code requested. Please login again.');
-    await client.destroy();
-    setTimeout(() => process.exit(1), 2000);
-});
-
-client.on('auth_failure', async msg => {
-    console.error('AUTHENTICATION FAILURE', msg);
-    await client.destroy();
-    setTimeout(() => process.exit(1), 2000);
-    try { await client.destroy(); } catch(e) {}
-});
+}
 
 // Timeout after 120 seconds if it can't connect
 setTimeout(async () => {
     console.error('Connection timed out');
-    try {
-        if (client.pupBrowser) {
-            const pid = client.pupBrowser.process().pid;
-            process.kill(pid, 'SIGKILL');
-        }
-    } catch(e) {}
-    setTimeout(() => process.exit(1), 1000);
+    process.exit(1);
 }, 120000);
 
-client.initialize().catch(err => {
-    console.error('Initialization error:', err);
-    try {
-        if (client.pupBrowser) {
-            const pid = client.pupBrowser.process().pid;
-            process.kill(pid, 'SIGKILL');
-        }
-    } catch(e) {}
-    setTimeout(() => process.exit(1), 1000);
-});
+startClient();

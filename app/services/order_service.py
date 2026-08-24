@@ -84,6 +84,7 @@ class OrderService:
                     quantity=item_data.get('quantity', 1),
                     price=item_data.get('price', 0.0),
                     image_path=img_path,
+                    notes=item_data.get('notes', ''),
                 )
 
                 # Snapshot inline measurements for this item

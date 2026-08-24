@@ -1,4 +1,3 @@
-2026/08/23-16:20:11.895 c57114 Reusing MANIFEST /Users/chinmay/Documents/Haroon_tailer/.wwebjs_auth/session/Default/Local Storage/leveldb/MANIFEST-000001
-2026/08/23-16:20:11.897 c57114 Recovering log #12
-2026/08/23-16:20:11.897 c57114 (ignoring error) /Users/chinmay/Documents/Haroon_tailer/.wwebjs_auth/session/Default/Local Storage/leveldb/000012.log: dropping 11570 bytes; Corruption: checksum mismatch
-2026/08/23-16:20:11.897 c57114 Reusing old log /Users/chinmay/Documents/Haroon_tailer/.wwebjs_auth/session/Default/Local Storage/leveldb/000012.log 
+2026/08/24-15:53:21.846 5654 Reusing MANIFEST C:\Users\Vivek\OneDrive\Desktop\Haroon_tailor_client_project\Haroon-tailor-project-\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/08/24-15:53:21.880 5654 Recovering log #3
+2026/08/24-15:53:21.926 5654 Reusing old log C:\Users\Vivek\OneDrive\Desktop\Haroon_tailor_client_project\Haroon-tailor-project-\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
