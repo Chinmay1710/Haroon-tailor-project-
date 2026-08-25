@@ -870,11 +870,11 @@ class WebBridge(QObject):
                 for e in expenses:
                     data.append({
                         "id": e.id,
-                        "date": e.date.isoformat() if e.date else "",
+                        "date": e.expense_date.isoformat() if e.expense_date else "",
                         "category": e.category,
                         "amount": e.amount,
-                        "description": e.description or "",
-                        "payment_method": e.payment_method
+                        "name": e.name,
+                        "note": e.note or ""
                     })
                 from datetime import date, timedelta
                 today = date.today()
@@ -883,26 +883,39 @@ class WebBridge(QObject):
                 
                 stats = {"today": 0, "week": 0, "month": 0}
                 for e in expenses:
-                    if e.date:
-                        if e.date == today:
+                    if e.expense_date:
+                        if e.expense_date == today:
                             stats["today"] += e.amount
-                        if e.date >= week_start:
+                        if e.expense_date >= week_start:
                             stats["week"] += e.amount
-                        if e.date >= month_start:
+                        if e.expense_date >= month_start:
                             stats["month"] += e.amount
                 response = {"status": "success", "data": {"expenses": data, "stats": stats}}
                 
             elif action == "create_expense":
                 exp_srv = self.services["expense"]
                 from datetime import date
+                
+                exp_date_str = payload.get("expense_date")
+                exp_date = date.fromisoformat(exp_date_str) if exp_date_str else date.today()
+                
                 exp_srv.create_expense(
+                    name=payload.get("name"),
                     category=payload.get("category"),
                     amount=payload.get("amount"),
-                    description=payload.get("description"),
-                    payment_method=payload.get("payment_method"),
-                    date=date.today()
+                    expense_date=exp_date,
+                    note=payload.get("note")
                 )
                 response = {"status": "success"}
+                
+            elif action == "delete_expense":
+                exp_srv = self.services["expense"]
+                exp_id = payload.get("id")
+                if exp_id:
+                    exp_srv.delete_expense(int(exp_id))
+                    response = {"status": "success"}
+                else:
+                    response = {"status": "error", "message": "Expense ID is required"}
 
             # ────────────────────────────────────────────────────────────
             # REPORTS

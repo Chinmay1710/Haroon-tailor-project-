@@ -30,7 +30,7 @@ class ReportService:
             pending_payments = pay_repo.get_total_pending()
             total_expenses = expense_repo.get_total_in_range(start_date, end_date)
 
-            estimated_profit = total_sales - total_expenses
+            estimated_profit = total_payments - total_expenses
 
             return {
                 "start_date": start_date,
