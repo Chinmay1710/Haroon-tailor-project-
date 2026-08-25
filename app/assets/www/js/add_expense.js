@@ -46,7 +46,7 @@ async function saveExpense() {
     
     try {
         const response = await window.API.request('create_expense', payload);
-        if (response && response.status === 'success') {
+        if (response) {
             const successMsg = document.getElementById('success-message');
             if (successMsg) {
                 successMsg.classList.remove('hidden', 'opacity-0', 'translate-y-[-10px]');
