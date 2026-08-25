@@ -127,30 +127,35 @@ function filterOrders(resetPage = true) {
         return matchesSearch && matchesStatus;
     });
 
-    // Sort red alert (overdue and urgent) orders to top, then by closest delivery date
     filtered.sort((a, b) => {
-        const checkAlert = (o) => {
-            if (o.status === 'OVERDUE' || (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.delivery_date && new Date(o.delivery_date) < new Date())) return true;
-            if (o.status === 'NEW' && o.delivery_date) {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const dDate = new Date(o.delivery_date);
-                dDate.setHours(0, 0, 0, 0);
-                const diffDays = Math.ceil((dDate - today) / (1000 * 60 * 60 * 24));
-                if (diffDays >= 0 && diffDays <= 3) return true;
-            }
-            return false;
-        };
-        
-        const isAAlert = checkAlert(a);
-        const isBAlert = checkAlert(b);
-        
-        if (isAAlert && !isBAlert) return -1;
-        if (!isAAlert && isBAlert) return 1;
+        if (status === 'All Orders' || status === 'Complete') {
+            // Stack system: newest orders first
+            return (b.id || 0) - (a.id || 0);
+        } else {
+            // Incomplete orders: sort red alert (overdue and urgent) orders to top, then by closest delivery date
+            const checkAlert = (o) => {
+                if (o.status === 'OVERDUE' || (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.delivery_date && new Date(o.delivery_date) < new Date())) return true;
+                if (o.status === 'NEW' && o.delivery_date) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const dDate = new Date(o.delivery_date);
+                    dDate.setHours(0, 0, 0, 0);
+                    const diffDays = Math.ceil((dDate - today) / (1000 * 60 * 60 * 24));
+                    if (diffDays >= 0 && diffDays <= 3) return true;
+                }
+                return false;
+            };
+            
+            const isAAlert = checkAlert(a);
+            const isBAlert = checkAlert(b);
+            
+            if (isAAlert && !isBAlert) return -1;
+            if (!isAAlert && isBAlert) return 1;
 
-        const dateA = a.delivery_date ? new Date(a.delivery_date).getTime() : Infinity;
-        const dateB = b.delivery_date ? new Date(b.delivery_date).getTime() : Infinity;
-        return dateA - dateB;
+            const dateA = a.delivery_date ? new Date(a.delivery_date).getTime() : Infinity;
+            const dateB = b.delivery_date ? new Date(b.delivery_date).getTime() : Infinity;
+            return dateA - dateB;
+        }
     });
 
     const totalItems = filtered.length;
