@@ -39,55 +39,56 @@ async function loadExpenses() {
 function filterExpenses(query) {
     const q = query.toLowerCase();
     const filtered = allExpenses.filter(e => 
-        (e.title && e.title.toLowerCase().includes(q)) || 
+        (e.name && e.name.toLowerCase().includes(q)) || 
         (e.category && e.category.toLowerCase().includes(q))
     );
     renderExpenses(filtered);
 }
 
 function renderExpenses(expenses) {
-    const tbody = document.getElementById('table-expenses');
-    if (!tbody) return;
+    const container = document.getElementById('table-expenses');
+    if (!container) return;
     
-    tbody.innerHTML = '';
+    container.innerHTML = '';
     
     if (expenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-on-surface-variant">No expenses found</td></tr>';
+        container.innerHTML = '<div class="p-4 text-center text-on-surface-variant w-full">No expenses found</div>';
         return;
     }
     
     expenses.forEach(exp => {
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-surface-container last:border-0 hover:bg-surface-container-highest/20 transition-colors cursor-pointer';
+        const div = document.createElement('div');
+        div.className = 'bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center';
         
         const catIcons = {
-            'Materials': 'inventory_2',
-            'Utilities': 'bolt',
-            'Rent': 'home_work',
-            'Salary': 'payments',
-            'Maintenance': 'build',
-            'Other': 'receipt_long'
+            'Material': { icon: 'category', bg: 'bg-[#dce9ff]/40', text: 'text-[#545f73]', border: 'border-[#dce9ff]' },
+            'Utility': { icon: 'bolt', bg: 'bg-[#ffdcbd]/40', text: 'text-[#623f18]', border: 'border-[#ffdcbd]' },
+            'Maintenance': { icon: 'build', bg: 'bg-[#e0e0db]/40', text: 'text-[#454744]', border: 'border-[#e0e0db]' },
+            'Rent': { icon: 'storefront', bg: 'bg-[#d8e3fb]/40', text: 'text-[#111c2d]', border: 'border-[#d8e3fb]' },
+            'Salary': { icon: 'payments', bg: 'bg-[#dce9ff]/40', text: 'text-[#545f73]', border: 'border-[#dce9ff]' }
         };
-        const icon = catIcons[exp.category] || 'receipt_long';
+        const catStyle = catIcons[exp.category] || { icon: 'receipt_long', bg: 'bg-surface-container/40', text: 'text-on-surface-variant', border: 'border-outline-variant' };
         
-        tr.innerHTML = `
-            <td class="p-4">
-                <p class="font-label-lg text-on-surface">${exp.title}</p>
-                <p class="font-label-sm text-on-surface-variant">${window.API.formatDate(exp.expense_date)}</p>
-            </td>
-            <td class="p-4">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-outline text-[18px]">${icon}</span>
-                    <span class="text-on-surface-variant">${exp.category}</span>
-                </div>
-            </td>
-            <td class="p-4 font-medium">${window.API.formatCurrency(exp.amount)}</td>
-            <td class="p-4 text-right">
-                <button onclick="event.stopPropagation(); window.API.request('delete_expense', {id: ${exp.id}}).then(()=>loadExpenses());" class="w-8 h-8 rounded-full hover:bg-error-container hover:text-on-error-container text-on-surface-variant flex items-center justify-center transition-colors">
+        const dateFormatted = window.API.formatDate ? window.API.formatDate(exp.date) : exp.date;
+        const amountFormatted = window.API.formatCurrency ? window.API.formatCurrency(exp.amount) : `$${exp.amount}`;
+        
+        div.innerHTML = `
+            <div class="col-span-2 font-body-md text-body-md text-on-surface-variant">${dateFormatted}</div>
+            <div class="col-span-3 font-label-lg text-label-lg text-on-surface">${exp.name}</div>
+            <div class="col-span-2">
+                <span class="px-3 py-1 ${catStyle.bg} ${catStyle.text} rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border ${catStyle.border}">
+                    <span class="material-symbols-outlined text-[14px]">${catStyle.icon}</span>
+                    ${exp.category}
+                </span>
+            </div>
+            <div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">${exp.note}</div>
+            <div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface flex items-center justify-end gap-3">
+                ${amountFormatted}
+                <button onclick="event.stopPropagation(); window.API.request('delete_expense', {id: ${exp.id}}).then(()=>loadExpenses());" class="w-8 h-8 rounded-full hover:bg-error-container hover:text-error text-on-surface-variant flex items-center justify-center transition-colors">
                     <span class="material-symbols-outlined text-[20px]">delete</span>
                 </button>
-            </td>
+            </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(div);
     });
 }

@@ -310,7 +310,14 @@
 </div>
 <!-- Expenses List -->
 <div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Recent Expenses</h3>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <h3 class="font-headline-md text-headline-md text-on-surface">Recent Expenses</h3>
+    <!-- Search Bar -->
+    <div class="relative w-full sm:w-64">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+        <input class="w-full pl-10 pr-4 py-2 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="expense-search" placeholder="Search expenses..." type="text"/>
+    </div>
+</div>
 <div class="flex flex-col gap-3">
 <!-- Header Row -->
 <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
@@ -321,57 +328,8 @@
 <div class="col-span-2 text-right">Amount</div>
 </div>
 <!-- List Items -->
-<!-- Item 1 -->
-<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
-<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 24, 2023</div>
-<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Premium Silk Thread</div>
-<div class="col-span-2">
-<span class="px-3 py-1 bg-[#dce9ff]/40 text-[#545f73] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#dce9ff]">
-<span class="material-symbols-outlined text-[14px]" data-icon="category">category</span>
-                            Material
-                        </span>
-</div>
-<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Restock for winter collection</div>
-<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$120.00</div>
-</div>
-<!-- Item 2 -->
-<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
-<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 22, 2023</div>
-<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Shop Electricity</div>
-<div class="col-span-2">
-<span class="px-3 py-1 bg-[#ffdcbd]/40 text-[#623f18] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#ffdcbd]">
-<span class="material-symbols-outlined text-[14px]" data-icon="bolt">bolt</span>
-                            Utility
-                        </span>
-</div>
-<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Monthly bill</div>
-<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$245.50</div>
-</div>
-<!-- Item 3 -->
-<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
-<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 15, 2023</div>
-<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Sewing Machine Repair</div>
-<div class="col-span-2">
-<span class="px-3 py-1 bg-[#e0e0db]/40 text-[#454744] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#e0e0db]">
-<span class="material-symbols-outlined text-[14px]" data-icon="build">build</span>
-                            Maintenance
-                        </span>
-</div>
-<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Routine maintenance for primary machine</div>
-<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$85.00</div>
-</div>
-<!-- Item 4 -->
-<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-transparent hover:border-outline-variant/30 transition-colors grid grid-cols-12 gap-4 items-center">
-<div class="col-span-2 font-body-md text-body-md text-on-surface-variant">Oct 01, 2023</div>
-<div class="col-span-3 font-label-lg text-label-lg text-on-surface">Monthly Rent</div>
-<div class="col-span-2">
-<span class="px-3 py-1 bg-[#d8e3fb]/40 text-[#111c2d] rounded-full font-label-sm text-label-sm inline-flex items-center gap-1 border border-[#d8e3fb]">
-<span class="material-symbols-outlined text-[14px]" data-icon="storefront">storefront</span>
-                            Rent
-                        </span>
-</div>
-<div class="col-span-3 font-body-md text-body-md text-on-surface-variant truncate">Studio space</div>
-<div class="col-span-2 text-right font-headline-md text-headline-md text-on-surface">$1,500.00</div>
+<div id="table-expenses" class="flex flex-col gap-3">
+    <!-- Expenses will be dynamically loaded here by JS -->
 </div>
 </div>
 </div>

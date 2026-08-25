@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Add Expense - Tailor Manager</title>
+    <script src="../js/tailwindcss.js?v=1787471943"></script>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#3f2200",
+                        "primary-fixed": "#d8e3fb",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#e0e0db",
+                        "on-surface-variant": "#45474c",
+                        "on-primary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#d3e4fe",
+                        "outline": "#75777d",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#1a1c19",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "on-primary-fixed-variant": "#3c475a",
+                        "surface-tint": "#545f73",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#b58759",
+                        "tertiary": "#221000",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-secondary-fixed-variant": "#454744",
+                        "primary": "#091426",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "secondary": "#5d5f5b",
+                        "on-primary-container": "#8590a6",
+                        "surface-bright": "#f8f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "outline-variant": "#c5c6cd",
+                        "primary-fixed-dim": "#bcc7de",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "inverse-primary": "#bcc7de",
+                        "primary-container": "#1e293b",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-secondary-container": "#62635f",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e3e3de"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack_lg": "32px",
+                        "gutter": "24px",
+                        "container_padding": "40px",
+                        "stack_sm": "8px",
+                        "sidebar_width": "280px",
+                        "header_height": "72px",
+                        "stack_md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Public Sans"],
+                        "headline-md": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "label-lg": ["Public Sans"],
+                        "label-sm": ["Public Sans"],
+                        "headline-lg": ["Public Sans"],
+                        "body-md": ["Public Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .ambient-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
+    </style>
+    <link href="../css/fonts.css" rel="stylesheet"/>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen">
+    <!-- Main Content Canvas -->
+    <main class="p-container_padding min-h-screen flex flex-col items-center">
+        <div class="w-full max-w-3xl">
+            <!-- Page Header -->
+            <div class="mb-stack_lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-body-md text-body-md" onclick="window.API.navigate('expenses_list')">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                        Back to Expenses
+                    </button>
+                </div>
+                <h1 class="font-headline-lg text-headline-lg text-primary">Add New Expense</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-1">Record a new workshop expenditure.</p>
+            </div>
+
+            <!-- Success Message Placeholder -->
+            <div class="hidden mb-6 p-4 rounded-xl bg-surface-container border border-primary-fixed flex items-center justify-between ambient-shadow transform transition-all duration-300 opacity-0 translate-y-[-10px]" id="success-message">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    </div>
+                    <div>
+                        <p class="font-label-lg text-label-lg text-primary">Expense saved successfully!</p>
+                    </div>
+                </div>
+                <button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="document.getElementById('success-message').classList.add('hidden')" type="button">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-surface-container-lowest rounded-xl p-8 ambient-shadow border border-outline-variant/20">
+                <form class="flex flex-col gap-stack_md" id="add-expense-form">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
+                        <!-- Name Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="expenseName">
+                                Expense Name <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">label</span>
+                                <input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="expenseName" placeholder="e.g. Premium Silk Thread" required="" type="text"/>
+                            </div>
+                        </div>
+
+                        <!-- Amount Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="expenseAmount">
+                                Amount <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">payments</span>
+                                <input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="expenseAmount" placeholder="0.00" required="" type="number" step="0.01" min="0"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md mt-2">
+                        <!-- Category Select -->
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="expenseCategory">
+                                Category <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">category</span>
+                                <select class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow appearance-none" id="expenseCategory" required="">
+                                    <option value="Material">Material</option>
+                                    <option value="Utility">Utility</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="Salary">Salary</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Date Input -->
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-lg text-label-lg text-on-surface flex items-center gap-1" for="expenseDate">
+                                Date <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">calendar_today</span>
+                                <input class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow" id="expenseDate" required="" type="date"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Textarea -->
+                    <div class="flex flex-col gap-2 mt-2">
+                        <label class="font-label-lg text-label-lg text-on-surface flex justify-between items-end" for="expenseNotes">
+                            <span>Note</span>
+                            <span class="font-label-sm text-label-sm text-outline font-normal">Optional</span>
+                        </label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-3 text-on-surface-variant">notes</span>
+                            <textarea class="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface text-on-surface font-body-md placeholder:text-outline focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-shadow resize-y" id="expenseNotes" placeholder="Additional details..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 mt-4 border-t border-outline-variant/30">
+                        <button class="h-16 px-8 rounded-xl border border-outline-variant bg-surface text-primary font-label-lg text-label-lg flex items-center justify-center flex-1 hover:bg-surface-container-low active:scale-[0.98] transition-all" type="button" onclick="window.API.navigate('expenses_list')">
+                            Cancel
+                        </button>
+                        <button class="h-16 px-6 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center flex-[1.5] hover:opacity-90 active:scale-[0.98] transition-all ambient-shadow gap-2" id="btn-save-expense" type="submit">
+                            <span class="material-symbols-outlined">save</span>
+                            Save Expense
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/i18n.js?v=1787471943"></script>
+    <script src="../js/api.js?v=1787471943"></script>
+    <script src="../js/app.js?v=1787471943"></script>
+    <script src="../js/add_expense.js?v=1787471943"></script>
+</body>
+</html>
