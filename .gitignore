@@ -37,3 +37,4 @@ app/data/
 app/assets/www/uploads/
 .wwebjs_auth/
 .wwebjs_cache/
+node_modules/

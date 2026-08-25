@@ -6,22 +6,30 @@ const os = require('os');
 
 console.log("🚀 Initializing WhatsApp connection...");
 
-// Use Puppeteer's bundled Chromium for compatibility, fall back to system Chrome
 let chromePath = '';
-try {
-    const puppeteer = require('puppeteer');
-    chromePath = puppeteer.executablePath();
-    console.log("Using bundled Chromium:", chromePath);
-} catch(e) {
-    if (os.platform() === 'darwin') {
-        chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-    } else if (os.platform() === 'win32') {
-        const winPath1 = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-        const winPath2 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe';
-        chromePath = fs.existsSync(winPath1) ? winPath1 : winPath2;
+const sysPaths = {
+    darwin: ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'],
+    win32: [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
+    ]
+};
+let possiblePaths = sysPaths[os.platform()] || [];
+for (let p of possiblePaths) {
+    if (fs.existsSync(p)) {
+        chromePath = p;
+        break;
     }
-    console.log("Using system Chrome:", chromePath);
 }
+if (!chromePath) {
+    try {
+        const puppeteer = require('puppeteer');
+        chromePath = puppeteer.executablePath();
+    } catch(e) {}
+}
+console.log("Using browser:", chromePath);
 
 const authPath = path.join(__dirname, '..', '..', '..', '.wwebjs_auth');
 
@@ -80,6 +88,7 @@ async function startClient() {
 
     client.on('auth_failure', async msg => {
         console.error('AUTHENTICATION FAILURE', msg);
+        try { fs.rmSync(authPath, { recursive: true, force: true }); } catch (e) {}
         try { await client.destroy(); } catch(e) {}
         setTimeout(() => process.exit(1), 2000);
     });

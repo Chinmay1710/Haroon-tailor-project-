@@ -13,19 +13,28 @@ const phoneNumber = args[0];
 const message = args[1];
 const pdfPath = args[2];
 
-// Use Puppeteer's bundled Chromium for compatibility, fall back to system Chrome
 let chromePath = '';
-try {
-    const puppeteer = require('puppeteer');
-    chromePath = puppeteer.executablePath();
-} catch(e) {
-    if (os.platform() === 'darwin') {
-        chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-    } else if (os.platform() === 'win32') {
-        const winPath1 = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-        const winPath2 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe';
-        chromePath = fs.existsSync(winPath1) ? winPath1 : winPath2;
+const sysPaths = {
+    darwin: ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'],
+    win32: [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
+    ]
+};
+let possiblePaths = sysPaths[os.platform()] || [];
+for (let p of possiblePaths) {
+    if (fs.existsSync(p)) {
+        chromePath = p;
+        break;
     }
+}
+if (!chromePath) {
+    try {
+        const puppeteer = require('puppeteer');
+        chromePath = puppeteer.executablePath();
+    } catch(e) {}
 }
 
 const authPath = path.join(__dirname, '..', '..', '..', '.wwebjs_auth');
@@ -109,6 +118,7 @@ async function startClient() {
 
     client.on('qr', async () => {
         console.error('Session invalid, QR code requested. Please login again.');
+        try { fs.rmSync(authPath, { recursive: true, force: true }); } catch (e) {}
         try { await client.destroy(); } catch(e) {}
         setTimeout(() => process.exit(1), 2000);
     });
@@ -116,6 +126,7 @@ async function startClient() {
     client.on('auth_failure', async msg => {
         console.error('AUTHENTICATION FAILURE', msg);
         killBrowser(client);
+        try { fs.rmSync(authPath, { recursive: true, force: true }); } catch (e) {}
         try { await client.destroy(); } catch(e) {}
         setTimeout(() => process.exit(1), 2000);
     });

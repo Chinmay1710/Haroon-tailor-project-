@@ -78,7 +78,7 @@ class WebBridge(QObject):
                             if success:
                                 self.notification_requested.emit("WhatsApp message sent successfully!", "success")
                             else:
-                                self.notification_requested.emit("Failed to send WhatsApp message", "error")
+                                self.notification_requested.emit("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings.", "error")
             except Exception as e:
                 print(f"WhatsApp receipt trigger error: {e}")
         threading.Thread(target=_run, daemon=True).start()
@@ -108,7 +108,7 @@ class WebBridge(QObject):
                         if success:
                             self.notification_requested.emit("WhatsApp message sent successfully!", "success")
                         else:
-                            self.notification_requested.emit("Failed to send WhatsApp message", "error")
+                            self.notification_requested.emit("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings.", "error")
             except Exception as e:
                 print(f"WhatsApp status trigger error: {e}")
         threading.Thread(target=_run, daemon=True).start()
@@ -534,11 +534,16 @@ class WebBridge(QObject):
                                     f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
                                     f"धन्यवाद,\n{shop_name}"
                                 )
+                                auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
+                                if not os.path.exists(auth_path):
+                                    order_srv.delete_order(order.id)
+                                    raise Exception("Please connect with WhatsApp Web in Settings. Order was not saved.")
+                                
                                 self.notification_requested.emit("Sending WhatsApp message...", "info")
                                 success = whatsapp.send_whatsapp_message(customer.mobile, msg, pdf_path=pdf_path)
                                 if not success:
                                     order_srv.delete_order(order.id)
-                                    raise Exception("Failed to send WhatsApp message. Order was not saved.")
+                                    raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Order was not saved.")
                                 self.notification_requested.emit("WhatsApp message sent successfully!", "success")
                     except Exception as e:
                         # Fallback deletion if something crashed
@@ -679,10 +684,14 @@ class WebBridge(QObject):
                             f"कृपया अपनी सुविधा अनुसार दुकान पर आएं और अपने सिले हुए कपड़े प्राप्त करें।\n\n"
                             f"जल्द मिलेंगे!\n{shop_name}"
                         )
+                        auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
+                        if not os.path.exists(auth_path):
+                            raise Exception("Please connect with WhatsApp Web in Settings. Status was not updated.")
+                        
                         self.notification_requested.emit("Sending WhatsApp message...", "info")
                         success = whatsapp.send_whatsapp_message(order.customer.mobile, msg)
                         if not success:
-                            raise Exception("Failed to send WhatsApp message. Status was not updated.")
+                            raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Status was not updated.")
                         self.notification_requested.emit("WhatsApp message sent successfully!", "success")
                 
                 order_srv.update_status(order_id, status)
@@ -789,11 +798,16 @@ class WebBridge(QObject):
                                     f"हमने आपकी अपडेटेड रसीद (Receipt) संलग्न कर दी है।\n\n"
                                     f"धन्यवाद,\n{shop_name}"
                                 )
+                                auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
+                                if not os.path.exists(auth_path):
+                                    pay_srv.delete_payment(payment.id)
+                                    raise Exception("Please connect with WhatsApp Web in Settings. Payment was not recorded.")
+
                                 self.notification_requested.emit("Sending WhatsApp payment receipt...", "info")
                                 success = whatsapp.send_whatsapp_message(order.customer.mobile, msg, pdf_path=pdf_path)
                                 if not success:
                                     pay_srv.delete_payment(payment.id)
-                                    raise Exception("Failed to send WhatsApp message. Payment was not recorded.")
+                                    raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Payment was not recorded.")
                                 self.notification_requested.emit("WhatsApp message sent successfully!", "success")
                     except Exception as e:
                         try:
