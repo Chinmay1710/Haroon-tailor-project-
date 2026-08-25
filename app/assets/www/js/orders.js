@@ -330,7 +330,7 @@ function renderOrders(orders) {
                 </span>
             </div>
             <div class="col-span-1 md:col-span-1 flex justify-end items-center gap-1">
-                ${(o.status === 'NEW' || o.status === 'STITCHING') ? `
+                ${(o.status === 'NEW' || o.status === 'STITCHING' || o.status === 'OVERDUE' || isOverdue) ? `
                 <button class="mark-complete-btn w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors" title="Mark as Ready">
                     <span class="material-symbols-outlined text-[18px]">check</span>
                 </button>
