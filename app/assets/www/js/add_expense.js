@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function saveExpense() {
     const name = document.getElementById('expenseName').value.trim();
-    const amount = parseFloat(document.getElementById('expenseAmount').value);
+    const amountStr = document.getElementById('expenseAmount').value;
+    const amount = parseFloat(amountStr.replace(/[₹, ]/g, ''));
     const category = document.getElementById('expenseCategory').value;
     const date = document.getElementById('expenseDate').value;
     const notes = document.getElementById('expenseNotes').value.trim();
