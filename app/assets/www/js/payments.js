@@ -6,6 +6,27 @@ let allPayments = [];
 let currentlyRendered = [];
 let currentTab = 'transactions';
 let allPendingOrders = [];
+let kpisVisible = false;
+
+window.toggleKPIs = function() {
+    kpisVisible = !kpisVisible;
+    updateKpiDisplay();
+}
+
+function updateKpiDisplay() {
+    ['dash-total-collected', 'dash-pending-payments', 'dash-today-payments'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.dataset.amount !== undefined) {
+            el.textContent = kpisVisible ? window.API.formatCurrency(parseFloat(el.dataset.amount)) : '****';
+        }
+    });
+    const btn = document.getElementById('kpi-toggle-btn');
+    if (btn) {
+        btn.innerHTML = kpisVisible 
+            ? `<span class="material-symbols-outlined text-[18px]">visibility_off</span> Hide Amounts`
+            : `<span class="material-symbols-outlined text-[18px]">visibility</span> Show Amounts`;
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     function init() {
@@ -167,23 +188,20 @@ function filterPayments(query) {
 function applyFilters() {
     const q = (document.getElementById('payment-search')?.value || '').toLowerCase();
     
-    if (currentTab === 'pending') {
-        const filtered = allPendingOrders.filter(o => 
-            (o.customer_name && o.customer_name.toLowerCase().includes(q)) || 
-            (o.customer_mobile && String(o.customer_mobile).toLowerCase().includes(q)) ||
-            (o.order_number && String(o.order_number).toLowerCase().includes(q)) ||
-            (o.id && String(o.id).toLowerCase().includes(q))
-        );
-        renderPendingBalances(filtered);
-        return;
-    }
-    
-    const timeFilter = document.getElementById('filter-time')?.value || 'today';
+    // Filter pending orders
+    const filteredPending = allPendingOrders.filter(o => 
+        (o.customer_name && o.customer_name.toLowerCase().includes(q)) || 
+        (o.customer_mobile && String(o.customer_mobile).toLowerCase().includes(q)) ||
+        (o.order_number && String(o.order_number).toLowerCase().includes(q)) ||
+        (o.id && String(o.id).toLowerCase().includes(q))
+    );
+
+    // Filter transactions
+    const timeFilter = document.getElementById('filter-time')?.value || 'all';
     const methodFilter = document.getElementById('filter-method')?.value || 'all';
-    
     const now = new Date();
     
-    const filtered = allPayments.filter(p => {
+    const filteredPayments = allPayments.filter(p => {
         const matchesSearch = (p.customer_name && p.customer_name.toLowerCase().includes(q)) || 
                               (p.customer_mobile && String(p.customer_mobile).toLowerCase().includes(q)) ||
                               (p.order_number && String(p.order_number).toLowerCase().includes(q)) ||
@@ -209,28 +227,28 @@ function applyFilters() {
         }
         return true;
     });
-    
-    currentlyRendered = filtered;
-    
-    // Calculate pending payments using allPendingOrders if loaded, otherwise we wait for it
-    let totalPendingPayments = 0;
-    if (allPendingOrders.length > 0) {
-        allPendingOrders.forEach(o => {
-            totalPendingPayments += o.remaining_amount || 0;
-        });
+
+    if (currentTab === 'pending') {
+        renderPendingBalances(filteredPending);
+    } else {
+        renderPayments(filteredPayments);
+        currentlyRendered = filteredPayments;
     }
+    
+    // Calculate pending payments using filteredPending
+    let totalPendingPayments = 0;
+    filteredPending.forEach(o => {
+        totalPendingPayments += o.remaining_amount || 0;
+    });
     
     // Update KPIs based on the filtered data
     let totalCollected = 0;
     let todayCollected = 0;
-    
-    const uniqueOrderIds = new Set();
     const nowStr = now.toDateString();
     let todayCount = 0;
     
-    allPayments.forEach(p => {
+    filteredPayments.forEach(p => {
         totalCollected += p.amount || 0;
-        
         if (p.payment_date) {
             const pDate = new Date(p.payment_date);
             if (pDate.toDateString() === nowStr) {
@@ -241,18 +259,18 @@ function applyFilters() {
     });
     
     const tc = document.getElementById('dash-total-collected');
-    if (tc) tc.textContent = window.API.formatCurrency(totalCollected);
+    if (tc) tc.dataset.amount = totalCollected;
     
     const pp = document.getElementById('dash-pending-payments');
-    if (pp) pp.textContent = window.API.formatCurrency(totalPendingPayments);
+    if (pp) pp.dataset.amount = totalPendingPayments;
     
     const tp = document.getElementById('dash-today-payments');
-    if (tp) tp.textContent = window.API.formatCurrency(todayCollected);
+    if (tp) tp.dataset.amount = todayCollected;
     
-    const tcCount = document.getElementById('dash-today-transactions-count');
-    if (tcCount) tcCount.textContent = `${todayCount} transactions today`;
+    const tCount = document.getElementById('dash-today-transactions-count');
+    if (tCount) tCount.innerText = `${todayCount} transactions today`;
     
-    renderPayments(filtered);
+    updateKpiDisplay();
 }
 
 function exportToCSV() {

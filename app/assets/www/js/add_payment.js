@@ -162,14 +162,14 @@ async function submitPayment(orderId) {
     const originalContent = btn.innerHTML;
     
     if (sendWhatsapp) {
-        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Sending Message...';
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
     } else {
         btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
     }
     btn.disabled = true;
     
     try {
-        await window.API.request('create_payment', {
+        const res = await window.API.request('create_payment', {
             order_id: orderId,
             amount: amount,
             payment_method: selectedMethod,
@@ -178,6 +178,11 @@ async function submitPayment(orderId) {
         
         btn.innerHTML = '<span class="material-symbols-outlined" data-weight="fill">done_all</span> Payment Saved';
         btn.classList.replace('bg-primary', 'bg-[#16a34a]');
+        
+        // Open WhatsApp with pre-typed message
+        if (res && res.whatsapp_url) {
+            window.API.request('open_whatsapp_url', {url: res.whatsapp_url});
+        }
         
         let navParamsStr = sessionStorage.getItem("nav_params");
         let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;

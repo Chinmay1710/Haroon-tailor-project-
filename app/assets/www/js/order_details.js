@@ -22,21 +22,36 @@ document.addEventListener("DOMContentLoaded", function() {
         
         loadOrderDetails(orderId);
         
-        document.getElementById('od-status-select').addEventListener('change', function(e) {
+        document.getElementById('od-status-select').addEventListener('change', async function(e) {
             const status = e.target.value;
+            const oldStatus = currentOrder ? currentOrder.status : 'NEW';
             
             if (status === 'DELIVERED') {
                 if (currentOrder && currentOrder.remaining_amount > 0) {
-                    const collect = confirm(`This order has a remaining balance of ${window.API.formatCurrency(currentOrder.remaining_amount)}. Would you like to collect the payment now before completing the order?`);
-                    if (collect) {
-                        e.target.value = currentOrder.status; // Revert select
-                        window.API.request('navigate_to', {page: 'add_payment', order_id: orderId});
-                        return; // Stop update
-                    }
+                    window.API.toast("Pending balance exists. Redirecting to payment...", "info");
+                    e.target.value = oldStatus; // Revert select
+                    window.API.request('navigate_to', {page: 'add_payment', order_id: orderId, complete_after: true});
+                    return; // Stop update
                 }
             }
             
-            updateOrderStatus(orderId, status);
+            let confirmResult = { confirmed: true, checked: false };
+            if (status === 'STITCHING_COMPLETE' || status === 'DELIVERED') {
+                confirmResult = await window.API.confirmWithCheckbox(
+                    'Change Status?',
+                    `Are you sure you want to change the status to ${status}?`,
+                    'Send WhatsApp Notification'
+                );
+            } else {
+                const ans = await window.API.confirm('Change Status?', `Are you sure you want to change the status to ${status}?`);
+                confirmResult = { confirmed: ans, checked: false };
+            }
+            
+            if (confirmResult.confirmed) {
+                updateOrderStatus(orderId, status, confirmResult.checked);
+            } else {
+                e.target.value = oldStatus;
+            }
         });
         
         document.getElementById('od-add-payment-btn').addEventListener('click', function() {
@@ -57,36 +72,14 @@ document.addEventListener("DOMContentLoaded", function() {
         
         document.getElementById('od-mark-complete-btn').addEventListener('click', async function() {
             if (currentOrder) {
-                if (currentOrder.remaining_amount > 0) {
-                    const collect = await window.API.confirm(
-                        'Pending Payment',
-                        `This order has a remaining balance of ₹${currentOrder.remaining_amount}. Would you like to collect the payment now before completing the order?`
-                    );
-                    if (collect) {
-                        window.API.request('navigate_to', {page: 'add_payment', order_id: orderId, complete_after: true});
-                        return;
-                    }
-                }
-                
-                let confirmResult;
-                if (newVal === 'COMPLETED' || newVal === 'READY' || newVal === 'DELIVERED') {
-                    confirmResult = await window.API.confirmWithCheckbox(
-                        'Complete Order?',
-                        'Are you sure you want to mark this order as complete? This action will mark it as delivered.',
-                        'Send WhatsApp Notification'
-                    );
-                } else {
-                    const ans = await window.API.confirm('Change Status?', `Are you sure you want to change the status to ${newVal}?`);
-                    confirmResult = { confirmed: ans, checked: false };
-                }
+                const confirmResult = await window.API.confirmWithCheckbox(
+                    'Mark Stitching Complete?',
+                    'Are you sure you want to mark this order as Stitching Complete?',
+                    'Send WhatsApp Notification'
+                );
                 
                 if (confirmResult.confirmed) {
-                    updateOrderStatus(orderId, newVal, confirmResult.checked).then(() => {
-                        window.API.toast(`Order marked as ${newVal}`, "success");
-                        loadOrderDetails(orderId);
-                    });
-                } else {
-                    e.target.value = oldVal;
+                    updateOrderStatus(orderId, 'STITCHING_COMPLETE', confirmResult.checked);
                 }
             }
         });
@@ -110,8 +103,12 @@ async function loadOrderDetails(id) {
 
 async function updateOrderStatus(id, status, send_whatsapp = false) {
     try {
-        await window.API.request('update_order_status', {order_id: id, status: status, send_whatsapp: send_whatsapp});
+        const res = await window.API.request('update_order_status', {order_id: id, status: status, send_whatsapp: send_whatsapp});
         window.API.toast("Status updated successfully", "success");
+        // Open WhatsApp with pre-typed message
+        if (res && res.whatsapp_url) {
+            window.API.request('open_whatsapp_url', {url: res.whatsapp_url});
+        }
     } catch (e) {
         window.API.toast("Failed to update status: " + e, "error");
         // Reload order details to revert the UI to the actual state
@@ -129,7 +126,7 @@ function renderOrder(o) {
     document.getElementById('od-customer-address').textContent = o.customer_address || '';
     
     const markBtn = document.getElementById('od-mark-complete-btn');
-    if (o.status !== 'DELIVERED' && o.status !== 'CANCELLED') {
+    if (o.status !== 'STITCHING_COMPLETE' && o.status !== 'DELIVERED' && o.status !== 'CANCELLED') {
         markBtn.classList.remove('hidden');
     } else {
         markBtn.classList.add('hidden');

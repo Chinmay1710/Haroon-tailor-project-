@@ -143,10 +143,6 @@
       <span data-i18n="sidebar.customers">Customers</span>
     </a>
     <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">straighten</span>
-      <span data-i18n="sidebar.measurements">Measurements</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
       <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
       <span data-i18n="sidebar.orders">Orders</span>
     </a>
@@ -161,10 +157,6 @@
     <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
       <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
       <span data-i18n="sidebar.expenses">Expenses</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">analytics</span>
-      <span data-i18n="sidebar.reports">Reports</span>
     </a>
     <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
       <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
@@ -342,12 +334,12 @@
 <div class="mt-8 pt-6 border-t border-outline-variant/20">
     <h3 class="font-label-lg text-on-surface mb-4">WhatsApp Integration</h3>
     <div class="flex items-center justify-between p-4 bg-surface rounded-lg border border-outline-variant/30">
-        <div>
-            <p class="font-body-md text-on-surface-variant text-sm mt-0.5 mb-2">Connect your WhatsApp account via terminal QR code to automatically send PDF receipts invisibly in the background.</p>
-            <button type="button" onclick="window.API.request('connect_whatsapp')" class="bg-[#25D366] hover:bg-[#128C7E] text-white px-6 py-2.5 rounded-lg font-label-lg transition-colors shadow-sm flex items-center gap-2">
-                <span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
-                Connect WhatsApp (QR Code)
-            </button>
+        <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-[#25D366] text-[28px] mt-0.5">chat</span>
+            <div>
+                <p class="font-label-md text-on-surface mb-1">WhatsApp Messaging is Active ✅</p>
+                <p class="font-body-md text-on-surface-variant text-sm">When you create orders, record payments, or mark orders complete — WhatsApp will open automatically with the message pre-typed. You just need to press Send!</p>
+            </div>
         </div>
     </div>
 </div>

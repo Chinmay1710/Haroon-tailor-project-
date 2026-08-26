@@ -678,6 +678,10 @@ window.saveOrder = async function() {
         } else {
             const response = await window.API.request('create_order', payload);
             window.API.toast(`Order ${response.order_number} created successfully!`, "success");
+            // Open WhatsApp with pre-typed message
+            if (response && response.whatsapp_url) {
+                window.API.request('open_whatsapp_url', {url: response.whatsapp_url});
+            }
             setTimeout(() => {
                 window.API.request('navigate_to', {page: 'order_details', id: response.id});
             }, 1000);

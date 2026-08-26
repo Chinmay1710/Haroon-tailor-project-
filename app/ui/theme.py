@@ -72,8 +72,8 @@ COLORS = {
 
 STATUS_COLORS = {
     "NEW": ("#64748b", "#f1f5f9"),
-    "STITCHING": ("#3b82f6", "#eff6ff"),
-    "READY": ("#10b981", "#ecfdf5"),
+    "CUTTING_COMPLETE": ("#3b82f6", "#eff6ff"),
+    "STITCHING_COMPLETE": ("#10b981", "#ecfdf5"),
     "DELIVERED": ("#6366f1", "#eef2ff"),
     "CANCELLED": ("#9ca3af", "#f9fafb"),
     "OVERDUE": ("#ef4444", "#fef2f2"),

@@ -3,6 +3,9 @@
  */
 
 let allCustomers = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+let currentFilteredCustomers = [];
 
 document.addEventListener("DOMContentLoaded", function() {
     function init() {
@@ -16,6 +19,24 @@ document.addEventListener("DOMContentLoaded", function() {
         if (searchInput) {
             searchInput.addEventListener('input', (e) => filterCustomers(e.target.value));
         }
+
+        const btnPrev = document.getElementById('btn-prev-page');
+        const btnNext = document.getElementById('btn-next-page');
+        if (btnPrev && btnNext) {
+            btnPrev.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderCustomers(currentFilteredCustomers);
+                }
+            });
+            btnNext.addEventListener('click', () => {
+                const totalPages = Math.ceil(currentFilteredCustomers.length / itemsPerPage) || 1;
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderCustomers(currentFilteredCustomers);
+                }
+            });
+        }
     }
     init();
 });
@@ -26,7 +47,9 @@ async function loadCustomers() {
         const data = await window.API.request('get_customers');
         window.API.toast("Loaded " + data.length + " customers", "success");
         allCustomers = data;
-        renderCustomers(allCustomers);
+        currentFilteredCustomers = allCustomers;
+        currentPage = 1;
+        renderCustomers(currentFilteredCustomers);
     } catch (e) {
         console.error(e);
         window.API.toast("Failed to load customers: " + e, "error");
@@ -35,12 +58,13 @@ async function loadCustomers() {
 
 function filterCustomers(query) {
     const q = query.toLowerCase();
-    const filtered = allCustomers.filter(c => 
+    currentFilteredCustomers = allCustomers.filter(c => 
         (c.name && c.name.toLowerCase().includes(q)) || 
         (c.mobile && String(c.mobile).toLowerCase().includes(q)) || 
         (c.id && String(c.id).toLowerCase().includes(q))
     );
-    renderCustomers(filtered);
+    currentPage = 1;
+    renderCustomers(currentFilteredCustomers);
 }
 
 function renderCustomers(customers) {
@@ -53,12 +77,35 @@ function renderCustomers(customers) {
         
         container.innerHTML = '';
         
-        if (customers.length === 0) {
+        const totalItems = customers.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        
+        const pInfo = document.getElementById('pagination-info');
+        if (pInfo) {
+            if (totalItems === 0) {
+                pInfo.innerText = "Showing 0 customers";
+            } else {
+                pInfo.innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} customers`;
+            }
+        }
+        
+        const btnPrev = document.getElementById('btn-prev-page');
+        const btnNext = document.getElementById('btn-next-page');
+        if (btnPrev) btnPrev.disabled = currentPage === 1;
+        if (btnNext) btnNext.disabled = currentPage === totalPages;
+        
+        const paginatedCustomers = customers.slice(startIndex, endIndex);
+        
+        if (totalItems === 0) {
             container.innerHTML = '<div class="p-4 text-center text-on-surface-variant">No customers found</div>';
             return;
         }
         
-        customers.forEach(customer => {
+        paginatedCustomers.forEach(customer => {
             const div = document.createElement('div');
             div.className = 'bg-surface-container-lowest rounded-xl card-shadow p-4 lg:px-6 lg:py-5 flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-4 items-center hover:card-shadow-hover transition-all duration-300 border border-transparent hover:border-outline-variant/20 relative group cursor-pointer';
             div.onclick = () => window.API.request('navigate_to', {page: 'customer_details', id: customer.id});

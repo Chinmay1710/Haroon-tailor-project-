@@ -5,6 +5,7 @@ import os
 import base64
 import uuid
 from datetime import date
+from sqlalchemy.orm import joinedload
 from app.database.engine import get_session
 from app.repositories.order_repo import OrderRepository
 from app.repositories.measurement_repo import MeasurementRepository
@@ -16,12 +17,14 @@ logger = get_logger(__name__)
 
 # Valid status transitions
 VALID_TRANSITIONS = {
-    "NEW": ["CUTTING", "STITCHING", "READY", "DELIVERED", "CANCELLED"],
-    "CUTTING": ["STITCHING", "READY", "DELIVERED", "CANCELLED"],
-    "STITCHING": ["NEW", "READY", "DELIVERED", "CANCELLED"],
-    "READY": ["NEW", "CUTTING", "STITCHING", "DELIVERED", "CANCELLED"],
-    "DELIVERED": ["READY", "CANCELLED"],  # Allow reverting if accidental
+    "NEW": ["CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED"],
+    "CUTTING_COMPLETE": ["STITCHING_COMPLETE", "DELIVERED", "CANCELLED", "NEW"],
+    "STITCHING_COMPLETE": ["DELIVERED", "CANCELLED", "NEW", "CUTTING_COMPLETE"],
+    "DELIVERED": ["STITCHING_COMPLETE", "CANCELLED"],  # Allow reverting if accidental
     "CANCELLED": ["NEW"],  # Allow reopening
+    "CUTTING": ["CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED", "NEW"],
+    "STITCHING": ["CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED", "NEW"],
+    "READY": ["CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED", "NEW"],
 }
 
 
@@ -264,14 +267,17 @@ class OrderService:
                     extra_amount=amt
                 )
             
-            # 2. Update Order Status
-            new_status = "CUTTING" if stage_name.upper() == "CUTTING" else "READY"
+            new_status = "CUTTING_COMPLETE" if stage_name.upper() == "CUTTING" else "STITCHING_COMPLETE"
+            logger.info(f"mark_stage_complete called for order {order_id} (current status: {order.status}) -> {new_status}")
+            
             if new_status in VALID_TRANSITIONS.get(order.status, []):
                 order = order_repo.update_status(order_id, new_status)
+                logger.info("Transition valid, updated via order_repo.")
             elif order.status == new_status:
-                pass # already in this state
+                logger.info("Already in this state.")
             else:
                 # Force status update if invalid transition but worker completed it anyway
+                logger.info(f"Invalid transition from {order.status} to {new_status}. Forcing update.")
                 order = order_repo.update_status(order_id, new_status)
                 
             # Pre-load customer details before commit
@@ -281,8 +287,8 @@ class OrderService:
 
             session.commit()
             
-            # 3. Send WhatsApp if READY
-            if new_status == "READY" and customer_mobile:
+            # 3. Send WhatsApp if STITCHING_COMPLETE
+            if new_status == "STITCHING_COMPLETE" and customer_mobile:
                 from app.services.whatsapp_service import WhatsAppService
                 try:
                     msg = (
@@ -335,11 +341,18 @@ class OrderService:
             pay_repo = PaymentRepository(session)
 
             today_orders = order_repo.get_today_orders(target_date)
+            # Today's Sales should be the money collected today (payments)
             today_sales = pay_repo.get_today_total(target_date)
             pending_payments = pay_repo.get_total_pending()
             today_deliveries = order_repo.get_by_delivery_date(target_date)
             status_counts = order_repo.count_by_status()
-            recent_orders = order_repo.get_recent(5)
+            
+            # Sort recent orders by updated_at instead of created_at
+            recent_orders = session.query(Order).options(
+                joinedload(Order.customer),
+                joinedload(Order.items),
+            ).order_by(Order.updated_at.desc()).limit(5).all()
+            
             overdue_orders = order_repo.get_overdue()
             urgent_not_started = order_repo.get_urgent_not_started(3)
 

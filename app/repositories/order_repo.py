@@ -183,7 +183,7 @@ class OrderRepository:
         results = self.session.query(
             Order.status, func.count(Order.id)
         ).group_by(Order.status).all()
-        counts = {status: 0 for status in ["NEW", "STITCHING", "READY", "DELIVERED", "CANCELLED"]}
+        counts = {status: 0 for status in ["NEW", "CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED"]}
         for status, count in results:
             counts[status] = count
         # Add overdue count

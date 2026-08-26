@@ -36,9 +36,6 @@ const authPath = path.join(__dirname, '..', '..', '..', '.wwebjs_auth');
 function createClient() {
     return new Client({
         authStrategy: new LocalAuth({ dataPath: authPath }),
-        webVersionCache: {
-            type: 'none',
-        },
         puppeteer: {
             executablePath: chromePath,
             headless: true,
@@ -50,6 +47,9 @@ function createClient() {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--disable-extensions',
+                '--ignore-certificate-errors',
+                '--ignore-certificate-errors-spki-list',
+                '--single-process'
             ]
         }
     });
@@ -98,13 +98,6 @@ async function startClient() {
     } catch (err) {
         console.error(`❌ Initialization failed (attempt ${attempt}):`, err.message);
         
-        // Clean up the browser process
-        try {
-            if (client.pupBrowser) {
-                const pid = client.pupBrowser.process()?.pid;
-                if (pid) process.kill(pid, 'SIGKILL');
-            }
-        } catch(e) {}
         try { await client.destroy(); } catch(e) {}
         
         if (attempt < MAX_RETRIES) {

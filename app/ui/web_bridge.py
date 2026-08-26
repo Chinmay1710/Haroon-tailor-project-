@@ -5,7 +5,6 @@ from app.services.report_service import ReportService
 from app.services.customer_service import CustomerService
 from app.services.order_service import OrderService
 from app.services.payment_service import PaymentService
-from app.services.whatsapp_service import WhatsAppService
 import threading
 import os
 import shutil
@@ -47,71 +46,19 @@ class WebBridge(QObject):
         except Exception:
             return "Tailor Shop"
 
-    def _trigger_whatsapp_receipt(self, order_id: int):
-        def _run():
-            try:
-                receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
-                os.makedirs(receipts_dir, exist_ok=True)
-                pdf_path = os.path.join(receipts_dir, f"receipt_{order_id}.pdf")
-                if generate_receipt_pdf(order_id, pdf_path):
-                    whatsapp = WhatsAppService()
-                    order = OrderService().get_order(order_id)
-                    shop_name = self._get_shop_name()
-                    if order and order.customer and order.customer.mobile:
-                        paid_amt = order.total_amount - order.remaining_amount
-                        msg = (
-                            f"✨ नमस्ते {order.customer.name}! ✨\n\n"
-                            f"{shop_name} को चुनने के लिए धन्यवाद! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
-                            f"👔 कुल बिल: ₹{order.total_amount}\n"
-                            f"✅ जमा किए: ₹{paid_amt}\n"
-                            f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
-                            f"हमने आपका आधिकारिक रसीद (Receipt) पीडीएफ नीचे संलग्न कर दिया है।\n"
-                            f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
-                            f"धन्यवाद,\n{shop_name}"
-                        )
-                        auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                        if not os.path.exists(auth_path):
-                            self.notification_requested.emit("Please connect with WhatsApp Web in Settings", "error")
-                        else:
-                            self.notification_requested.emit("Sending WhatsApp message...", "info")
-                            success = whatsapp.send_whatsapp_message(order.customer.mobile, msg, pdf_path=pdf_path)
-                            if success:
-                                self.notification_requested.emit("WhatsApp message sent successfully!", "success")
-                            else:
-                                self.notification_requested.emit("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings.", "error")
-            except Exception as e:
-                print(f"WhatsApp receipt trigger error: {e}")
-        threading.Thread(target=_run, daemon=True).start()
-
-    def _trigger_whatsapp_status(self, order_id: int, status: str):
-        if status != "COMPLETED" and status != "READY":
-            return
-        def _run():
-            try:
-                whatsapp = WhatsAppService()
-                order = OrderService().get_order(order_id)
-                shop_name = self._get_shop_name()
-                if order and order.customer and order.customer.mobile:
-                    items_str = ", ".join(f"{item.quantity} {item.clothing_type}" for item in order.items) if order.items else "कपड़े"
-                    msg = (
-                        f"🎉 खुशखबरी, {order.customer.name}! 🎉\n\n"
-                        f"आपका ऑर्डर #{order.order_number} ({items_str}) अब बिल्कुल तैयार है! आप इसे {shop_name} से ले जा सकते हैं।\n\n"
-                        f"कृपया अपनी सुविधा अनुसार दुकान पर आएं और अपने सिले हुए कपड़े प्राप्त करें।\n\n"
-                        f"जल्द मिलेंगे!\n{shop_name}"
-                    )
-                    auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                    if not os.path.exists(auth_path):
-                        self.notification_requested.emit("Please connect with WhatsApp Web in Settings", "error")
-                    else:
-                        self.notification_requested.emit("Sending WhatsApp message...", "info")
-                        success = whatsapp.send_whatsapp_message(order.customer.mobile, msg)
-                        if success:
-                            self.notification_requested.emit("WhatsApp message sent successfully!", "success")
-                        else:
-                            self.notification_requested.emit("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings.", "error")
-            except Exception as e:
-                print(f"WhatsApp status trigger error: {e}")
-        threading.Thread(target=_run, daemon=True).start()
+    def _build_whatsapp_url(self, phone: str, message: str) -> str:
+        """Build a wa.me URL with pre-filled message. User just clicks Send."""
+        import urllib.parse
+        # Clean phone number - remove +, spaces, dashes
+        clean_phone = phone.strip().replace("+", "").replace(" ", "").replace("-", "")
+        # If starts with 0, replace with 91 (India)
+        if clean_phone.startswith("0"):
+            clean_phone = "91" + clean_phone[1:]
+        # If doesn't start with country code, add 91
+        if len(clean_phone) == 10:
+            clean_phone = "91" + clean_phone
+        encoded_msg = urllib.parse.quote(message)
+        return f"whatsapp://send?phone={clean_phone}&text={encoded_msg}"
 
     @Slot(str, str, result=str)
     def dispatch(self, action, payload_str):
@@ -504,58 +451,28 @@ class WebBridge(QObject):
                     payment_method=payload.get("paymentMethod", "Cash")
                 )
                 
-                # Wait for WhatsApp message to send if checked
+                # Build WhatsApp URL if requested
+                whatsapp_url = None
                 if send_whatsapp:
-                    auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                    if not os.path.exists(auth_path):
-                        order_srv.delete_order(order.id)
-                        raise Exception("Please connect with WhatsApp Web in Settings first.")
-                    
-                    try:
-                        receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
-                        os.makedirs(receipts_dir, exist_ok=True)
-                        pdf_path = os.path.join(receipts_dir, f"receipt_{order.id}.pdf")
-                        
-                        if generate_receipt_pdf(order.id, pdf_path):
-                            whatsapp = WhatsAppService()
-                            shop_name = self._get_shop_name()
-                            customer_srv = self.services["customer"]
-                            customer = customer_srv.get_customer(payload.get("customerId")) if payload.get("customerId") else None
-                            
-                            if customer and customer.mobile:
-                                paid_amt = order.total_amount - order.remaining_amount
-                                msg = (
-                                    f"✨ नमस्ते {customer.name}! ✨\n\n"
-                                    f"{shop_name} को चुनने के लिए धन्यवाद! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
-                                    f"👔 कुल बिल: ₹{order.total_amount}\n"
-                                    f"✅ जमा किए: ₹{paid_amt}\n"
-                                    f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
-                                    f"हमने आपका आधिकारिक रसीद (Receipt) पीडीएफ नीचे संलग्न कर दिया है।\n"
-                                    f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
-                                    f"धन्यवाद,\n{shop_name}"
-                                )
-                                auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                                if not os.path.exists(auth_path):
-                                    order_srv.delete_order(order.id)
-                                    raise Exception("Please connect with WhatsApp Web in Settings. Order was not saved.")
-                                
-                                self.notification_requested.emit("Sending WhatsApp message...", "info")
-                                success = whatsapp.send_whatsapp_message(customer.mobile, msg, pdf_path=pdf_path)
-                                if not success:
-                                    order_srv.delete_order(order.id)
-                                    raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Order was not saved.")
-                                self.notification_requested.emit("WhatsApp message sent successfully!", "success")
-                    except Exception as e:
-                        # Fallback deletion if something crashed
-                        try:
-                            order_srv.delete_order(order.id)
-                        except:
-                            pass
-                        raise Exception(str(e))
+                    customer_srv = self.services["customer"]
+                    customer = customer_srv.get_customer(payload.get("customerId")) if payload.get("customerId") else None
+                    if customer and customer.mobile:
+                        shop_name = self._get_shop_name()
+                        paid_amt = order.total_amount - order.remaining_amount
+                        msg = (
+                            f"✨ नमस्ते {customer.name}! ✨\n\n"
+                            f"{shop_name} को चुनने के लिए धन्यवाद! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
+                            f"👔 कुल बिल: ₹{order.total_amount}\n"
+                            f"✅ जमा किए: ₹{paid_amt}\n"
+                            f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
+                            f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
+                            f"धन्यवाद,\n{shop_name}"
+                        )
+                        whatsapp_url = self._build_whatsapp_url(customer.mobile, msg)
 
                 response = {
                     "status": "success", 
-                    "data": {"id": order.id, "order_number": order.order_number}
+                    "data": {"id": order.id, "order_number": order.order_number, "whatsapp_url": whatsapp_url}
                 }
                 
             elif action == "update_order":
@@ -597,8 +514,10 @@ class WebBridge(QObject):
                         "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
                         "status": o.status,
                         "total_amount": o.total_amount,
-                        "remaining_amount": o.remaining_amount
+                        "remaining_amount": o.remaining_amount,
+                        "updated_at": o.updated_at.isoformat() if hasattr(o, "updated_at") and o.updated_at else ""
                     })
+                data.sort(key=lambda x: x["updated_at"] if x.get("updated_at") else str(x["id"]), reverse=True)
                 response = {"status": "success", "data": data}
                 
             elif action == "get_order_details":
@@ -668,12 +587,11 @@ class WebBridge(QObject):
                 order_id = payload.get("order_id") or payload.get("id")
                 send_whatsapp = payload.get("send_whatsapp", False)
                 
-                if send_whatsapp and (status == "COMPLETED" or status == "READY" or status == "DELIVERED"):
-                    auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                    if not os.path.exists(auth_path):
-                        raise Exception("Please connect with WhatsApp Web in Settings first.")
-                    
-                    whatsapp = WhatsAppService()
+                order_srv.update_status(order_id, status)
+                
+                # Build WhatsApp URL if requested
+                whatsapp_url = None
+                if send_whatsapp and (status == "STITCHING_COMPLETE" or status == "DELIVERED"):
                     order = order_srv.get_order(order_id)
                     shop_name = self._get_shop_name()
                     if order and order.customer and order.customer.mobile:
@@ -684,24 +602,15 @@ class WebBridge(QObject):
                             f"कृपया अपनी सुविधा अनुसार दुकान पर आएं और अपने सिले हुए कपड़े प्राप्त करें।\n\n"
                             f"जल्द मिलेंगे!\n{shop_name}"
                         )
-                        auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                        if not os.path.exists(auth_path):
-                            raise Exception("Please connect with WhatsApp Web in Settings. Status was not updated.")
-                        
-                        self.notification_requested.emit("Sending WhatsApp message...", "info")
-                        success = whatsapp.send_whatsapp_message(order.customer.mobile, msg)
-                        if not success:
-                            raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Status was not updated.")
-                        self.notification_requested.emit("WhatsApp message sent successfully!", "success")
+                        whatsapp_url = self._build_whatsapp_url(order.customer.mobile, msg)
                 
-                order_srv.update_status(order_id, status)
-                response = {"status": "success"}
+                response = {"status": "success", "data": {"whatsapp_url": whatsapp_url}}
 
-            elif action == "connect_whatsapp":
-                def _run():
-                    whatsapp = WhatsAppService()
-                    whatsapp.connect_whatsapp()
-                threading.Thread(target=_run, daemon=True).start()
+            elif action == "open_whatsapp_url":
+                import webbrowser
+                url = payload.get("url", "")
+                if url:
+                    webbrowser.open(url)
                 response = {"status": "success"}
 
             # ────────────────────────────────────────────────────────────
@@ -724,8 +633,10 @@ class WebBridge(QObject):
                             "customer_mobile": p.customer.mobile if p.customer else "",
                             "amount": p.amount,
                             "payment_date": p.payment_date.isoformat() if p.payment_date else "",
-                            "payment_method": p.payment_method
+                            "payment_method": p.payment_method,
+                            "updated_at": p.updated_at.isoformat() if hasattr(p, "updated_at") and p.updated_at else ""
                         })
+                    data.sort(key=lambda x: x["updated_at"] if x.get("updated_at") else str(x["id"]), reverse=True)
                     response = {"status": "success", "data": data}
                 finally:
                     session.close()
@@ -773,50 +684,24 @@ class WebBridge(QObject):
                 )
                 
                 if send_whatsapp:
-                    auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                    if not os.path.exists(auth_path):
-                        pay_srv.delete_payment(payment.id)
-                        raise Exception("Please connect with WhatsApp Web in Settings first.")
-                    
-                    try:
-                        receipts_dir = os.path.join(APP_DATA_DIR, "receipts")
-                        os.makedirs(receipts_dir, exist_ok=True)
-                        pdf_path = os.path.join(receipts_dir, f"receipt_{order_id}.pdf")
-                        
-                        if generate_receipt_pdf(order_id, pdf_path):
-                            whatsapp = WhatsAppService()
-                            order_srv = self.services["order"]
-                            order = order_srv.get_order(order_id)
-                            shop_name = self._get_shop_name()
-                            if order and order.customer and order.customer.mobile:
-                                paid_amt = order.total_amount - order.remaining_amount
-                                msg = (
-                                    f"✨ नमस्ते {order.customer.name}! ✨\n\n"
-                                    f"हमने आपके ऑर्डर #{order.order_number} के लिए ₹{payment.amount} का भुगतान प्राप्त कर लिया है।\n\n"
-                                    f"✅ कुल जमा: ₹{paid_amt}\n"
-                                    f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
-                                    f"हमने आपकी अपडेटेड रसीद (Receipt) संलग्न कर दी है।\n\n"
-                                    f"धन्यवाद,\n{shop_name}"
-                                )
-                                auth_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".wwebjs_auth"))
-                                if not os.path.exists(auth_path):
-                                    pay_srv.delete_payment(payment.id)
-                                    raise Exception("Please connect with WhatsApp Web in Settings. Payment was not recorded.")
-
-                                self.notification_requested.emit("Sending WhatsApp payment receipt...", "info")
-                                success = whatsapp.send_whatsapp_message(order.customer.mobile, msg, pdf_path=pdf_path)
-                                if not success:
-                                    pay_srv.delete_payment(payment.id)
-                                    raise Exception("Failed to send WhatsApp message. Please reconnect WhatsApp in Settings. Payment was not recorded.")
-                                self.notification_requested.emit("WhatsApp message sent successfully!", "success")
-                    except Exception as e:
-                        try:
-                            pay_srv.delete_payment(payment.id)
-                        except:
-                            pass
-                        raise Exception(str(e))
-                
-                response = {"status": "success"}
+                    order_srv = self.services["order"]
+                    order = order_srv.get_order(order_id)
+                    if order and order.customer and order.customer.mobile:
+                        shop_name = self._get_shop_name()
+                        paid_amt = order.total_amount - order.remaining_amount
+                        msg = (
+                            f"✨ नमस्ते {order.customer.name}! ✨\n\n"
+                            f"हमने आपके ऑर्डर #{order.order_number} के लिए ₹{payment.amount} का भुगतान प्राप्त कर लिया है।\n\n"
+                            f"✅ कुल जमा: ₹{paid_amt}\n"
+                            f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
+                            f"धन्यवाद,\n{shop_name}"
+                        )
+                        whatsapp_url = self._build_whatsapp_url(order.customer.mobile, msg)
+                        response = {"status": "success", "data": {"whatsapp_url": whatsapp_url}}
+                    else:
+                        response = {"status": "success"}
+                else:
+                    response = {"status": "success"}
 
             # ────────────────────────────────────────────────────────────
             # DELIVERIES
@@ -832,9 +717,9 @@ class WebBridge(QObject):
                 counts = {"due_today": 0, "due_tomorrow": 0, "upcoming": 0, "overdue": 0}
                 
                 for o in orders:
-                    # The user requested that the Deliveries dashboard ONLY show 'READY' products.
-                    if o.status != "READY": continue
-                    
+                    # The user requested that the Deliveries dashboard show 'STITCHING_COMPLETE' and now also 'DELIVERED'.
+                    if o.status not in ["STITCHING_COMPLETE", "DELIVERED"]: continue
+
                     if o.delivery_date:
                         if o.delivery_date < today:
                             counts["overdue"] += 1
@@ -854,10 +739,12 @@ class WebBridge(QObject):
                         "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
                         "status": o.status,
                         "total_amount": o.total_amount,
-                        "advance_paid": getattr(o, "advance_amount", getattr(o, "paid_amount", 0))
+                        "advance_paid": getattr(o, "advance_amount", getattr(o, "paid_amount", 0)),
+                        "remaining_amount": o.remaining_amount,
+                        "updated_at": o.updated_at.isoformat() if hasattr(o, "updated_at") and o.updated_at else ""
                     })
                 
-                deliveries.sort(key=lambda x: x["delivery_date"])
+                deliveries.sort(key=lambda x: x["updated_at"] if x.get("updated_at") else str(x["id"]), reverse=True)
                 response = {"status": "success", "data": {"counts": counts, "deliveries": deliveries}}
 
             # ────────────────────────────────────────────────────────────

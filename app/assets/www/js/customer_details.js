@@ -180,10 +180,10 @@ function renderOrders(orders) {
             statusStyle = 'bg-error-container text-on-error-container';
             statusIcon = 'error';
             displayStatus = 'OVERDUE';
-        } else if (o.status === 'READY') {
-            statusStyle = 'bg-green-100 text-green-800';
+        } else if (o.status === 'STITCHING_COMPLETE') {
+            statusStyle = 'bg-tertiary-container text-on-tertiary-container';
             statusIcon = 'check_circle';
-        } else if (o.status === 'STITCHING') {
+        } else if (o.status === 'CUTTING_COMPLETE') {
             statusStyle = 'bg-primary-container text-on-primary-container';
             statusIcon = 'cut';
         } else if (o.status === 'NEW') {

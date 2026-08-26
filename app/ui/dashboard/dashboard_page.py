@@ -108,8 +108,8 @@ class DashboardPage(QWidget):
         pipeline_grid.setSpacing(STACK_SM)
         self.pipeline_cards = {
             "NEW": StatusCountCard("0", "New"),
-            "STITCHING": StatusCountCard("0", "Stitching", "#3b82f6"),
-            "READY": StatusCountCard("0", "Ready", "#10b981"),
+            "CUTTING_COMPLETE": StatusCountCard("0", "Cut Done", "#3b82f6"),
+            "STITCHING_COMPLETE": StatusCountCard("0", "Stitch Done", "#10b981"),
             "DELIVERED": StatusCountCard("0", "Delivered"),
             "OVERDUE": StatusCountCard("0", "Overdue", "#ef4444"),
         }

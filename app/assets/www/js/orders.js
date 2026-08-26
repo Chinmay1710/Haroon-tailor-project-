@@ -27,17 +27,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 btn.addEventListener('click', (e) => {
                     // Update active button styling
                     buttons.forEach(b => {
-                        b.classList.remove('bg-surface-container-highest', 'text-primary');
-                        if (!b.classList.contains('text-error')) {
-                            b.classList.add('text-on-surface-variant');
-                        }
+                        b.className = "px-5 py-2.5 rounded-full bg-surface-container border border-outline-variant/50 text-on-surface-variant font-label-lg hover:bg-surface-container-high whitespace-nowrap transition-all";
                     });
                     
                     const target = e.currentTarget;
-                    if (!target.classList.contains('text-error')) {
-                        target.classList.remove('text-on-surface-variant');
-                        target.classList.add('bg-surface-container-highest', 'text-primary');
-                    }
+                    target.className = "px-5 py-2.5 rounded-full bg-primary text-on-primary font-label-lg shadow-sm whitespace-nowrap transition-all";
                     
                     window.currentOrderFilter = target.getAttribute('data-filter');
                     filterOrders();
@@ -80,15 +74,19 @@ async function loadOrders() {
 
 window.markOrderComplete = async function(id) {
     const confirmResult = await window.API.confirmWithCheckbox(
-        'Order Ready?',
-        'Are you sure you want to mark this order as ready? This means the product is complete and waiting for the customer.',
+        'Mark Stitching Complete?',
+        'Are you sure you want to mark this order as Stitching Complete? This means the item is ready for delivery.',
         'Send WhatsApp Notification'
     );
     
     if (confirmResult.confirmed) {
         try {
-            await window.API.request('update_order_status', {order_id: id, status: 'READY', send_whatsapp: confirmResult.checked});
-            window.API.toast("Order marked as Ready", "success");
+            const res = await window.API.request('update_order_status', {order_id: id, status: 'STITCHING_COMPLETE', send_whatsapp: confirmResult.checked});
+            window.API.toast("Order marked as Stitching Complete", "success");
+            // Open WhatsApp with pre-typed message
+            if (res && res.whatsapp_url) {
+                window.API.request('open_whatsapp_url', {url: res.whatsapp_url});
+            }
             loadOrders();
         } catch (e) {
             window.API.toast("Failed to update status: " + e, "error");
@@ -119,7 +117,11 @@ function filterOrders(resetPage = true) {
         if (status === 'All Orders') {
             matchesStatus = true;
         } else if (status === 'Incomplete') {
-            matchesStatus = (o.status !== 'DELIVERED' && o.status !== 'CANCELLED');
+            matchesStatus = (o.status !== 'DELIVERED' && o.status !== 'CANCELLED' && o.status !== 'STITCHING_COMPLETE');
+        } else if (status === 'Cutting Complete') {
+            matchesStatus = (o.status === 'CUTTING_COMPLETE');
+        } else if (status === 'Stitching & Press Complete') {
+            matchesStatus = (o.status === 'STITCHING_COMPLETE');
         } else if (status === 'Complete') {
             matchesStatus = (o.status === 'DELIVERED');
         }
@@ -129,8 +131,10 @@ function filterOrders(resetPage = true) {
 
     filtered.sort((a, b) => {
         if (status === 'All Orders' || status === 'Complete') {
-            // Stack system: newest orders first
-            return (b.id || 0) - (a.id || 0);
+            // Stack system: newest updated/created orders first
+            const timeA = a.updated_at ? new Date(a.updated_at).getTime() : (a.id || 0);
+            const timeB = b.updated_at ? new Date(b.updated_at).getTime() : (b.id || 0);
+            return timeB - timeA;
         } else {
             // Incomplete orders: sort red alert (overdue and urgent) orders to top, then by closest delivery date
             const checkAlert = (o) => {
@@ -193,9 +197,9 @@ function renderOrders(orders) {
         <div class="col-span-2">Order Info</div>
         <div class="col-span-3">Customer &amp; Item</div>
         <div class="col-span-2">Dates</div>
-        <div class="col-span-2">Financials</div>
+        <div class="col-span-1">Financials</div>
         <div class="col-span-2">Status</div>
-        <div class="col-span-1 text-right">Action</div>
+        <div class="col-span-2 text-right">Action</div>
     </div>`;
     
     container.innerHTML = headersHTML;
@@ -225,7 +229,8 @@ function renderOrders(orders) {
             }
         }
 
-        const displayStatus = isOverdue ? 'OVERDUE' : o.status;
+        let displayStatus = o.status.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+        if (isOverdue) displayStatus = 'Overdue';
         
         let statusColor, statusBg, statusDot;
         let cardBg = 'bg-surface-container-lowest';
@@ -258,12 +263,12 @@ function renderOrders(orders) {
                     statusBg = 'bg-surface-container-low border border-outline-variant/50';
                     statusDot = 'bg-outline';
                     break;
-                case 'STITCHING':
+                case 'CUTTING_COMPLETE':
                     statusColor = 'text-primary';
                     statusBg = 'bg-surface-container-high';
                     statusDot = 'bg-primary';
                     break;
-                case 'READY':
+                case 'STITCHING_COMPLETE':
                     statusColor = 'text-on-tertiary-container';
                     statusBg = 'bg-tertiary-fixed';
                     statusDot = 'bg-tertiary-fixed-dim';
@@ -317,22 +322,23 @@ function renderOrders(orders) {
                     </div>
                 </div>
             </div>
-            <div class="col-span-1 md:col-span-2 flex flex-row md:flex-col justify-between md:justify-start">
-                <div class="flex items-baseline gap-2">
+            <div class="col-span-1 md:col-span-1 flex flex-row md:flex-col justify-between md:justify-start items-start md:items-center">
+                <div class="flex flex-col items-end">
                     <span class="font-body-md text-body-md text-on-surface-variant text-sm">Total:</span>
                     <span class="font-label-lg text-label-lg text-on-surface">${window.API.formatCurrency(o.total_amount)}</span>
                 </div>
             </div>
             <div class="col-span-1 md:col-span-2 flex justify-start">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full font-label-sm text-label-sm ${statusBg} ${statusColor}">
-                    <span class="w-1.5 h-1.5 rounded-full ${statusDot} mr-2"></span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full font-label-sm text-label-[11px] ${statusBg} ${statusColor}">
+                    <span class="w-1.5 h-1.5 rounded-full ${statusDot} mr-1.5"></span>
                     ${displayStatus}
                 </span>
             </div>
-            <div class="col-span-1 md:col-span-1 flex justify-end items-center gap-1">
-                ${(o.status === 'NEW' || o.status === 'STITCHING' || o.status === 'OVERDUE' || isOverdue) ? `
-                <button class="mark-complete-btn w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors" title="Mark as Ready">
-                    <span class="material-symbols-outlined text-[18px]">check</span>
+            <div class="col-span-1 md:col-span-2 flex justify-end items-center gap-2">
+                ${(o.status !== 'STITCHING_COMPLETE' && o.status !== 'DELIVERED' && o.status !== 'CANCELLED') ? `
+                <button class="mark-complete-btn px-3 py-1.5 rounded-md bg-primary/10 text-primary font-label-sm hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap shadow-sm border border-primary/20 flex items-center gap-1" title="Mark Stitching Complete">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                    Complete
                 </button>
                 ` : ''}
                 <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:${isOverdue ? 'bg-error-container hover:text-error' : 'bg-surface-container-highest hover:text-primary'} transition-colors">

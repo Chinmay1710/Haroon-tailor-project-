@@ -133,7 +133,7 @@ class DeliveriesPage(QWidget):
 
             # Actions
             if order.status not in ("DELIVERED", "CANCELLED"):
-                if order.status != "READY":
+                if order.status != "STITCHING_COMPLETE":
                     ready_btn = QPushButton("✅ Ready")
                     ready_btn.setCursor(Qt.CursorShape.PointingHandCursor)
                     ready_btn.setFixedHeight(32)
@@ -160,7 +160,7 @@ class DeliveriesPage(QWidget):
 
     def _mark_ready(self, order_id: int):
         try:
-            self.order_service.update_status(order_id, "READY")
+            self.order_service.update_status(order_id, "STITCHING_COMPLETE")
             self.refresh_data()
             self.order_updated.emit()
         except Exception as e:
@@ -174,8 +174,8 @@ class DeliveriesPage(QWidget):
         if dlg.exec() == dlg.DialogCode.Accepted:
             try:
                 order = self.order_service.get_order(order_id)
-                if order and order.status != "READY":
-                    self.order_service.update_status(order_id, "READY")
+                if order and order.status != "STITCHING_COMPLETE":
+                    self.order_service.update_status(order_id, "STITCHING_COMPLETE")
                 self.order_service.update_status(order_id, "DELIVERED")
                 self.refresh_data()
                 self.order_updated.emit()

@@ -42,9 +42,6 @@ const authPath = path.join(__dirname, '..', '..', '..', '.wwebjs_auth');
 function createClient() {
     return new Client({
         authStrategy: new LocalAuth({ dataPath: authPath }),
-        webVersionCache: {
-            type: 'none',
-        },
         puppeteer: {
             executablePath: chromePath,
             headless: true,
@@ -56,6 +53,9 @@ function createClient() {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--disable-extensions',
+                '--ignore-certificate-errors',
+                '--ignore-certificate-errors-spki-list',
+                '--single-process'
             ]
         }
     });
@@ -71,14 +71,7 @@ try {
     if (fs.existsSync(lock3)) fs.unlinkSync(lock3);
 } catch (e) {}
 
-function killBrowser(client) {
-    try {
-        if (client.pupBrowser) {
-            const pid = client.pupBrowser.process()?.pid;
-            if (pid) process.kill(pid, 'SIGKILL');
-        }
-    } catch(e) {}
-}
+
 
 const MAX_RETRIES = 3;
 let attempt = 0;
@@ -107,11 +100,11 @@ async function startClient() {
             // Wait 5 seconds to ensure the browser finishes transmitting to WhatsApp servers
             await new Promise(resolve => setTimeout(resolve, 5000));
             
-            killBrowser(client);
+            try { await client.destroy(); } catch(e) {}
             setTimeout(() => process.exit(0), 1000);
         } catch (error) {
             console.error("Failed to send message:", error);
-            killBrowser(client);
+            try { await client.destroy(); } catch(e) {}
             setTimeout(() => process.exit(1), 1000);
         }
     });
@@ -125,7 +118,6 @@ async function startClient() {
 
     client.on('auth_failure', async msg => {
         console.error('AUTHENTICATION FAILURE', msg);
-        killBrowser(client);
         try { fs.rmSync(authPath, { recursive: true, force: true }); } catch (e) {}
         try { await client.destroy(); } catch(e) {}
         setTimeout(() => process.exit(1), 2000);
@@ -136,7 +128,6 @@ async function startClient() {
     } catch (err) {
         console.error(`❌ Initialization failed (attempt ${attempt}/${MAX_RETRIES}):`, err.message);
         
-        killBrowser(client);
         try { await client.destroy(); } catch(e) {}
         
         if (attempt < MAX_RETRIES) {

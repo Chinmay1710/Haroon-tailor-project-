@@ -55,8 +55,7 @@ function createCard(d, isCompact = false) {
     const isOverdue = dDate < today;
     
     const totalAmount = parseFloat(d.total_amount) || 0;
-    const advancePaid = parseFloat(d.advance_paid) || 0;
-    const pendingAmount = totalAmount - advancePaid;
+    const pendingAmount = d.remaining_amount !== undefined ? parseFloat(d.remaining_amount) : 0;
     const hasPendingPayment = pendingAmount > 0;
     
     const paymentBadge = hasPendingPayment 
@@ -111,11 +110,13 @@ function createCard(d, isCompact = false) {
                     ${paymentBadge}
                 </div>
             </div>
-            <div class="flex gap-2 border-t sm:border-t-0 sm:border-l border-outline-variant pt-3 sm:pt-0 sm:pl-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+            ${d.status !== 'DELIVERED' ? `
+            <div class="flex gap-2 border-t sm:border-t-0 sm:border-l border-outline-variant pt-3 sm:pt-0 sm:pl-4 opacity-100">
                 <button onclick="event.stopPropagation(); updateStatus(${d.id}, 'DELIVERED');" class="flex-1 sm:flex-none justify-center flex items-center gap-2 bg-primary text-on-primary px-3 py-2 rounded-lg hover:bg-primary/90 transition-colors font-label-sm text-label-sm whitespace-nowrap">
                     <span class="material-symbols-outlined text-[18px]">local_shipping</span> Deliver
                 </button>
             </div>
+            ` : ''}
         </div>
     `;
     return card;
@@ -123,37 +124,46 @@ function createCard(d, isCompact = false) {
 
 function renderDeliveries(deliveries) {
     const readyC = document.getElementById('ready-container');
+    const completedC = document.getElementById('completed-container');
     if(readyC) readyC.innerHTML = '';
+    if(completedC) completedC.innerHTML = '';
     
-    // Filter first
-    const filtered = deliveries.filter(d => {
-        if (activeFilter === 'All') return true;
-        
-        const totalAmount = parseFloat(d.total_amount) || 0;
-        const advancePaid = parseFloat(d.advance_paid) || 0;
-        const pendingAmount = totalAmount - advancePaid;
-        
-        if (activeFilter === 'Pending Payment') return pendingAmount > 0;
-        if (activeFilter === 'Paid') return pendingAmount <= 0;
-        return true;
-    });
+    const readyDeliveries = deliveries.filter(d => d.status === 'STITCHING_COMPLETE');
+    const completedDeliveries = deliveries.filter(d => d.status === 'DELIVERED').slice(0, 10);
     
     if (readyC) {
-        if (filtered.length === 0) {
+        if (readyDeliveries.length === 0) {
             readyC.innerHTML = '<div class="text-center p-8 text-on-surface-variant bg-surface-container-lowest rounded-xl border border-outline-variant/30">No ready deliveries found</div>';
         } else {
-            filtered.forEach(d => {
+            readyDeliveries.forEach(d => {
                 readyC.appendChild(createCard(d, false)); // full size cards for all
+            });
+        }
+    }
+    
+    if (completedC) {
+        if (completedDeliveries.length === 0) {
+            completedC.innerHTML = '<div class="text-center p-8 text-on-surface-variant bg-surface-container-lowest rounded-xl border border-outline-variant/30">No completed deliveries found</div>';
+        } else {
+            completedDeliveries.forEach(d => {
+                completedC.appendChild(createCard(d, false)); // full size cards for all
             });
         }
     }
     
     // Update count dynamically
     const elTotal = document.getElementById('del-total-count');
-    if (elTotal) elTotal.innerText = filtered.length;
+    if (elTotal) elTotal.innerText = readyDeliveries.length;
+    const elCompletedTotal = document.getElementById('del-completed-count');
+    if (elCompletedTotal) elCompletedTotal.innerText = completedDeliveries.length;
 }
 
 window.updateStatus = async function(orderId, newStatus) {
+    if (newStatus === 'DELIVERED') {
+        window.API.request('navigate_to', {page: 'add_payment', order_id: orderId, complete_after: true});
+        return;
+    }
+
     let confirmResult;
     if (newStatus === 'COMPLETED' || newStatus === 'READY' || newStatus === 'DELIVERED') {
         confirmResult = await window.API.confirmWithCheckbox(
@@ -168,8 +178,12 @@ window.updateStatus = async function(orderId, newStatus) {
     
     if (confirmResult.confirmed) {
         try {
-            await window.API.request('update_order_status', {id: orderId, status: newStatus, send_whatsapp: confirmResult.checked});
+            const res = await window.API.request('update_order_status', {id: orderId, status: newStatus, send_whatsapp: confirmResult.checked});
             window.API.toast(`Order marked as ${newStatus}`, "success");
+            // Open WhatsApp with pre-typed message
+            if (res && res.whatsapp_url) {
+                window.API.request('open_whatsapp_url', {url: res.whatsapp_url});
+            }
             loadDeliveries();
         } catch (e) {
             window.API.toast(e.toString(), "error");

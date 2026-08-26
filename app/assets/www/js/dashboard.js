@@ -33,8 +33,8 @@ async function loadDashboardStats(date_str = null) {
         // 2. Update Order Pipeline Counts
         const counts = data.status_counts;
         document.getElementById('pipe-new').innerText = counts.NEW;
-        document.getElementById('pipe-stitching').innerText = counts.STITCHING;
-        document.getElementById('pipe-ready').innerText = counts.READY;
+        document.getElementById('pipe-stitching').innerText = counts.CUTTING_COMPLETE || 0;
+        document.getElementById('pipe-ready').innerText = counts.STITCHING_COMPLETE || 0;
         document.getElementById('pipe-delivered').innerText = counts.DELIVERED;
         document.getElementById('pipe-overdue').innerText = counts.OVERDUE;
 
