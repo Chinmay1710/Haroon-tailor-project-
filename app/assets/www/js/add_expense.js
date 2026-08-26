@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
             dateInput.valueAsDate = new Date();
         }
 
+        if (window.API && window.API.attachMic) {
+            window.API.attachMic('expenseName');
+            window.API.attachMic('expenseNotes');
+        }
+
         const form = document.getElementById('add-expense-form');
         if (form) {
             form.addEventListener('submit', async (e) => {

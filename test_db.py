@@ -1,21 +1,7 @@
-from app.database.engine import init_db, get_session
-from app.models.customer import Customer
-from app.services.customer_service import CustomerService
-from sqlalchemy.orm import selectinload
-
-init_db()
-
-srv = CustomerService()
-try:
-    c = srv.create_customer(name="Test User", mobile="1234567890")
-except Exception:
-    pass
-
-session = get_session()
-try:
-    customers = session.query(Customer).options(selectinload(Customer.orders)).all()
-    for c in customers:
-        print(f"Customer {c.id}: {c.name}, in session: {c in session}")
-        print(f"Orders count: {len(c.orders)}")
-finally:
-    session.close()
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+engine = create_engine("sqlite:////Users/chinmay/Library/Application Support/TailorShopManager/data/tailor_shop.db")
+Session = sessionmaker(bind=engine)
+session = Session()
+result = session.execute(text("SELECT status FROM orders WHERE id=21")).fetchone()
+print("ORDER 21 STATUS:", result[0])

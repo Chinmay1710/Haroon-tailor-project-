@@ -446,12 +446,17 @@
         async function initWorkers() {
             if (!window.pyBridge) { setTimeout(initWorkers, 100); return; }
             try {
+                if (window.API && window.API.attachMic) {
+                    window.API.attachMic('w-name');
+                    window.API.attachMic('new-garment-name');
+                    window.API.attachMic('adv-notes');
+                }
                 const portalRes = await window.API.request('get_worker_portal_url');
                 if (portalRes && portalRes.url) document.getElementById('portal-url').value = portalRes.url;
                 await loadWorkers();
             } catch(e) { console.error(e); }
         }
-        
+
         async function loadWorkers() {
             try {
                 const res = await window.API.request('get_all_workers');

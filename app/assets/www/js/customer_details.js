@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Attach Dictation Mic to large textareas
         setTimeout(() => {
             if (window.API && window.API.attachMic) {
+                window.API.attachMic('edit-name');
                 window.API.attachMic('edit-address');
                 window.API.attachMic('edit-notes');
             }
@@ -90,11 +91,7 @@ window.saveCustomerEdit = async function() {
         window.API.toast("Customer name is required", "error");
         return;
     }
-    const nameRegex = /^[A-Za-z\s]+$/;
-    if (!nameRegex.test(name)) {
-        window.API.toast("Name should contain only letters and spaces", "error");
-        return;
-    }
+
 
     const mobile = document.getElementById('edit-mobile').value.trim();
     if (!mobile) {

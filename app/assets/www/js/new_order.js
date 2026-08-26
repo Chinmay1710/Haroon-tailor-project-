@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Attach Dictation Mic
         setTimeout(() => {
             window.API.attachMic('order-notes');
+            window.API.attachMic('modal-special-instructions');
         }, 100);
     }
     init();

@@ -13,6 +13,13 @@ document.addEventListener("DOMContentLoaded", function() {
             setTimeout(init, 100);
             return;
         }
+        
+        if (window.API && window.API.attachMic) {
+            window.API.attachMic('set-shop-name');
+            window.API.attachMic('set-owner-name');
+            window.API.attachMic('set-address');
+        }
+        
         loadSettings();
     }
     init();

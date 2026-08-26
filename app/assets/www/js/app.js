@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Block numbers in person names (excludes shop name, garment names, etc)
         if (id.includes('name') && !id.includes('shop') && !id.includes('garment') && !id.includes('item') && !id.includes('business')) {
-            e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
+            e.target.value = e.target.value.replace(/[\d]/g, '');
         }
         
         // Restrict phone numbers to 10 digits and prefix with +91
