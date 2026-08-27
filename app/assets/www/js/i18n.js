@@ -23,8 +23,8 @@
                 "loading": "Loading..."
             },
             "sidebar": {
-                "offline_mode": "Offline Mode",
-                "backup_restore": "Backup & Restore",
+                "offline": "Offline Mode",
+                "backup": "Backup & Restore",
                 "dashboard": "Dashboard",
                 "customers": "Customers",
                 "measurements": "Measurements",
@@ -36,6 +36,7 @@
                 "settings": "Settings",
                 "help": "Help",
                 "workers": "Workers",
+                "stock": "Stock",
                 "premium_tailoring": "Premium Tailoring"
             },
             "dashboard": {
@@ -270,10 +271,8 @@
                 "loading": "लोड हो रहा है..."
             },
             "sidebar": {
-                "offline_mode": "ऑफ़लाइन मोड",
-                "backup_restore": "बैकअप और रीस्टोर",
-                "offline_mode": "Offline Mode",
-                "backup_restore": "Backup & Restore",
+                "offline": "ऑफ़लाइन मोड",
+                "backup": "बैकअप और रीस्टोर",
                 "dashboard": "डैशबोर्ड",
                 "customers": "ग्राहक सूची",
                 "measurements": "माप पुस्तिका",
@@ -285,6 +284,7 @@
                 "settings": "सिस्टम सेटिंग्स",
                 "help": "मदद",
                 "workers": "कर्मचारी (Workers)",
+                "stock": "स्टॉक",
                 "premium_tailoring": "प्रीमियम सिलाई"
             },
             "dashboard": {

@@ -37,8 +37,6 @@ async function loadSlipData(orderId) {
             : "Custom Item (x1)";
         document.getElementById('ss-garment-type').textContent = garmentText;
         
-        document.getElementById('ss-special-instructions').textContent = o.special_instructions || "None";
-        
         const now = new Date();
         document.getElementById('ss-generated-date').textContent = `Generated: ${window.API.formatDate(now)} - ${now.toLocaleTimeString()}`;
         
@@ -72,6 +70,16 @@ async function loadSlipData(orderId) {
                             <span style="font-weight:bold;">${values[key]}"</span>
                         `;
                         section.appendChild(mItem);
+                    }
+                    
+                    if (item.notes && item.notes.trim() !== '') {
+                        const notesItem = document.createElement('div');
+                        notesItem.style.marginTop = '6px';
+                        notesItem.style.paddingTop = '4px';
+                        notesItem.style.borderTop = '1px dashed #ccc';
+                        notesItem.style.fontSize = '0.9em';
+                        notesItem.innerHTML = `<strong>Note:</strong> ${item.notes}`;
+                        section.appendChild(notesItem);
                     }
                     
                     mContainer.appendChild(section);

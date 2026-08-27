@@ -108,6 +108,7 @@ class MainWindow(QMainWindow):
         # Register the bridge object to be accessible as `bridge` in javascript
         self.channel.registerObject("bridge", self.bridge)
         self.web_view.page().setWebChannel(self.channel)
+        self.web_view.page().printRequested.connect(self._handle_print_requested)
 
         # Check setup and navigate
         session = get_session()
@@ -142,6 +143,13 @@ class MainWindow(QMainWindow):
         error_json = json.dumps(error)
         script = f"if (window.API && window.API.handleDictationResult) {{ window.API.handleDictationResult('{textarea_id}', {text_json}, {error_json}); }}"
         self.web_view.page().runJavaScript(script)
+
+    def _handle_print_requested(self):
+        from PySide6.QtPrintSupport import QPrinter, QPrintDialog
+        printer = QPrinter(QPrinter.PrinterMode.ScreenResolution)
+        dialog = QPrintDialog(printer, self)
+        if dialog.exec() == QPrintDialog.DialogCode.Accepted:
+            self.web_view.page().print(printer, lambda success: logger.info(f"Print finished: success={success}"))
 
     # ─── Close Event ───
     def closeEvent(self, event):

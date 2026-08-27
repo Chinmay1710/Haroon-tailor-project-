@@ -51,15 +51,6 @@ async function loadOrderData(orderId) {
                 `;
                 tbody.appendChild(div);
                 
-                if (item.notes) {
-                    const notesDiv = document.createElement('div');
-                    notesDiv.style.fontSize = '10px';
-                    notesDiv.style.color = '#555';
-                    notesDiv.style.marginLeft = '5px';
-                    notesDiv.style.marginBottom = '4px';
-                    notesDiv.textContent = `* ${item.notes}`;
-                    tbody.appendChild(notesDiv);
-                }
             });
         } else {
             const div = document.createElement('div');

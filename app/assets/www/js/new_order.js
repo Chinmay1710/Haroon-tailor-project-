@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", function() {
             sessionStorage.removeItem('nav_params');
         }
 
-        // Set default date to next week
+        // Set default date to 5 days from today
         const today = new Date();
-        const nextWeek = new Date(today);
-        nextWeek.setDate(today.getDate() + 7);
-        document.getElementById('order-date').value = nextWeek.toISOString().split('T')[0];
+        const defaultDate = new Date(today);
+        defaultDate.setDate(today.getDate() + 5);
+        document.getElementById('order-date').value = defaultDate.toISOString().split('T')[0];
         
         loadCustomers(initialCustomerId);
         
@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Attach Dictation Mic
         setTimeout(() => {
-            window.API.attachMic('order-notes');
             window.API.attachMic('modal-special-instructions');
         }, 100);
     }
@@ -96,7 +95,6 @@ async function loadCustomers(initialCustomerId) {
                 if (data.delivery_date) {
                     document.getElementById('order-date').value = data.delivery_date.split('T')[0];
                 }
-                document.getElementById('order-notes').value = data.special_instructions || "";
                 document.getElementById('order-advance').value = data.advance_amount || 0;
                 wizardState.advance = data.advance_amount || 0;
                 
@@ -466,7 +464,8 @@ window.startCamera = async function() {
         const video = document.getElementById('live-camera-feed');
         video.srcObject = currentCameraStream;
         document.getElementById('live-camera-container').classList.remove('hidden');
-        document.getElementById('modal-photo-preview-container').classList.add('hidden');
+        const previewList = document.getElementById('modal-photo-preview-list');
+        if (previewList) previewList.classList.add('hidden');
         document.getElementById('btn-start-camera').classList.add('hidden');
     } catch (err) {
         console.error("Error accessing camera: ", err);
@@ -639,13 +638,11 @@ window.saveOrder = async function() {
     }
     
     const date = document.getElementById('order-date').value;
-    if (!date) {
-        window.API.toast("Please select a delivery date", "error");
-        return;
-    }
+    const advance = parseFloat(document.getElementById('order-advance').value) || 0;
+    const paymentMethod = document.getElementById('order-payment-method').value;
     
-    const notes = document.getElementById('order-notes').value;
-    const method = document.getElementById('order-payment-method').value;
+    // Combine item notes into order notes since order-level notes are removed
+    const combinedNotes = wizardState.items.map(item => item.notes).filter(n => n).join(" | ");
     
     const payloadItems = wizardState.items.map(i => ({
         clothing_type: i.clothing_type,
@@ -664,9 +661,9 @@ window.saveOrder = async function() {
         customerId: wizardState.customerId,
         items: payloadItems,
         deliveryDate: date,
-        notes: notes,
-        advance: wizardState.advance,
-        paymentMethod: method,
+        advance: advance,
+        notes: combinedNotes,
+        paymentMethod: paymentMethod,
         send_whatsapp: sendWhatsapp
     };
     

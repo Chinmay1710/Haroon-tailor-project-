@@ -192,11 +192,25 @@ function renderOrders(orders) {
         div.className = 'bg-surface-container-lowest rounded-xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-surface-container-high/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:shadow-[0_4px_15px_rgba(0,0,0,0.05)] transition-shadow cursor-pointer';
         div.onclick = () => window.API.request('navigate_to', {page: 'order_details', id: o.id});
         
+        let thumbnailHtml = `
+            <div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                <span class="material-symbols-outlined text-primary">checkroom</span>
+            </div>
+        `;
+        if (o.image_path) {
+            const firstImg = o.image_path.split(',')[0].trim();
+            if (firstImg) {
+                thumbnailHtml = `
+                    <div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                        <img src="${firstImg}" class="w-full h-full object-cover">
+                    </div>
+                `;
+            }
+        }
+
         div.innerHTML = `
             <div class="flex items-center gap-4 w-full md:w-auto">
-                <div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-primary">checkroom</span>
-                </div>
+                ${thumbnailHtml}
                 <div>
                     <p class="font-label-lg text-label-lg text-on-surface">${o.clothing_type || 'Custom Item'}</p>
                     <p class="font-body-md text-body-md text-on-surface-variant">${o.order_number} • ${window.API.formatDate(o.order_date)}</p>

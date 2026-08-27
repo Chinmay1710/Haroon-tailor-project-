@@ -31,3 +31,19 @@ window.handleRestore = async () => {
         }
     }
 };
+
+window.handleEraseData = async () => {
+    if (confirm("🚨 WARNING: Are you sure you want to completely erase ALL data (Customers, Orders, Measurements)?\n\nMake sure you have created a backup first!\n\nThis action CANNOT be undone. Press OK to proceed.")) {
+        if (confirm("Final Confirmation: All your data will be permanently deleted now. Type 'yes' in your mind, then press OK.")) {
+            try {
+                window.API.toast("Erasing all data...", "info");
+                await window.API.request('erase_all_data');
+                alert("Data erased successfully. The application will now restart with an empty database.");
+                // Simply navigate to dashboard to reflect changes, though a hard restart is recommended
+                window.API.request('navigate_to', {page: 'dashboard'});
+            } catch (e) {
+                window.API.toast("Failed to erase data: " + e, "error");
+            }
+        }
+    }
+};

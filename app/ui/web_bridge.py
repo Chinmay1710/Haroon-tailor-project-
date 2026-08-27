@@ -266,6 +266,7 @@ class WebBridge(QObject):
                             "id": o.id,
                             "order_number": o.order_number,
                             "clothing_type": o.items[0].clothing_type if o.items else "Custom",
+                            "image_path": o.items[0].image_path if o.items and o.items[0].image_path else "",
                             "order_date": o.order_date.isoformat() if o.order_date else "",
                             "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
                             "status": o.status,
@@ -510,6 +511,7 @@ class WebBridge(QObject):
                         "customer_id": o.customer.id if o.customer else None,
                         "customer_mobile": o.customer.mobile if o.customer else "",
                         "items": ", ".join([f"{i.quantity}x {i.clothing_type}" for i in o.items]) if o.items else "Custom",
+                        "image_path": o.items[0].image_path if o.items and o.items[0].image_path else "",
                         "order_date": o.order_date.isoformat() if o.order_date else "",
                         "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
                         "status": o.status,
@@ -855,21 +857,48 @@ class WebBridge(QObject):
 
             elif action == "create_backup":
                 from PySide6.QtWidgets import QFileDialog
-                import shutil, os
-                from datetime import datetime
+                import shutil, os, zipfile, tempfile
                 from app.config import DATABASE_PATH
-                from app.database.engine import get_session
+                from app.database.engine import get_session, get_engine
                 from app.repositories.settings_repo import SettingsRepository
                 
                 db_path = DATABASE_PATH
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                default_filename = f"TailorBackup_{timestamp}.db"
+                default_filename = f"TailorBackup_{timestamp}.zip"
                 
                 # Ask for Hard Drive location
-                save_path, _ = QFileDialog.getSaveFileName(self.parent(), "Save Backup File", default_filename, "Database Files (*.db)")
+                save_path, _ = QFileDialog.getSaveFileName(self.parent(), "Save Backup File", default_filename, "Backup Files (*.zip)")
                 
+                # Checkpoint the WAL before copying to ensure all data is in the .db file
+                from sqlalchemy import text
+                try:
+                    with get_engine().connect() as conn:
+                        conn.execute(text("PRAGMA wal_checkpoint(TRUNCATE)"))
+                except Exception as e:
+                    print(f"Warning: WAL Checkpoint failed: {e}")
+
                 if save_path:
-                    shutil.copy2(db_path, save_path)
+                    try:
+                        # Create a temporary directory to assemble the backup
+                        with tempfile.TemporaryDirectory() as temp_dir:
+                            # 1. Copy database
+                            shutil.copy2(db_path, os.path.join(temp_dir, "tailor_shop.db"))
+                            
+                            # 2. Copy uploads folder if it exists
+                            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                            uploads_dir = os.path.join(base_dir, "assets", "www", "uploads")
+                            if os.path.exists(uploads_dir):
+                                shutil.copytree(uploads_dir, os.path.join(temp_dir, "uploads"))
+                                
+                            # 3. Zip it all up
+                            shutil.make_archive(save_path.replace('.zip', ''), 'zip', temp_dir)
+                            # make_archive appends .zip, so ensure the name matches save_path
+                            if not save_path.endswith('.zip'):
+                                os.rename(save_path.replace('.zip', '') + '.zip', save_path)
+                    except Exception as e:
+                        print(f"Error creating zip backup: {e}")
+                        response = {"status": "error", "message": f"Backup failed: {e}"}
+
                     
                     # Handle Google Drive Backup
                     session = get_session()
@@ -898,19 +927,80 @@ class WebBridge(QObject):
 
             elif action == "restore_backup":
                 from PySide6.QtWidgets import QFileDialog
-                import shutil, os
+                import shutil, os, zipfile, tempfile
                 from app.config import DATABASE_PATH
+                from app.database.engine import close_db, init_db
                 
                 db_path = DATABASE_PATH
                 
-                # Ask user to select the .db file
-                restore_path, _ = QFileDialog.getOpenFileName(self.parent(), "Select Backup File to Restore", "", "Database Files (*.db)")
+                # Ask user to select the file (.zip or .db)
+                restore_path, _ = QFileDialog.getOpenFileName(self.parent(), "Select Backup File to Restore", "", "Backup Files (*.zip *.db)")
                 
                 if restore_path and os.path.exists(restore_path):
-                    shutil.copy2(restore_path, db_path)
-                    response = {"status": "success", "data": {}}
+                    try:
+                        # Close the current database connection
+                        close_db()
+                        
+                        # Remove existing WAL and SHM files to prevent corruption after restore
+                        if os.path.exists(db_path + "-wal"):
+                            os.remove(db_path + "-wal")
+                        if os.path.exists(db_path + "-shm"):
+                            os.remove(db_path + "-shm")
+                            
+                        if restore_path.endswith('.zip'):
+                            with tempfile.TemporaryDirectory() as temp_dir:
+                                # Extract zip
+                                with zipfile.ZipFile(restore_path, 'r') as zip_ref:
+                                    zip_ref.extractall(temp_dir)
+                                
+                                # 1. Restore Database
+                                extracted_db = os.path.join(temp_dir, "tailor_shop.db")
+                                if os.path.exists(extracted_db):
+                                    shutil.copy2(extracted_db, db_path)
+                                else:
+                                    raise Exception("Invalid backup format: Database file missing in zip.")
+                                    
+                                # 2. Restore Uploads (Photos)
+                                extracted_uploads = os.path.join(temp_dir, "uploads")
+                                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                                current_uploads = os.path.join(base_dir, "assets", "www", "uploads")
+                                
+                                if os.path.exists(extracted_uploads):
+                                    # Clear current uploads if they exist to avoid mixing
+                                    if os.path.exists(current_uploads):
+                                        shutil.rmtree(current_uploads)
+                                    shutil.copytree(extracted_uploads, current_uploads)
+                                    
+                        else:
+                            # Legacy .db file support
+                            shutil.copy2(restore_path, db_path)
+                        
+                        # Re-initialize the database connection
+                        init_db()
+                        response = {"status": "success", "data": {}}
+                    except Exception as e:
+                        response = {"status": "error", "message": f"Restore failed: {e}"}
+                        init_db() # Try to recover
                 else:
                     response = {"status": "error", "message": "Restore cancelled or file not found"}
+
+            elif action == "erase_all_data":
+                from app.database.engine import close_db, init_db
+                from app.config import DATABASE_PATH
+                import os
+                
+                try:
+                    close_db()
+                    if os.path.exists(DATABASE_PATH):
+                        os.remove(DATABASE_PATH)
+                    if os.path.exists(DATABASE_PATH + "-wal"):
+                        os.remove(DATABASE_PATH + "-wal")
+                    if os.path.exists(DATABASE_PATH + "-shm"):
+                        os.remove(DATABASE_PATH + "-shm")
+                    init_db()
+                    response = {"status": "success", "data": {}}
+                except Exception as e:
+                    response = {"status": "error", "message": str(e)}
 
             # ────────────────────────────────────────────────────────────
             # STOCK
@@ -969,5 +1059,22 @@ class WebBridge(QObject):
             import traceback
             traceback.print_exc()
             response = {"status": "error", "message": str(e)}
+
+        # Resolve image paths to absolute file:// URIs so QWebEngineView can load them from APP_DATA_DIR
+        def resolve_paths(obj):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    if isinstance(v, str) and v.startswith("../uploads/items/"):
+                        from app.config import UPLOADS_DIR
+                        filename = v.split("/")[-1]
+                        abs_path = os.path.join(UPLOADS_DIR, "items", filename)
+                        obj[k] = f"file:///{abs_path}".replace("\\", "/")
+                    else:
+                        resolve_paths(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    resolve_paths(item)
+                    
+        resolve_paths(response)
 
         return json.dumps(response)

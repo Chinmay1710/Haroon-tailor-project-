@@ -31,6 +31,7 @@ DATABASE_PATH = os.path.join(DATABASE_DIR, "tailor_shop.db")
 LOG_DIR = os.path.join(APP_DATA_DIR, "logs")
 LOG_FILE = os.path.join(LOG_DIR, "tailor_shop.log")
 BACKUP_DEFAULT_DIR = os.path.join(APP_DATA_DIR, "backups")
+UPLOADS_DIR = os.path.join(APP_DATA_DIR, "uploads")
 
 # ---------------------------------------------------------------------------
 # Ensure directories exist
@@ -38,8 +39,32 @@ BACKUP_DEFAULT_DIR = os.path.join(APP_DATA_DIR, "backups")
 
 def ensure_dirs():
     """Create all required application directories if they don't exist."""
-    for d in [APP_DATA_DIR, DATABASE_DIR, LOG_DIR, BACKUP_DEFAULT_DIR]:
+    for d in [APP_DATA_DIR, DATABASE_DIR, LOG_DIR, BACKUP_DEFAULT_DIR, UPLOADS_DIR]:
         os.makedirs(d, exist_ok=True)
+        
+    # Migrate any existing uploads from assets to APP_DATA_DIR
+    import shutil
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    old_uploads = os.path.join(base_dir, "assets", "www", "uploads")
+    if os.path.exists(old_uploads) and os.listdir(old_uploads):
+        try:
+            for item in os.listdir(old_uploads):
+                src = os.path.join(old_uploads, item)
+                dst = os.path.join(UPLOADS_DIR, item)
+                if os.path.isdir(src):
+                    if not os.path.exists(dst):
+                        shutil.copytree(src, dst)
+                    else:
+                        # Copy contents if dir exists
+                        for sub_item in os.listdir(src):
+                            shutil.copy2(os.path.join(src, sub_item), os.path.join(dst, sub_item))
+                else:
+                    shutil.copy2(src, dst)
+            # Remove old directory after successful copy
+            shutil.rmtree(old_uploads)
+            print(f"Migrated uploads from {old_uploads} to {UPLOADS_DIR}")
+        except Exception as e:
+            print(f"Warning: Failed to migrate old uploads: {e}")
 
 
 # ---------------------------------------------------------------------------

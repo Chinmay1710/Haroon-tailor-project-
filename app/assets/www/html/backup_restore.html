@@ -204,7 +204,7 @@
 <!-- Bento Grid Layout for Backup/Restore -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-stack_md">
 <!-- Backup Card -->
-<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between h-[320px] hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between min-h-[320px] h-full hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300">
 <div>
 <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-6">
 <span class="material-symbols-outlined text-on-primary-fixed" data-icon="cloud_upload">cloud_upload</span>
@@ -224,7 +224,7 @@
                     </button>
 </div>
 <!-- Restore Card -->
-<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between h-[320px] hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 relative overflow-hidden">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container flex flex-col justify-between min-h-[320px] h-full hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 relative overflow-hidden">
 <!-- Subtle warning background pattern -->
 <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-error-container/20 to-transparent pointer-events-none"></div>
 <div class="relative z-10">
@@ -263,6 +263,25 @@
 </label>
 </div>
 </div>
+
+<!-- Danger Zone -->
+<div class="bg-error-container/10 rounded-xl p-6 border border-error-container/30 mt-4">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container/30 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error" data-icon="delete_forever">delete_forever</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-error">Erase All Data</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Permanently delete all customers, orders, and shop data. This cannot be undone.</p>
+</div>
+</div>
+<button class="bg-error text-on-error font-label-lg text-label-lg px-6 py-2 rounded-lg hover:bg-error/90 transition-colors shadow-sm whitespace-nowrap" onclick="window.handleEraseData()">
+    Erase Data
+</button>
+</div>
+</div>
+
 </div>
 </main>
 <script src="../js/i18n.js?v=1787471943"></script>

@@ -43,15 +43,16 @@ class OrderService:
             img_data = base64.b64decode(b64_data)
             filename = f"item_{uuid.uuid4().hex[:8]}.jpg"
             
-            # Save to app/assets/www/uploads/items/
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            upload_dir = os.path.join(base_dir, "assets", "www", "uploads", "items")
+            from app.config import UPLOADS_DIR
+            
+            upload_dir = os.path.join(UPLOADS_DIR, "items")
             os.makedirs(upload_dir, exist_ok=True)
             
             file_path = os.path.join(upload_dir, filename)
             with open(file_path, "wb") as f:
                 f.write(img_data)
                 
+            # Return relative path for DB, but the UI will need absolute path resolution
             return f"../uploads/items/{filename}"
         except Exception as e:
             logger.error(f"Failed to save image: {e}")

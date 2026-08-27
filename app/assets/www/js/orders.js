@@ -290,6 +290,18 @@ function renderOrders(orders) {
             }
         }
         
+        let thumbnailHtml = '';
+        if (o.image_path) {
+            const firstImg = o.image_path.split(',')[0].trim();
+            if (firstImg) {
+                thumbnailHtml = `
+                    <div class="w-10 h-10 mt-2 bg-surface-container rounded-lg flex items-center justify-center shrink-0 overflow-hidden border border-outline-variant/50">
+                        <img src="${firstImg}" class="w-full h-full object-cover">
+                    </div>
+                `;
+            }
+        }
+        
         const card = document.createElement('div');
         card.className = `${cardBg} rounded-xl shadow-sm border ${cardBorder} p-4 hover:shadow-md transition-shadow group grid grid-cols-1 md:grid-cols-12 gap-4 items-center relative overflow-hidden cursor-pointer`;
         card.onclick = () => window.API.request('navigate_to', {page: 'order_details', id: o.id});
@@ -297,9 +309,12 @@ function renderOrders(orders) {
         card.innerHTML = `
             ${errorHighlight}
             <div class="col-span-1 md:col-span-2 flex flex-row md:flex-col justify-between md:justify-start ${isOverdue ? 'pl-2' : ''}">
-                <div class="flex items-center gap-1">
-                    ${isOverdue ? '<span class="material-symbols-outlined text-error text-[18px]">error</span>' : ''}
-                    <span class="font-label-lg text-label-lg text-primary">${o.order_number}</span>
+                <div class="flex flex-col items-start">
+                    <div class="flex items-center gap-1">
+                        ${isOverdue ? '<span class="material-symbols-outlined text-error text-[18px]">error</span>' : ''}
+                        <span class="font-label-lg text-label-lg text-primary">${o.order_number}</span>
+                    </div>
+                    ${thumbnailHtml}
                 </div>
             </div>
             <div class="col-span-1 md:col-span-3 flex flex-row md:flex-col justify-between md:justify-start">
