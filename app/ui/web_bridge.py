@@ -854,30 +854,63 @@ class WebBridge(QObject):
                     session.close()
 
             elif action == "create_backup":
-                db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database', 'tailor_shop.db'))
-                backup_dir = os.path.expanduser('~/Documents/ArtisanStitch_Backups')
-                os.makedirs(backup_dir, exist_ok=True)
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                backup_path = os.path.join(backup_dir, f'backup_{timestamp}.db')
+                from PySide6.QtWidgets import QFileDialog
+                import shutil, os
+                from datetime import datetime
+                from app.config import DATABASE_PATH
+                from app.database.engine import get_session
+                from app.repositories.settings_repo import SettingsRepository
                 
-                if os.path.exists(db_path):
-                    shutil.copy2(db_path, backup_path)
-                    response = {"status": "success", "path": backup_path}
+                db_path = DATABASE_PATH
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                default_filename = f"TailorBackup_{timestamp}.db"
+                
+                # Ask for Hard Drive location
+                save_path, _ = QFileDialog.getSaveFileName(self.parent(), "Save Backup File", default_filename, "Database Files (*.db)")
+                
+                if save_path:
+                    shutil.copy2(db_path, save_path)
+                    
+                    # Handle Google Drive Backup
+                    session = get_session()
+                    try:
+                        repo = SettingsRepository(session)
+                        settings = repo.get_settings()
+                        gdrive_path = getattr(settings, "backup_location", None)
+                        
+                        # Ensure it's an absolute path and exists, otherwise prompt again
+                        if not gdrive_path or not os.path.exists(gdrive_path):
+                            gdrive_path = QFileDialog.getExistingDirectory(self.parent(), "Select your local Google Drive folder for Automatic Backups (Cancel to skip)")
+                            if gdrive_path:
+                                repo.update_settings(backup_location=gdrive_path)
+                                session.commit()
+                        
+                        if gdrive_path and os.path.exists(gdrive_path):
+                            gdrive_backup = os.path.join(gdrive_path, default_filename)
+                            shutil.copy2(db_path, gdrive_backup)
+                            response = {"status": "success", "data": {"path": f"Hard Drive: {save_path}\nGoogle Drive: {gdrive_backup}"}}
+                        else:
+                            response = {"status": "success", "data": {"path": save_path}}
+                    finally:
+                        session.close()
                 else:
-                    response = {"status": "error", "message": "Database file not found"}
+                    response = {"status": "error", "message": "Backup cancelled"}
 
             elif action == "restore_backup":
-                # In a real app we'd let the user select the file, but for now we restore the latest backup.
-                db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database', 'tailor_shop.db'))
-                backup_dir = os.path.expanduser('~/Documents/ArtisanStitch_Backups')
-                backups = glob.glob(os.path.join(backup_dir, '*.db'))
+                from PySide6.QtWidgets import QFileDialog
+                import shutil, os
+                from app.config import DATABASE_PATH
                 
-                if backups:
-                    latest_backup = max(backups, key=os.path.getctime)
-                    shutil.copy2(latest_backup, db_path)
-                    response = {"status": "success"}
+                db_path = DATABASE_PATH
+                
+                # Ask user to select the .db file
+                restore_path, _ = QFileDialog.getOpenFileName(self.parent(), "Select Backup File to Restore", "", "Database Files (*.db)")
+                
+                if restore_path and os.path.exists(restore_path):
+                    shutil.copy2(restore_path, db_path)
+                    response = {"status": "success", "data": {}}
                 else:
-                    response = {"status": "error", "message": "No backups found to restore."}
+                    response = {"status": "error", "message": "Restore cancelled or file not found"}
 
             else:
                 response = {"status": "error", "message": f"Unknown action: {action}"}
