@@ -6,7 +6,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('app/assets/www', 'app/assets/www')],
+    datas=[('app/assets', 'assets')],
     hiddenimports=['PySide6.QtWebEngineWidgets', 'PySide6.QtWebEngineCore', 'PySide6.QtWebChannel', 'sqlalchemy', 'sqlite3', 'reportlab'],
     hookspath=[],
     hooksconfig={},
