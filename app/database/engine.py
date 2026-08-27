@@ -72,6 +72,7 @@ def init_db():
     import app.models.expense       # noqa: F401
     import app.models.settings      # noqa: F401
     import app.models.worker        # noqa: F401
+    import app.models.stock         # noqa: F401
 
     engine = get_engine()
     Base.metadata.create_all(engine)

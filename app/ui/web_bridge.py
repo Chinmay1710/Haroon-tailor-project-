@@ -879,6 +879,57 @@ class WebBridge(QObject):
                 else:
                     response = {"status": "error", "message": "No backups found to restore."}
 
+            # ────────────────────────────────────────────────────────────
+            # STOCK
+            # ────────────────────────────────────────────────────────────
+            elif action == "get_all_stock":
+                from app.services.stock_service import stock_service
+                items = stock_service.get_all_stock()
+                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity} for i in items]
+                response = {"status": "success", "data": data}
+            
+            elif action == "get_low_stock":
+                from app.services.stock_service import stock_service
+                items = stock_service.get_low_stock_items()
+                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity} for i in items]
+                response = {"status": "success", "data": data}
+
+            elif action == "add_stock_item":
+                from app.services.stock_service import stock_service
+                item = stock_service.add_stock_item(
+                    name=payload.get("name"),
+                    category=payload.get("category"),
+                    quantity=float(payload.get("quantity", 0)),
+                    unit=payload.get("unit"),
+                    min_quantity=float(payload.get("min_quantity", 0))
+                )
+                response = {"status": "success", "data": item}
+                
+            elif action == "update_stock_item":
+                from app.services.stock_service import stock_service
+                item = stock_service.update_stock_item(
+                    item_id=payload.get("id"),
+                    name=payload.get("name"),
+                    category=payload.get("category"),
+                    unit=payload.get("unit"),
+                    min_quantity=float(payload.get("min_quantity", 0))
+                )
+                response = {"status": "success", "data": item}
+                
+            elif action == "adjust_stock":
+                from app.services.stock_service import stock_service
+                item = stock_service.adjust_stock(
+                    item_id=payload.get("id"),
+                    amount=float(payload.get("amount", 0)),
+                    operation=payload.get("operation")
+                )
+                response = {"status": "success", "data": item}
+                
+            elif action == "delete_stock_item":
+                from app.services.stock_service import stock_service
+                success = stock_service.delete_stock_item(payload.get("id"))
+                response = {"status": "success" if success else "error"}
+
             else:
                 response = {"status": "error", "message": f"Unknown action: {action}"}
         except Exception as e:

@@ -1,5 +1,5 @@
 /**
- * stitching_slip_preview.js - Render dynamic stitching slip data before printing
+ * stitching_slip_preview.js - Render dynamic stitching slip data before printing (58mm POS format)
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         if (!navParams || !navParams.order_id) {
             window.API.toast("No order ID provided.", "error");
-            document.getElementById('ss-order-number').textContent = "Error: Order ID Missing";
+            document.getElementById('ss-order-number').textContent = "Error";
             return;
         }
         
@@ -28,10 +28,9 @@ async function loadSlipData(orderId) {
         const o = await window.API.request('get_order_details', {id: orderId});
         
         document.getElementById('ss-order-number').textContent = o.order_number;
-        document.getElementById('ss-due-date').textContent = "Due: " + window.API.formatDate(o.delivery_date);
+        document.getElementById('ss-due-date').textContent = window.API.formatDate(o.delivery_date);
         
-        document.getElementById('ss-customer-name').textContent = o.customer_name || 'Walk-in Customer';
-        document.getElementById('ss-customer-mobile').innerHTML = `<span class="material-symbols-outlined text-[18px]" data-icon="phone">phone</span> ${o.customer_mobile || 'No Mobile'}`;
+        document.getElementById('ss-customer-name').textContent = o.customer_name || 'Walk-in';
         
         const garmentText = o.items && o.items.length > 0 
             ? o.items.map(i => `${i.clothing_type || 'Custom Item'} (x${i.quantity || 1})`).join(", ")
@@ -50,50 +49,46 @@ async function loadSlipData(orderId) {
         let hasMeasurements = false;
         
         if (o.items && o.items.length > 0) {
-            o.items.forEach(item => {
+            o.items.forEach((item, index) => {
                 if (item.measurements && Object.keys(item.measurements).length > 0) {
                     hasMeasurements = true;
-                    const section = document.createElement('section');
-                    section.className = "flex flex-col gap-stack_sm mt-4";
+                    const section = document.createElement('div');
+                    section.style.marginBottom = '10px';
                     
                     section.innerHTML = `
-                        <h3 class="font-headline-md text-headline-md text-primary flex items-center gap-2 border-b border-outline-variant/50 pb-2">
-                            <span class="material-symbols-outlined" data-icon="straighten">straighten</span>
-                            ${item.clothing_type || 'Item'} Measurements
-                        </h3>
+                        <div style="font-weight: bold; margin-bottom: 2px; text-decoration: underline;">
+                            ${item.clothing_type || 'Item'}
+                        </div>
                     `;
                     
-                    const grid = document.createElement('div');
-                    grid.className = "grid grid-cols-2 md:grid-cols-4 gap-4 mt-2";
-                    
                     const values = item.measurements;
+                    // Format compactly: Name: Value" 
                     for (const key of Object.keys(values)) {
                         const mItem = document.createElement('div');
-                        mItem.className = "flex flex-col items-center justify-center p-4 bg-surface rounded-lg border border-outline-variant shadow-sm relative overflow-hidden";
+                        mItem.style.display = 'flex';
+                        mItem.style.justifyContent = 'space-between';
                         mItem.innerHTML = `
-                            <div class="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
-                            <span class="font-label-lg text-label-lg text-on-surface-variant mb-2 truncate max-w-full" title="${key}">${key.replace('_', ' ')}</span>
-                            <span class="font-display text-display text-primary">${values[key]}<span class="text-headline-md text-on-surface-variant ml-1">"</span></span>
+                            <span>${key.replace('_', ' ')}:</span>
+                            <span style="font-weight:bold;">${values[key]}"</span>
                         `;
-                        grid.appendChild(mItem);
+                        section.appendChild(mItem);
                     }
                     
-                    section.appendChild(grid);
                     mContainer.appendChild(section);
                 }
             });
         }
         
         if (!hasMeasurements) {
-            mContainer.innerHTML = '<div class="p-4 bg-surface-container-low text-center text-on-surface-variant rounded-lg">No measurement profile attached to this order.</div>';
+            mContainer.innerHTML = '<div style="text-align:center; font-style:italic;">No measurements</div>';
         }
 
         if (o.scan_url) {
             document.getElementById('ss-qrcode').innerHTML = '';
             new QRCode(document.getElementById("ss-qrcode"), {
                 text: o.scan_url,
-                width: 75,
-                height: 75,
+                width: 60,
+                height: 60,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.L
@@ -105,4 +100,3 @@ async function loadSlipData(orderId) {
         window.API.toast("Failed to load stitching slip: " + e, "error");
     }
 }
-

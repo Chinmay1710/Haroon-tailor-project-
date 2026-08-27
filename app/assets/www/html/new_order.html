@@ -336,12 +336,15 @@
                 
                 <!-- Photo Capture Section -->
                 <div>
-                    <h3 class="font-title-md text-primary mb-4 flex items-center gap-2">
-                        <span class="material-symbols-outlined" data-icon="photo_camera">photo_camera</span>
-                        Attach Photo
+                    <h3 class="font-title-md text-primary mb-4 flex justify-between items-center">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined" data-icon="photo_camera">photo_camera</span>
+                            Attach Photo(s)
+                        </span>
+                        <span id="photo-count-badge" class="bg-primary-container text-on-primary-container px-2 py-1 rounded text-sm">0 / 1</span>
                     </h3>
                     <div class="flex flex-col gap-4">
-                        <div class="flex items-center gap-4">
+                        <div class="flex flex-wrap items-center gap-4">
                             <button type="button" id="btn-start-camera" onclick="startCamera()" class="px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-lg border border-outline flex items-center gap-2 transition-colors">
                                 <span class="material-symbols-outlined text-[20px]" data-icon="videocam">videocam</span>
                                 Start Camera
@@ -350,13 +353,6 @@
                                 Or upload file
                             </button>
                             <input type="file" id="modal-item-photo" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
-                            
-                            <div id="modal-photo-preview-container" class="hidden relative border border-outline rounded-lg overflow-hidden bg-surface-container-lowest h-16 w-16 shadow-sm">
-                                <img id="modal-photo-preview" src="" class="w-full h-full object-cover">
-                                <button type="button" onclick="clearPhotoCapture()" class="absolute -top-2 -right-2 w-6 h-6 bg-error text-on-error rounded-full flex items-center justify-center shadow-sm z-10">
-                                    <span class="material-symbols-outlined text-[14px]" data-icon="close">close</span>
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Live Camera View -->
@@ -372,7 +368,15 @@
                             </div>
                             <canvas id="live-camera-canvas" class="hidden"></canvas>
                         </div>
+                        
+                        <!-- Photo Previews List -->
+                        <div id="modal-photo-preview-list" class="flex gap-3 flex-wrap empty:hidden">
+                            <!-- Thumbnails injected here -->
+                        </div>
                     </div>
+                </div>
+
+
                 </div>
 
             </div>
@@ -382,6 +386,14 @@
                 <button onclick="saveModalItem()" id="btn-save-modal-item" class="px-6 py-2.5 font-label-lg bg-primary text-on-primary rounded-lg hover:opacity-90 transition-opacity ambient-shadow shadow-sm"><span data-i18n="new_order.add_item">Add Item</span></button>
             </div>
         </div>
+    </div>
+
+    <!-- Full Screen Image Modal -->
+    <div id="image-modal" class="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity" onclick="closeImageModal()">
+        <img id="image-modal-content" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded">
+        <button class="absolute top-4 right-4 text-white hover:text-gray-300 w-10 h-10 flex items-center justify-center bg-black/50 rounded-full" onclick="closeImageModal(event)">
+            <span class="material-symbols-outlined">close</span>
+        </button>
     </div>
 
     <!-- JS -->

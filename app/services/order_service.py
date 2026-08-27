@@ -81,7 +81,13 @@ class OrderService:
 
             # Add order items
             for item_data in items:
-                img_path = self._save_image(item_data.get('image_base64'))
+                b64_data = item_data.get('image_base64')
+                if isinstance(b64_data, list):
+                    paths = [self._save_image(b) for b in b64_data if b]
+                    paths = [p for p in paths if p] # filter out Nones
+                    img_path = ",".join(paths) if paths else None
+                else:
+                    img_path = self._save_image(b64_data)
                 item = order_repo.add_item(
                     order_id=order.id,
                     clothing_type=item_data.get('clothing_type', 'Custom'),
@@ -163,7 +169,13 @@ class OrderService:
             order_repo.clear_items(order_id)
             # Re-add order items
             for item_data in items:
-                img_path = self._save_image(item_data.get('image_base64'))
+                b64_data = item_data.get('image_base64')
+                if isinstance(b64_data, list):
+                    paths = [self._save_image(b) for b in b64_data if b]
+                    paths = [p for p in paths if p] # filter out Nones
+                    img_path = ",".join(paths) if paths else None
+                else:
+                    img_path = self._save_image(b64_data)
                 item = order_repo.add_item(
                     order_id=order.id,
                     clothing_type=item_data.get('clothing_type', 'Custom'),

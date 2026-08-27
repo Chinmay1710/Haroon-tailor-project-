@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         else if (text.includes("expense") || text.includes("खर्च")) window.dispatchToPython("navigate_to", {page: "expenses_list"});
                         else if (text.includes("report") || text.includes("रिपोर्ट")) window.dispatchToPython("navigate_to", {page: "reports"});
                         else if (text.includes("worker") || text.includes("कर्मचारी")) window.dispatchToPython("navigate_to", {page: "workers"});
+                        else if (text.includes("stock") || text.includes("स्टॉक")) window.dispatchToPython("navigate_to", {page: "stock_list"});
                         else if (text.includes("setting") || text.includes("सेटिंग")) window.dispatchToPython("navigate_to", {page: "settings"});
                         else if (text.includes("backup") || text.includes("बैकअप")) window.dispatchToPython("navigate_to", {page: "backup_restore"});
                         else if (text.includes("help") || text.includes("मदद")) window.dispatchToPython("navigate_to", {page: "help"});

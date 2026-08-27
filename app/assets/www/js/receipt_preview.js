@@ -1,5 +1,5 @@
 /**
- * receipt_preview.js - Render dynamic receipt data before printing
+ * receipt_preview.js - Render dynamic receipt data before printing (58mm POS format)
  */
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         if (!navParams || !navParams.order_id) {
             window.API.toast("No order ID provided.", "error");
-            document.getElementById('rp-order-number').textContent = "Error: Order ID Missing";
+            document.getElementById('rp-order-number').textContent = "Error";
             return;
         }
         
@@ -28,47 +28,48 @@ async function loadOrderData(orderId) {
         const o = await window.API.request('get_order_details', {id: orderId});
         
         document.getElementById('rp-order-number').textContent = o.order_number;
-        document.getElementById('rp-date').textContent = "Date: " + window.API.formatDate(new Date());
+        document.getElementById('rp-date').textContent = window.API.formatDate(new Date());
         
-        document.getElementById('rp-customer-name').textContent = o.customer_name || 'Walk-in Customer';
-        document.getElementById('rp-customer-mobile').textContent = o.customer_mobile || '';
-        document.getElementById('rp-customer-address').textContent = o.customer_address || '';
+        document.getElementById('rp-customer-name').textContent = o.customer_name || 'Walk-in';
+        document.getElementById('rp-customer-mobile').textContent = o.customer_mobile ? `Ph: ${o.customer_mobile}` : '';
         
-        document.getElementById('rp-order-date').textContent = window.API.formatDate(o.order_date);
         document.getElementById('rp-delivery-date').textContent = window.API.formatDate(o.delivery_date);
-        document.getElementById('rp-status').textContent = o.status;
         
         const tbody = document.getElementById('rp-items-tbody');
         tbody.innerHTML = '';
         
         if (o.items && o.items.length > 0) {
             o.items.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-outline-variant/50';
-                tr.innerHTML = `
-                    <td class="py-4 px-2">
-                        <p class="font-label-lg text-label-lg">${item.clothing_type || 'Custom Item'}</p>
-                        <p class="text-on-surface-variant text-sm mt-1">${item.notes || ''}</p>
-                    </td>
-                    <td class="py-4 px-2 text-center">${item.quantity || 1}</td>
-                    <td class="py-4 px-2 text-right">${window.API.formatCurrency(item.price || 0)}</td>
-                    <td class="py-4 px-2 text-right font-label-lg text-label-lg">${window.API.formatCurrency((item.price || 0) * (item.quantity || 1))}</td>
+                const total = (item.price || 0) * (item.quantity || 1);
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.marginBottom = '2px';
+                div.innerHTML = `
+                    <div style="width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.clothing_type || 'Custom'}</div>
+                    <div style="width: 15%; text-align: center;">${item.quantity || 1}</div>
+                    <div style="width: 35%; text-align: right;">${window.API.formatCurrency(total)}</div>
                 `;
-                tbody.appendChild(tr);
+                tbody.appendChild(div);
+                
+                if (item.notes) {
+                    const notesDiv = document.createElement('div');
+                    notesDiv.style.fontSize = '10px';
+                    notesDiv.style.color = '#555';
+                    notesDiv.style.marginLeft = '5px';
+                    notesDiv.style.marginBottom = '4px';
+                    notesDiv.textContent = `* ${item.notes}`;
+                    tbody.appendChild(notesDiv);
+                }
             });
         } else {
-            // Fallback just in case
-            const tr = document.createElement('tr');
-            tr.className = 'border-b border-outline-variant/50';
-            tr.innerHTML = `
-                <td class="py-4 px-2">
-                    <p class="font-label-lg text-label-lg">Custom Item</p>
-                </td>
-                <td class="py-4 px-2 text-center">1</td>
-                <td class="py-4 px-2 text-right">${window.API.formatCurrency(o.total_amount)}</td>
-                <td class="py-4 px-2 text-right font-label-lg text-label-lg">${window.API.formatCurrency(o.total_amount)}</td>
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.innerHTML = `
+                <div style="width: 50%;">Custom</div>
+                <div style="width: 15%; text-align: center;">1</div>
+                <div style="width: 35%; text-align: right;">${window.API.formatCurrency(o.total_amount)}</div>
             `;
-            tbody.appendChild(tr);
+            tbody.appendChild(div);
         }
         
         document.getElementById('rp-total').textContent = window.API.formatCurrency(o.total_amount);
@@ -79,10 +80,11 @@ async function loadOrderData(orderId) {
         if (o.payments && o.payments.length > 0) {
             o.payments.forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'flex justify-between py-2 font-body-md text-body-md text-on-surface';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
                 div.innerHTML = `
-                    <span>Payment (${window.API.formatDate(p.payment_date)}) - ${p.payment_method}:</span>
-                    <span class="text-primary-fixed-dim">-${window.API.formatCurrency(p.amount)}</span>
+                    <span>Paid (${window.API.formatDate(p.payment_date)}):</span>
+                    <span>-${window.API.formatCurrency(p.amount)}</span>
                 `;
                 histContainer.appendChild(div);
             });

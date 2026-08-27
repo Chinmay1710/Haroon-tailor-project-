@@ -1,205 +1,116 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Stitching Slip Print Preview</title>
-<script src="../js/tailwindcss.js?v=1787471943"></script>
-<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-
-
-
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-container-highest": "#d3e4fe",
-                        "surface-dim": "#cbdbf5",
-                        "surface-container": "#e5eeff",
-                        "tertiary-container": "#3f2200",
-                        "primary-fixed": "#d8e3fb",
-                        "surface": "#f8f9ff",
-                        "secondary-container": "#e0e0db",
-                        "on-surface-variant": "#45474c",
-                        "on-primary-fixed": "#111c2d",
-                        "on-error-container": "#93000a",
-                        "surface-variant": "#d3e4fe",
-                        "outline": "#75777d",
-                        "error-container": "#ffdad6",
-                        "on-secondary-fixed": "#1a1c19",
-                        "inverse-on-surface": "#eaf1ff",
-                        "on-background": "#0b1c30",
-                        "on-primary-fixed-variant": "#3c475a",
-                        "surface-tint": "#545f73",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-container": "#b58759",
-                        "tertiary": "#221000",
-                        "background": "#f8f9ff",
-                        "on-tertiary": "#ffffff",
-                        "tertiary-fixed": "#ffdcbd",
-                        "on-secondary-fixed-variant": "#454744",
-                        "primary": "#091426",
-                        "surface-container-low": "#eff4ff",
-                        "on-tertiary-fixed-variant": "#623f18",
-                        "secondary": "#5d5f5b",
-                        "on-primary-container": "#8590a6",
-                        "surface-bright": "#f8f9ff",
-                        "on-error": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "inverse-surface": "#213145",
-                        "surface-container-high": "#dce9ff",
-                        "outline-variant": "#c5c6cd",
-                        "primary-fixed-dim": "#bcc7de",
-                        "on-surface": "#0b1c30",
-                        "secondary-fixed-dim": "#c6c7c2",
-                        "inverse-primary": "#bcc7de",
-                        "primary-container": "#1e293b",
-                        "on-tertiary-fixed": "#2c1600",
-                        "on-secondary-container": "#62635f",
-                        "tertiary-fixed-dim": "#f0bd8b",
-                        "on-secondary": "#ffffff",
-                        "error": "#ba1a1a",
-                        "secondary-fixed": "#e3e3de"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "stack_lg": "32px",
-                        "gutter": "24px",
-                        "container_padding": "40px",
-                        "stack_sm": "8px",
-                        "sidebar_width": "280px",
-                        "header_height": "72px",
-                        "stack_md": "16px"
-                    },
-                    "fontFamily": {
-                        "body-lg": ["Public Sans"],
-                        "headline-md": ["Public Sans"],
-                        "display": ["Public Sans"],
-                        "label-lg": ["Public Sans"],
-                        "label-sm": ["Public Sans"],
-                        "headline-lg": ["Public Sans"],
-                        "body-md": ["Public Sans"]
-                    },
-                    "fontSize": {
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "display": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
-                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
-                    }
-                }
-            }
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stitching Slip Print Preview</title>
+    <script src="../js/tailwindcss.js?v=1787471943"></script>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <style>
+        /* 58mm POS receipt styling */
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            font-family: 'Courier New', Courier, monospace;
+            color: #000;
+            margin: 0;
+            padding: 20px;
         }
-    </script>
-<style>
-        /* Custom print styles to ensure preview looks like actual print */
+        .pos-slip {
+            width: 58mm; /* Standard 58mm paper size */
+            max-width: 58mm;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
         @media print {
-            body { background: white; }
+            body { background: white; margin: 0; padding: 0; display: block; }
+            .pos-slip { width: 100%; max-width: 100%; box-shadow: none; margin: 0; padding: 0; }
             .no-print { display: none !important; }
-            .print-canvas { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
+            @page { margin: 0; size: 58mm auto; }
         }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        .text-lg { font-size: 16px; }
+        .dashed-line { border-top: 1px dashed #000; margin: 5px 0; }
+        .flex-between { display: flex; justify-content: space-between; }
+        .mb-2 { margin-bottom: 8px; }
+        .mt-2 { margin-top: 8px; }
     </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
 </head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col items-center py-stack_lg px-gutter antialiased">
-<!-- Action Bar (Task-Focused screen, no global nav) -->
-<div class="w-full max-w-[900px] flex justify-between items-center mb-stack_md no-print">
-<h1 class="font-headline-md text-headline-md text-on-surface">Print Preview</h1>
-<div class="flex gap-4">
-<button onclick="window.API.request('navigate_to', {page: 'orders_list'})" class="px-6 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-primary font-label-lg hover:bg-surface-variant transition-colors flex items-center gap-2 shadow-sm">
-<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
-                Close
-            </button>
-<button class="px-6 py-3 rounded-lg bg-primary text-on-primary font-label-lg flex items-center gap-2 shadow-md hover:bg-primary/90 transition-colors" onclick="window.print()">
-<span class="material-symbols-outlined text-[20px]" data-icon="print">print</span>
-                Print Slip
-            </button>
-</div>
-</div>
-<!-- Print Canvas (The A4/Slip representation) -->
-<main class="w-full max-w-[900px] bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] p-10 flex flex-col gap-stack_lg print-canvas">
-<!-- Slip Header -->
-<header class="flex justify-between items-start border-b-2 border-primary pb-6">
-<div class="flex flex-col gap-2">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-display text-primary" data-icon="straighten">straighten</span>
-<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight "><span class="global-shop-name">Artisan Stitch</span></h2>
-</div>
-<p class="font-label-lg text-label-lg text-on-surface-variant">Workshop Stitching Slip</p>
-</div>
-<div class="text-right flex flex-col gap-1">
-<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Order Number</span>
-<span id="ss-order-number" class="font-display text-display text-primary leading-none">#...</span>
-<div class="mt-2 inline-flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full text-primary self-end">
-<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
-<span id="ss-due-date" class="font-label-lg text-label-lg">Due: ...</span>
-</div>
-</div>
-</header>
-<!-- Customer & Garment Identity -->
-<section class="grid grid-cols-2 gap-stack_lg bg-surface p-6 rounded-lg border border-outline-variant/30">
-<div>
-<span class="font-label-sm text-label-sm uppercase text-on-surface-variant block mb-1">Customer</span>
-<span id="ss-customer-name" class="font-headline-md text-headline-md text-on-surface block">Loading...</span>
-<span id="ss-customer-mobile" class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 mt-2">
-<span class="material-symbols-outlined text-[18px]" data-icon="phone">phone</span>
-                </span>
-</div>
-<div>
-<span class="font-label-sm text-label-sm uppercase text-on-surface-variant block mb-1">Garment Type</span>
-<span id="ss-garment-type" class="font-headline-md text-headline-md text-on-surface block">Loading...</span>
-<span class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 mt-2">
-<span class="material-symbols-outlined text-[18px]" data-icon="palette">palette</span>
-                    Standard Material
-                </span>
-</div>
-</section>
-<!-- Measurements Grid -->
-<div id="ss-measurements-container" class="flex flex-col gap-stack_sm mt-4">
-    <!-- Measurements injected by JS -->
-</div>
-<!-- Special Instructions (Highly visible for workshop) -->
-<section class="mt-4 p-6 bg-surface-container-high rounded-xl border-l-8 border-primary">
-<h3 class="font-label-lg text-label-lg uppercase tracking-wider text-primary mb-3 flex items-center gap-2">
-<span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
-                Special Instructions
-            </h3>
-<p id="ss-special-instructions" class="font-body-lg text-body-lg text-on-surface leading-relaxed whitespace-pre-wrap text-xl">
-None
-            </p>
-</section>
-<!-- Footer Sign-offs (Tactile element) -->
-<footer class="mt-8 pt-8 border-t-2 border-dashed border-outline-variant flex justify-between items-end">
-<div class="flex gap-16">
-<div class="flex flex-col w-48">
-<div class="border-b border-outline h-8"></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center uppercase">Cut By</span>
-</div>
-<div class="flex flex-col w-48">
-<div class="border-b border-outline h-8"></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center uppercase">Sewn By</span>
-</div>
-</div>
-<div class="flex flex-col items-center gap-2">
-    <div id="ss-qrcode" class="p-1 bg-white rounded-md border shadow-sm h-[90px] w-[90px] flex items-center justify-center"></div>
-    <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Scan to Update</span>
-    <div id="ss-generated-date" class="font-body-sm text-[10px] text-on-surface-variant mt-1">
-        Generated: ...
+<body>
+    <div class="fixed top-4 right-4 no-print flex gap-2">
+        <button onclick="window.history.back()" class="px-4 py-2 bg-gray-200 rounded text-sm font-sans flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Back
+        </button>
+        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-sans flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px;">print</span> Print
+        </button>
     </div>
-</div>
-</footer>
-</main>
-<script src="../js/qrcode.min.js"></script>
-<script src="../js/api.js?v=1787471943"></script>
-<script src="../js/app.js?v=1787471943"></script>
-<script src="../js/stitching_slip_preview.js?v=1787471943"></script>
-</body></html>
+
+    <main class="pos-slip print-canvas">
+        <div class="text-center mb-2 mt-2">
+            <div class="font-bold text-lg">STITCHING SLIP</div>
+            <div><span class="global-shop-name">Artisan Stitch</span></div>
+        </div>
+        
+        <div class="dashed-line"></div>
+        
+        <div class="flex-between font-bold" style="font-size: 14px;">
+            <span>Order No:</span>
+            <span id="ss-order-number">...</span>
+        </div>
+        <div class="flex-between">
+            <span>Due:</span>
+            <span id="ss-due-date">...</span>
+        </div>
+        
+        <div class="dashed-line"></div>
+        
+        <div class="mb-2">
+            <div>Customer: <span id="ss-customer-name" class="font-bold">...</span></div>
+            <!-- Intentionally no mobile number as requested -->
+        </div>
+
+        <div class="dashed-line"></div>
+        
+        <div class="font-bold mb-2">Garments:</div>
+        <div id="ss-garment-type" style="margin-bottom: 5px;">Loading...</div>
+
+        <div class="dashed-line"></div>
+        
+        <div class="font-bold mb-2">Instructions:</div>
+        <div id="ss-special-instructions" style="white-space: pre-wrap; margin-bottom: 5px;">None</div>
+
+        <div class="dashed-line"></div>
+        <div class="font-bold text-center mb-2">MEASUREMENTS</div>
+        
+        <div id="ss-measurements-container">
+            <!-- Measurements injected by JS -->
+        </div>
+
+        <div class="dashed-line"></div>
+        
+        <div class="flex-between mt-2" style="font-size: 10px;">
+            <span>Cut By: _____</span>
+            <span>Sewn By: _____</span>
+        </div>
+        
+        <div class="text-center mt-2 flex flex-col items-center">
+            <div id="ss-qrcode" style="margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;"></div>
+            <div style="font-size: 10px;">Scan to Update Status</div>
+            <div id="ss-generated-date" style="font-size: 9px; margin-top: 5px;">Generated: ...</div>
+        </div>
+    </main>
+
+    <script src="../js/qrcode.min.js"></script>
+    <script src="../js/api.js?v=1787471943"></script>
+    <script src="../js/app.js?v=1787471943"></script>
+    <script src="../js/stitching_slip_preview.js?v=1787471943"></script>
+</body>
+</html>

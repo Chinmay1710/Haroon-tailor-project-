@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Tailor Manager - Stock</title>
+    <script src="../js/tailwindcss.js?v=1787471943"></script>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-dim": "#cbdbf5",
+                      "surface-container": "#e5eeff",
+                      "tertiary-container": "#3f2200",
+                      "primary-fixed": "#d8e3fb",
+                      "surface": "#f8f9ff",
+                      "secondary-container": "#e0e0db",
+                      "on-surface-variant": "#45474c",
+                      "on-primary-fixed": "#111c2d",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#d3e4fe",
+                      "outline": "#75777d",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#1a1c19",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-background": "#0b1c30",
+                      "on-primary-fixed-variant": "#3c475a",
+                      "surface-tint": "#545f73",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#b58759",
+                      "tertiary": "#221000",
+                      "background": "#f8f9ff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#ffdcbd",
+                      "on-secondary-fixed-variant": "#454744",
+                      "primary": "#091426",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed-variant": "#623f18",
+                      "secondary": "#5d5f5b",
+                      "on-primary-container": "#8590a6",
+                      "surface-bright": "#f8f9ff",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#213145",
+                      "surface-container-high": "#dce9ff",
+                      "outline-variant": "#c5c6cd",
+                      "primary-fixed-dim": "#bcc7de",
+                      "on-surface": "#0b1c30",
+                      "secondary-fixed-dim": "#c6c7c2",
+                      "inverse-primary": "#bcc7de",
+                      "primary-container": "#1e293b",
+                      "on-tertiary-fixed": "#2c1600",
+                      "on-secondary-container": "#62635f",
+                      "tertiary-fixed-dim": "#f0bd8b",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e3e3de"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack_lg": "32px",
+                      "gutter": "24px",
+                      "container_padding": "40px",
+                      "stack_sm": "8px",
+                      "sidebar_width": "280px",
+                      "header_height": "72px",
+                      "stack_md": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Public Sans"],
+                      "headline-md": ["Public Sans"],
+                      "display": ["Public Sans"],
+                      "label-lg": ["Public Sans"],
+                      "label-sm": ["Public Sans"],
+                      "headline-lg": ["Public Sans"],
+                      "body-md": ["Public Sans"]
+              }
+            }
+          }
+        }
+    </script>
+    <link href="../css/fonts.css" rel="stylesheet"/>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
+    
+    <!-- SideNavBar will be injected or included here. We duplicate the structure for consistency. -->
+    <nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
+    </div>
+    <div>
+      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+    </div>
+  </div>
+  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
+  </div>
+  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
+      <span data-i18n="sidebar.dashboard">Dashboard</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
+      <span data-i18n="sidebar.customers">Customers</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
+      <span data-i18n="sidebar.orders">Orders</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
+      <span data-i18n="sidebar.payments">Payments</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
+      <span data-i18n="sidebar.deliveries">Deliveries</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
+      <span data-i18n="sidebar.expenses">Expenses</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
+      <span data-i18n="sidebar.workers">Workers</span>
+    </a>
+        <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
+      <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">inventory_2</span>
+      <span data-i18n="sidebar.stock">Stock</span>
+    </a>
+<a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
+      <span data-i18n="sidebar.settings">Settings</span>
+    </a>
+  </div>
+  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
+      <span data-i18n="sidebar.help">Help</span>
+    </a>
+    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
+      <span data-i18n="sidebar.offline">Offline Mode</span>
+    </a>
+  </div>
+</nav>
+
+    <!-- TopAppBar -->
+    <header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface dark:bg-surface shadow-sm transition-transform">
+        <div class="flex items-center gap-4">
+            <h2 class="font-headline-md text-headline-md text-primary">Tailor Manager</h2>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ml-[280px] pt-[72px] w-full min-h-screen bg-surface">
+        <div class="p-container_padding max-w-[1200px] mx-auto">
+            
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="font-display text-display text-on-surface">Stock Management</h1>
+                    <p class="text-on-surface-variant font-body-lg text-body-lg mt-1">Track and manage inventory items.</p>
+                </div>
+                <button onclick="openStockModal()" class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-label-lg text-label-lg hover:shadow-[0px_4px_20px_rgba(0,0,0,0.1)] transition-all">
+                    <span class="material-symbols-outlined">add</span>
+                    New Item
+                </button>
+            </div>
+
+            <!-- Dashboard Stats for Stock -->
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+                            <span class="material-symbols-outlined">inventory</span>
+                        </div>
+                        <h3 class="font-label-lg text-label-lg text-on-surface-variant">Total Items</h3>
+                    </div>
+                    <p id="total-items-count" class="font-display text-display text-on-surface ml-13">0</p>
+                </div>
+                
+                <div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+                            <span class="material-symbols-outlined">warning</span>
+                        </div>
+                        <h3 class="font-label-lg text-label-lg text-on-surface-variant">Low Stock Alert</h3>
+                    </div>
+                    <p id="low-stock-count" class="font-display text-display text-error ml-13">0</p>
+                </div>
+            </div>
+
+            <!-- Stock Table -->
+            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+                <div class="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Inventory List</h2>
+                    <div class="relative w-[300px]">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                        <input type="text" id="stock-search" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-on-surface-variant/50 transition-all"/>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-outline-variant/50 bg-surface-container-lowest">
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Item Name</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Category</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant text-right">Quantity</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant text-right">Min Alert</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant text-center">Status</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-tbody" class="divide-y divide-outline-variant/30">
+                            <!-- JS injected rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Add/Edit Stock Modal -->
+    <div id="stock-modal" class="fixed inset-0 bg-[#000000] bg-opacity-50 z-50 hidden items-center justify-center backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-surface-container-lowest rounded-2xl shadow-[0px_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[500px] overflow-hidden transform scale-95 transition-transform">
+            <div class="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
+                <h3 id="modal-title" class="font-headline-md text-headline-md text-on-surface">Add Stock Item</h3>
+                <button onclick="closeStockModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="stock-id" value="" />
+                
+                <div class="mb-4">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Item Name *</label>
+                    <input type="text" id="stock-name" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface" placeholder="e.g. Red Thread">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Category *</label>
+                    <select id="stock-category" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface appearance-none">
+                        <option value="Fabric">Fabric</option>
+                        <option value="Thread">Thread</option>
+                        <option value="Button">Button</option>
+                        <option value="Zipper">Zipper</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Initial Quantity *</label>
+                        <input type="number" id="stock-quantity" step="0.01" min="0" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface" placeholder="0.0">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Unit *</label>
+                        <select id="stock-unit" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface appearance-none">
+                            <option value="meters">Meters</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="spools">Spools</option>
+                            <option value="boxes">Boxes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Low Stock Alert Minimum *</label>
+                    <input type="number" id="stock-min-quantity" step="0.01" min="0" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface" placeholder="e.g. 10">
+                    <p class="text-xs text-on-surface-variant mt-1">Alerts when quantity falls below this.</p>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant/30">
+                    <button onclick="closeStockModal()" class="px-6 py-2 rounded-lg font-label-lg text-label-lg border border-outline text-on-surface hover:bg-surface-container-high transition-colors">Cancel</button>
+                    <button onclick="saveStockItem()" class="px-6 py-2 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary hover:shadow-md transition-all">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Adjust Stock Modal -->
+    <div id="adjust-modal" class="fixed inset-0 bg-[#000000] bg-opacity-50 z-50 hidden items-center justify-center backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-surface-container-lowest rounded-2xl shadow-[0px_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[400px] overflow-hidden transform scale-95 transition-transform">
+            <div class="px-6 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
+                <h3 class="font-headline-md text-headline-md text-on-surface">Adjust Inventory</h3>
+                <button onclick="closeAdjustModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="adj-stock-id" value="" />
+                
+                <p id="adj-item-name" class="font-label-lg text-label-lg text-on-surface mb-1">Item Name</p>
+                <p class="text-sm text-on-surface-variant mb-4">Current Available: <span id="adj-current-qty" class="font-bold text-primary">0</span> <span id="adj-unit"></span></p>
+                
+                <div class="mb-4">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Action</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="adj-action" value="add" class="accent-primary" checked>
+                            <span>Add / Restock</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="adj-action" value="consume" class="accent-error">
+                            <span>Consume</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Amount</label>
+                    <input type="number" id="adj-amount" step="0.01" min="0" class="w-full px-4 py-2 rounded-lg border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest text-on-surface" placeholder="0.0">
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant/30">
+                    <button onclick="closeAdjustModal()" class="px-6 py-2 rounded-lg font-label-lg text-label-lg border border-outline text-on-surface hover:bg-surface-container-high transition-colors">Cancel</button>
+                    <button onclick="saveAdjustment()" class="px-6 py-2 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary hover:shadow-md transition-all">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js?v=1787471943"></script>
+    <script src="../js/app.js?v=1787471943"></script>
+    <script src="../js/stock.js?v=1787471943"></script>
+</body>
+</html>

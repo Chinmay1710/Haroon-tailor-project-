@@ -135,6 +135,34 @@ async function loadOrderData(orderId) {
 async function submitPayment(orderId) {
     const amount = parseFloat(document.getElementById('ap-amount').value);
     
+    if (amount === 0 && currentOrderData.remaining_amount === 0) {
+        const btn = document.getElementById('ap-submit-btn');
+        btn.innerHTML = '<span class="material-symbols-outlined" data-weight="fill">done_all</span> Completed';
+        btn.classList.replace('bg-primary', 'bg-[#16a34a]');
+        
+        let navParamsStr = sessionStorage.getItem("nav_params");
+        let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
+        
+        if (navParams && navParams.complete_after) {
+            try {
+                await window.API.request('update_order_status', {order_id: orderId, status: 'DELIVERED'});
+                window.API.toast("Order Completed!", "success");
+                setTimeout(() => {
+                    window.API.navigate('orders_list');
+                }, 1500);
+            } catch (e) {
+                console.error(e);
+                window.API.toast("Failed to update order status", "error");
+            }
+        } else {
+            window.API.toast("Order is already fully paid", "success");
+            setTimeout(() => {
+                window.API.navigate('payments');
+            }, 1500);
+        }
+        return;
+    }
+
     if (isNaN(amount) || amount <= 0) {
         window.API.toast("Please enter a valid amount.", "error");
         return;
