@@ -416,23 +416,20 @@
 </div>
 </div>
 <div class="flex flex-col gap-1.5">
-<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Local Backup Location</label>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Dual Backup Status</label>
 <div class="flex gap-2">
-<input class="flex-1 px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface-container-low text-on-surface-variant outline-none font-body-md cursor-not-allowed" readonly="" type="text" value="C:\Users\Admin\Documents\TailorBackups"/>
-<button class="bg-surface hover:bg-secondary-container text-primary px-4 py-2 rounded-lg font-label-lg transition-colors border border-outline-variant/50 whitespace-nowrap" type="button">
-                                        Browse
-                                    </button>
+<input class="flex-1 px-4 py-3 rounded-lg border border-outline-variant/50 bg-surface-container-low text-on-surface-variant outline-none font-body-md cursor-not-allowed" readonly="" type="text" value="Hard Drive + Google Drive (Configured on click)"/>
 </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pt-6 border-t border-outline-variant/20">
-<div class="border border-outline-variant/30 p-6 rounded-lg flex flex-col items-center text-center gap-3 hover:border-primary/50 transition-colors cursor-pointer group">
+<div class="border border-outline-variant/30 p-6 rounded-lg flex flex-col items-center text-center gap-3 hover:border-primary/50 transition-colors cursor-pointer group" onclick="window.handleBackup()">
 <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">backup</span>
 </div>
 <h4 class="font-label-lg text-on-surface">Backup Now</h4>
 <p class="font-body-md text-sm text-on-surface-variant">Create a manual snapshot of your current database.</p>
 </div>
-<div class="border border-outline-variant/30 p-6 rounded-lg flex flex-col items-center text-center gap-3 hover:border-primary/50 transition-colors cursor-pointer group">
+<div class="border border-outline-variant/30 p-6 rounded-lg flex flex-col items-center text-center gap-3 hover:border-primary/50 transition-colors cursor-pointer group" onclick="window.handleRestore()">
 <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restore</span>
 </div>
@@ -482,4 +479,5 @@
 <script src="../js/api.js?v=1787471943"></script>
 <script src="../js/app.js?v=1787471943"></script>
 <script src="../js/settings.js?v=1787471943"></script>
+<script src="../js/backup.js?v=1787471943"></script>
 </body></html>

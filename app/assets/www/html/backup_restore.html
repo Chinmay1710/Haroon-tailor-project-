@@ -212,17 +212,13 @@
 <h3 class="font-headline-md text-headline-md text-on-surface mb-2">Create Backup</h3>
 <p class="font-body-md text-body-md text-on-surface-variant mb-4">Save a secure copy of your current shop records, including measurements and active orders.</p>
 <div class="bg-surface rounded-lg p-3 flex flex-col gap-1 border border-surface-container">
-<div class="flex justify-between items-center">
-<span class="font-label-sm text-label-sm text-on-surface-variant">Last Backup:</span>
-<span class="font-label-lg text-label-lg text-on-surface">Today, 09:41 AM</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="font-label-sm text-label-sm text-on-surface-variant">Location:</span>
-<span class="font-body-md text-body-md text-on-surface truncate max-w-[150px]">Documents/ArtisanStitch</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dual Backup Enabled: Hard Drive + Google Drive</span>
 </div>
 </div>
 </div>
-<button class="w-full h-16 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-md transition-all active:scale-[0.98] mt-6" id="btn-backup">
+<button class="w-full h-16 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-md transition-all active:scale-[0.98] mt-6" id="btn-backup" onclick="window.handleBackup()">
 <span class="material-symbols-outlined" data-icon="save_alt">save_alt</span>
                         Backup Data
                     </button>
@@ -242,7 +238,7 @@
 <p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Restoring will replace all current information. Any new measurements entered since the backup will be removed.</p>
 </div>
 </div>
-<button class="w-full h-16 bg-surface text-primary border border-outline-variant font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-[0.98] mt-6 relative z-10" id="btn-restore">
+<button class="w-full h-16 bg-surface text-primary border border-outline-variant font-label-lg text-label-lg rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-[0.98] mt-6 relative z-10" id="btn-restore" onclick="window.handleRestore()">
 <span class="material-symbols-outlined" data-icon="restore">restore</span>
                         Restore Data
                     </button>
