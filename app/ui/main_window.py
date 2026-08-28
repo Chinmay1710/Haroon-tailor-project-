@@ -18,6 +18,7 @@ from app.services.expense_service import ExpenseService
 from app.services.report_service import ReportService
 from app.services.backup_service import BackupService
 from app.services.worker_service import worker_service
+from app.services.stock_service import StockService
 from app.utils.logger import get_logger
 from app.ui.web_bridge import WebBridge
 
