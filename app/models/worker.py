@@ -12,6 +12,11 @@ class WorkerType(str, enum.Enum):
     DAILY_SALARY = "DAILY_SALARY"
     PIECE_RATE = "PIECE_RATE"
 
+class WorkerRole(str, enum.Enum):
+    ADMIN = "ADMIN"
+    CUTTING = "CUTTING"
+    STITCHING = "STITCHING"
+
 class Worker(Base):
     __tablename__ = "workers"
 
@@ -20,6 +25,7 @@ class Worker(Base):
     phone = Column(String(20), nullable=True)
     pin = Column(String(4), nullable=False) # 4-digit PIN for portal login
     worker_type = Column(String(20), default=WorkerType.PIECE_RATE.value, nullable=False)
+    worker_role = Column(String(20), default=WorkerRole.STITCHING.value, nullable=False)
     daily_rate = Column(Float, default=0.0, nullable=False) # Only for DAILY_SALARY workers
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)

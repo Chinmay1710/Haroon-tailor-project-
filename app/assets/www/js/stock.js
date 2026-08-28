@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         loadStockData();
         setupSearch();
+        loadStockUsageHistory();
     }
     init();
 });
@@ -263,5 +264,58 @@ async function saveAdjustment() {
         loadStockData();
     } catch (e) {
         window.API.toast(e, "error");
+    }
+}
+
+/* Tabs Logic */
+function switchStockTab(tab) {
+    document.querySelectorAll('.stock-tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.stock-tab-content').forEach(el => el.classList.remove('block'));
+    
+    document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+        btn.classList.remove('border-primary', 'text-primary');
+        btn.classList.add('border-transparent', 'text-on-surface-variant');
+    });
+    
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.getElementById('tab-' + tab).classList.add('block');
+    
+    document.getElementById('tab-btn-' + tab).classList.remove('border-transparent', 'text-on-surface-variant');
+    document.getElementById('tab-btn-' + tab).classList.add('border-primary', 'text-primary');
+    
+    if (tab === 'usage') {
+        loadStockUsageHistory();
+    }
+}
+
+async function loadStockUsageHistory() {
+    try {
+        const response = await window.API.request('get_stock_usage_history');
+        const history = response.history || [];
+        const tbody = document.getElementById('usage-tbody');
+        tbody.innerHTML = '';
+        
+        if (history.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-on-surface-variant font-label-lg">No stock usage history found.</td></tr>`;
+            return;
+        }
+        
+        history.forEach(item => {
+            const date = new Date(item.date).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'numeric'});
+            
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-outline-variant/30 hover:bg-surface-container/30 transition-colors';
+            tr.innerHTML = `
+                <td class="py-4 px-6 font-body-md text-on-surface-variant">${date}</td>
+                <td class="py-4 px-6 font-body-md font-bold text-on-surface">${item.worker_name}</td>
+                <td class="py-4 px-6 font-body-md font-bold text-on-surface">${item.item_name}</td>
+                <td class="py-4 px-6 font-body-md text-on-surface">
+                    <span class="px-2 py-1 bg-indigo-50 text-indigo-700 rounded font-bold">${item.quantity} ${item.unit}</span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (e) {
+        console.error("Failed to load stock usage history:", e);
     }
 }

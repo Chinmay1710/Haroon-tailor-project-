@@ -22,3 +22,17 @@ class StockItem(Base):
 
     def __repr__(self):
         return f"<StockItem(id={self.id}, name='{self.name}', qty={self.quantity} {self.unit})>"
+
+class StockUsage(Base):
+    __tablename__ = "stock_usage"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    worker_id = Column(Integer, nullable=False, index=True) # Intentionally not using strict ForeignKey to avoid circular import loops if not needed, or we can use string "workers.id"
+    stock_item_id = Column(Integer, nullable=False, index=True)
+    quantity = Column(Float, nullable=False)
+    date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    
+    # We will fetch relationships dynamically or manually to avoid circular imports between worker.py and stock.py
+    
+    def __repr__(self):
+        return f"<StockUsage(id={self.id}, worker_id={self.worker_id}, item_id={self.stock_item_id}, qty={self.quantity})>"

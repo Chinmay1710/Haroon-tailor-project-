@@ -57,6 +57,20 @@ class MainWindow(QMainWindow):
         # Initialize database
         init_db()
 
+        # Start Worker Portal Server and Tunnel
+        try:
+            from app.web.server import WebServerThread
+            from app.web.tunnel import NgrokTunnel
+            self.worker_server = WebServerThread(port=8000)
+            self.worker_server.start()
+            
+            self.tunnel = NgrokTunnel(port=8000)
+            self.tunnel_url = self.tunnel.start()
+            logger.info(f"Worker portal started at {self.tunnel_url}")
+        except Exception as e:
+            logger.error(f"Failed to start worker portal: {e}")
+            self.tunnel_url = None
+
         # Initialize Services
         self.services = {
             'customer': CustomerService(),
@@ -157,4 +171,11 @@ class MainWindow(QMainWindow):
 
         from app.database.engine import close_db
         close_db()
+        
+        # Stop Worker Portal and Tunnel
+        if hasattr(self, 'tunnel') and self.tunnel:
+            self.tunnel.stop()
+        if hasattr(self, 'worker_server') and self.worker_server:
+            self.worker_server.stop()
+            
         event.accept()

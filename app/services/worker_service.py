@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.database.engine import get_session
-from app.models.worker import Worker, WorkerTask, GarmentRate, WorkEntry, WorkerAdvance, WorkerType
+from app.models.worker import Worker, WorkerTask, GarmentRate, WorkEntry, WorkerAdvance, WorkerType, WorkerRole
+from app.models.stock import StockUsage, StockItem
 from app.models.order import OrderItem, Order
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ class WorkerService:
                     "phone": w.phone,
                     "pin": w.pin,
                     "worker_type": w.worker_type,
+                    "worker_role": getattr(w, "worker_role", WorkerRole.STITCHING.value),
                     "daily_rate": w.daily_rate,
                     "is_active": w.is_active,
                     "created_at": w.created_at.isoformat() if w.created_at else None
@@ -32,9 +34,9 @@ class WorkerService:
                 for w in workers
             ]
 
-    def add_worker(self, name: str, phone: str, pin: str, worker_type: str = WorkerType.PIECE_RATE.value, daily_rate: float = 0.0) -> Dict[str, Any]:
+    def add_worker(self, name: str, phone: str, pin: str, worker_type: str = WorkerType.PIECE_RATE.value, worker_role: str = WorkerRole.STITCHING.value, daily_rate: float = 0.0) -> Dict[str, Any]:
         with get_session() as session:
-            worker = Worker(name=name, phone=phone, pin=pin, worker_type=worker_type, daily_rate=daily_rate)
+            worker = Worker(name=name, phone=phone, pin=pin, worker_type=worker_type, worker_role=worker_role, daily_rate=daily_rate)
             session.add(worker)
             session.commit()
             session.refresh(worker)
@@ -44,7 +46,7 @@ class WorkerService:
         with get_session() as session:
             worker = session.query(Worker).filter(func.lower(Worker.name) == name.lower(), Worker.pin == pin, Worker.is_active == True).first()
             if worker:
-                return {"id": worker.id, "name": worker.name, "worker_type": worker.worker_type}
+                return {"id": worker.id, "name": worker.name, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
             return None
 
     # --- Garment Rates ---
@@ -166,5 +168,25 @@ class WorkerService:
                 "total_advance": total_advance,
                 "remaining_balance": total_earned - total_advance
             }
+
+    def get_stock_usage_history(self) -> List[Dict[str, Any]]:
+        with get_session() as session:
+            usages = session.query(StockUsage, Worker.name, StockItem.name, StockItem.unit).join(
+                Worker, StockUsage.worker_id == Worker.id
+            ).join(
+                StockItem, StockUsage.stock_item_id == StockItem.id
+            ).order_by(StockUsage.date.desc()).all()
+            
+            return [
+                {
+                    "id": usage[0].id,
+                    "worker_name": usage[1],
+                    "item_name": usage[2],
+                    "quantity": usage[0].quantity,
+                    "unit": usage[3],
+                    "date": usage[0].date.isoformat()
+                }
+                for usage in usages
+            ]
 
 worker_service = WorkerService()

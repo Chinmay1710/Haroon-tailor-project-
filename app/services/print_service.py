@@ -119,8 +119,8 @@ class PrintService:
                 from app.web.tunnel import GLOBAL_TUNNEL_URL
                 import tempfile
 
-                tunnel_url = GLOBAL_TUNNEL_URL or "http://localhost:8000"
-                scan_url = f"{tunnel_url}/scan?order_id={order.id}"
+                # We now just encode "ORDER:{id}" so the in-app scanner can parse it.
+                scan_url = f"ORDER:{order.id}"
 
                 qr = qrcode.QRCode(version=1, box_size=3, border=1)
                 qr.add_data(scan_url)

@@ -126,10 +126,15 @@
                 </div>
             </div>
 
-            <!-- Stock Table -->
-            <div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+            <!-- Tabs -->
+            <div class="flex gap-4 mb-4 border-b border-surface-container-highest">
+                <button id="tab-btn-inventory" class="px-4 py-2 font-label-lg border-b-2 border-primary text-primary transition-colors" onclick="switchStockTab('inventory')">Inventory List</button>
+                <button id="tab-btn-usage" class="px-4 py-2 font-label-lg border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" onclick="switchStockTab('usage')">Usage History</button>
+            </div>
+
+            <!-- Stock Table Tab -->
+            <div id="tab-inventory" class="stock-tab-content block bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
                 <div class="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
-                    <h2 class="font-headline-md text-headline-md text-on-surface">Inventory List</h2>
                     <div class="relative w-[300px]">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
                         <input type="text" id="stock-search" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-on-surface-variant/50 transition-all"/>
@@ -148,6 +153,28 @@
                             </tr>
                         </thead>
                         <tbody id="stock-tbody" class="divide-y divide-outline-variant/30">
+                            <!-- JS injected rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Usage History Tab -->
+            <div id="tab-usage" class="stock-tab-content hidden bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden">
+                <div class="p-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface/50">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Worker Stock Consumption</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-outline-variant/50 bg-surface-container-lowest">
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Date</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Worker</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Item</th>
+                                <th class="py-4 px-6 font-label-lg text-label-lg text-on-surface-variant">Quantity Used</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usage-tbody" class="divide-y divide-outline-variant/30">
                             <!-- JS injected rows -->
                         </tbody>
                     </table>

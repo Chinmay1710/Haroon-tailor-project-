@@ -116,11 +116,12 @@ class WebBridge(QObject):
             elif action == "add_worker":
                 worker_srv = self.services["worker"]
                 w = worker_srv.add_worker(
-                    payload.get("name"), 
-                    payload.get("phone"), 
-                    payload.get("pin"),
-                    payload.get("worker_type", "PIECE_RATE"),
-                    float(payload.get("daily_rate", 0.0))
+                    name=payload.get("name"), 
+                    phone=payload.get("phone"), 
+                    pin=payload.get("pin"),
+                    worker_type=payload.get("worker_type", "PIECE_RATE"),
+                    worker_role=payload.get("worker_role", "STITCHING"),
+                    daily_rate=float(payload.get("daily_rate", 0.0))
                 )
                 response = {"status": "success", "data": {"worker": w}}
 
@@ -1082,6 +1083,11 @@ class WebBridge(QObject):
                 from app.services.stock_service import stock_service
                 success = stock_service.delete_stock_item(payload.get("id"))
                 response = {"status": "success" if success else "error"}
+
+            elif action == "get_stock_usage_history":
+                worker_srv = self.services["worker"]
+                history = worker_srv.get_stock_usage_history()
+                response = {"status": "success", "data": {"history": history}}
 
             else:
                 response = {"status": "error", "message": f"Unknown action: {action}"}

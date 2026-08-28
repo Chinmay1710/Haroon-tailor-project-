@@ -191,7 +191,8 @@
 <thead>
 <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
 <th class="px-6 py-4 font-medium">Worker</th>
-<th class="px-6 py-4 font-medium">Type</th>
+<th class="px-6 py-4 font-medium">Role</th>
+<th class="px-6 py-4 font-medium">Payment Type</th>
 <th class="px-6 py-4 font-medium">Total Earned</th>
 <th class="px-6 py-4 font-medium">Advance Given</th>
 <th class="px-6 py-4 font-medium">Balance</th>
@@ -281,11 +282,21 @@
 </div>
 <div class="flex gap-4">
     <div class="flex-1">
+        <label class="block font-label-md text-on-surface mb-1.5">Worker Role</label>
+        <select id="w-role" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface">
+            <option value="STITCHING">Stitching Worker</option>
+            <option value="CUTTING">Cutting Worker</option>
+            <option value="ADMIN">Admin</option>
+        </select>
+    </div>
+</div>
+<div class="flex gap-4">
+    <div class="flex-[2]">
         <label class="block font-label-md text-on-surface mb-1.5">4-Digit PIN <span class="text-error">*</span></label>
         <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface font-mono tracking-[0.5em] text-center" id="w-pin" maxlength="4" placeholder="1234" type="text"/>
     </div>
     <div class="flex-1">
-        <label class="block font-label-md text-on-surface mb-1.5">Worker Type</label>
+        <label class="block font-label-md text-on-surface mb-1.5">Payment</label>
         <select id="w-type" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface" onchange="document.getElementById('w-rate-container').style.display = this.value === 'DAILY_SALARY' ? 'block' : 'none'">
             <option value="PIECE_RATE">Piece Rate</option>
             <option value="DAILY_SALARY">Daily Salary</option>
@@ -366,8 +377,12 @@
                     window.API.attachMic('new-garment-name');
                     window.API.attachMic('adv-notes');
                 }
-                const portalRes = await window.API.request('get_worker_portal_url');
-                if (portalRes && portalRes.url) document.getElementById('portal-url').value = portalRes.url;
+                try {
+                    const portalRes = await window.API.request('get_worker_portal_url');
+                    if (portalRes && portalRes.url) document.getElementById('portal-url').value = portalRes.url;
+                } catch(e) {
+                    document.getElementById('portal-url').value = "Not Running";
+                }
                 await loadWorkers();
             } catch(e) { console.error(e); }
         }
@@ -389,6 +404,8 @@
                     
                     const badge = w.worker_type === 'DAILY_SALARY' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
                     const typeStr = w.worker_type === 'DAILY_SALARY' ? `Daily (₹${w.daily_rate})` : 'Piece Rate';
+                    const roleBadge = w.worker_role === 'ADMIN' ? 'bg-red-100 text-red-800' : (w.worker_role === 'CUTTING' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800');
+                    const roleStr = w.worker_role || 'STITCHING';
                     
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-surface-container-lowest/50";
@@ -397,6 +414,7 @@
                             <div class="font-bold">${w.name}</div>
                             <div class="text-xs text-on-surface-variant">PIN: ${w.pin} | ${w.phone || ''}</div>
                         </td>
+                        <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${roleBadge} font-bold uppercase tracking-wider">${roleStr}</span></td>
                         <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${badge} font-bold uppercase tracking-wider">${typeStr}</span></td>
                         <td class="px-6 py-4 font-bold text-green-700">₹${ledger.total_earned.toFixed(0)}</td>
                         <td class="px-6 py-4 font-bold text-orange-600">₹${ledger.total_advance.toFixed(0)}</td>
@@ -415,11 +433,12 @@
             const phone = document.getElementById('w-phone').value;
             const pin = document.getElementById('w-pin').value;
             const worker_type = document.getElementById('w-type').value;
+            const worker_role = document.getElementById('w-role').value;
             const daily_rate = document.getElementById('w-rate').value;
             
             if (!name || !pin) return;
             try {
-                await window.API.request('add_worker', {name, phone, pin, worker_type, daily_rate});
+                await window.API.request('add_worker', {name, phone, pin, worker_type, worker_role, daily_rate});
                 document.getElementById('add-worker-modal').classList.add('hidden');
                 loadWorkers();
             } catch(e) { console.error(e); }

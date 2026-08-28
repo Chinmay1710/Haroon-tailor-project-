@@ -58,7 +58,7 @@ class StockService:
         finally:
             session.close()
 
-    def adjust_stock(self, item_id: int, amount: float, operation: str) -> dict:
+    def adjust_stock(self, item_id: int, amount: float, operation: str, worker_id: int = None) -> dict:
         """
         Adjust stock quantity. 
         `amount` is absolute value. `operation` is "add" or "consume".
@@ -74,6 +74,12 @@ class StockService:
                 if item.quantity < amount:
                     raise ValueError(f"Insufficient stock. Available: {item.quantity}, Requested: {amount}")
                 item.quantity -= amount
+                
+                # Log usage if worker is provided
+                if worker_id is not None:
+                    from app.models.stock import StockUsage
+                    usage = StockUsage(worker_id=worker_id, stock_item_id=item_id, quantity=amount)
+                    session.add(usage)
             elif operation == "add":
                 item.quantity += amount
             else:
