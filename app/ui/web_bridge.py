@@ -25,6 +25,7 @@ class WebBridge(QObject):
     def __init__(self, services, parent=None):
         super().__init__(parent)
         self.services = services
+        self._settings_cache = None  # In-memory cache for get_settings
         from app.services.dictation_service import DictationService
         self.dictation_service = DictationService(self)
         self.dictation_service.dictation_finished.connect(self.dictation_result_requested.emit)
@@ -219,14 +220,19 @@ class WebBridge(QObject):
                 try:
                     from app.models.customer import Customer
                     from app.models.order import Order
+                    from sqlalchemy.orm import joinedload
                     
                     # Clear session just to be safe if any detached objects linger
                     session.expunge_all()
                     
-                    customers = session.query(Customer).filter(Customer.is_active == True).order_by(Customer.id.desc()).all()  # noqa: E712
+                    # Fix N+1: joinedload loads all orders in the same query
+                    customers = session.query(Customer).options(
+                        joinedload(Customer.orders)
+                    ).filter(Customer.is_active == True).order_by(Customer.id.desc()).all()  # noqa: E712
+                    
                     data = []
                     for c in customers:
-                        orders = session.query(Order).filter(Order.customer_id == c.id).all()
+                        orders = c.orders
                         count = len(orders)
                         pending_amount = sum(o.remaining_amount for o in orders)
                         last_order_date = max([o.order_date for o in orders if o.order_date], default=None)
@@ -354,15 +360,20 @@ class WebBridge(QObject):
                 session = get_session()
                 try:
                     from app.models.measurement import MeasurementProfile
-                    from app.models.customer import Customer
+                    from sqlalchemy.orm import joinedload
                     
                     # Clear session just to be safe
                     session.expunge_all()
                     
-                    measurements = session.query(MeasurementProfile).all()
+                    # Fix N+1: load customer and values eagerly
+                    measurements = session.query(MeasurementProfile).options(
+                        joinedload(MeasurementProfile.customer),
+                        joinedload(MeasurementProfile.values)
+                    ).all()
+                    
                     data = []
                     for m in measurements:
-                        customer = session.query(Customer).filter(Customer.id == m.customer_id).first()
+                        customer = m.customer
                         
                         data.append({
                             "id": m.id,
@@ -370,7 +381,7 @@ class WebBridge(QObject):
                             "customer_name": customer.name if customer else "Unknown",
                             "customer_mobile": customer.mobile if customer else "",
                             "template_type": m.template_type,
-                            "values_count": len(m.values), # Values are cascade-loaded or we can just let lazy load happen safely since session is open and clean
+                            "values_count": len(m.values),
                             "updated_at": m.updated_at.isoformat()
                         })
                     response = {"status": "success", "data": data}
@@ -648,20 +659,26 @@ class WebBridge(QObject):
                 from app.models.payment import Payment
                 from app.models.order import Order
                 from datetime import date
+                from sqlalchemy import func
                 session = get_session()
                 try:
                     today = date.today()
                     
-                    # Total collected
-                    all_payments = session.query(Payment).all()
-                    total_collected = sum(p.amount for p in all_payments)
+                    # Total collected — SQL SUM instead of loading all rows
+                    total_collected = session.query(func.sum(Payment.amount)).scalar() or 0.0
                     
-                    # Today's payments
-                    today_payments = sum(p.amount for p in all_payments if p.payment_date == today)
+                    # Today's payments — SQL SUM with filter
+                    today_payments = session.query(func.sum(Payment.amount)).filter(
+                        Payment.payment_date == today
+                    ).scalar() or 0.0
                     
-                    # Pending payments (remaining amount on all active orders)
-                    active_orders = session.query(Order).filter(Order.status != 'CANCELLED').all()
-                    pending_payments = sum(o.remaining_amount for o in active_orders if o.remaining_amount > 0)
+                    # Pending payments — SQL SUM on computed column
+                    pending_payments = session.query(
+                        func.sum(Order.total_amount - Order.paid_amount)
+                    ).filter(
+                        Order.status != 'CANCELLED',
+                        Order.total_amount > Order.paid_amount
+                    ).scalar() or 0.0
                     
                     data = {
                         "total_collected": total_collected,
@@ -710,41 +727,50 @@ class WebBridge(QObject):
             # ────────────────────────────────────────────────────────────
             elif action == "get_deliveries_dashboard":
                 from datetime import date, timedelta
-                order_srv = self.services["order"]
+                from app.database.engine import get_session
+                from app.models.order import Order
+                from sqlalchemy.orm import joinedload
                 today = date.today()
                 tomorrow = today + timedelta(days=1)
                 
-                orders = order_srv.get_all_orders()
-                deliveries = []
-                counts = {"due_today": 0, "due_tomorrow": 0, "upcoming": 0, "overdue": 0}
-                
-                for o in orders:
-                    # The user requested that the Deliveries dashboard show 'STITCHING_COMPLETE' and now also 'DELIVERED'.
-                    if o.status not in ["STITCHING_COMPLETE", "DELIVERED"]: continue
-
-                    if o.delivery_date:
-                        if o.delivery_date < today:
-                            counts["overdue"] += 1
-                        elif o.delivery_date == today:
-                            counts["due_today"] += 1
-                        elif o.delivery_date == tomorrow:
-                            counts["due_tomorrow"] += 1
-                        else:
-                            counts["upcoming"] += 1
-                            
-                    deliveries.append({
-                        "id": o.id,
-                        "order_number": o.order_number,
-                        "customer_name": o.customer.name if o.customer else "",
-                        "mobile": o.customer.mobile if o.customer else "",
-                        "items": "Various",
-                        "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
-                        "status": o.status,
-                        "total_amount": o.total_amount,
-                        "advance_paid": getattr(o, "advance_amount", getattr(o, "paid_amount", 0)),
-                        "remaining_amount": o.remaining_amount,
-                        "updated_at": o.updated_at.isoformat() if hasattr(o, "updated_at") and o.updated_at else ""
-                    })
+                # Filter at DB level instead of loading ALL orders
+                session = get_session()
+                try:
+                    orders = session.query(Order).options(
+                        joinedload(Order.customer),
+                    ).filter(
+                        Order.status.in_(["STITCHING_COMPLETE", "DELIVERED"])
+                    ).order_by(Order.updated_at.desc()).all()
+                    
+                    deliveries = []
+                    counts = {"due_today": 0, "due_tomorrow": 0, "upcoming": 0, "overdue": 0}
+                    
+                    for o in orders:
+                        if o.delivery_date:
+                            if o.delivery_date < today:
+                                counts["overdue"] += 1
+                            elif o.delivery_date == today:
+                                counts["due_today"] += 1
+                            elif o.delivery_date == tomorrow:
+                                counts["due_tomorrow"] += 1
+                            else:
+                                counts["upcoming"] += 1
+                                
+                        deliveries.append({
+                            "id": o.id,
+                            "order_number": o.order_number,
+                            "customer_name": o.customer.name if o.customer else "",
+                            "mobile": o.customer.mobile if o.customer else "",
+                            "items": "Various",
+                            "delivery_date": o.delivery_date.isoformat() if o.delivery_date else "",
+                            "status": o.status,
+                            "total_amount": o.total_amount,
+                            "advance_paid": getattr(o, "advance_amount", getattr(o, "paid_amount", 0)),
+                            "remaining_amount": o.remaining_amount,
+                            "updated_at": o.updated_at.isoformat() if hasattr(o, "updated_at") and o.updated_at else ""
+                        })
+                finally:
+                    session.close()
                 
                 deliveries.sort(key=lambda x: x["updated_at"] if x.get("updated_at") else str(x["id"]), reverse=True)
                 response = {"status": "success", "data": {"counts": counts, "deliveries": deliveries}}
@@ -823,25 +849,30 @@ class WebBridge(QObject):
             # SETTINGS
             # ────────────────────────────────────────────────────────────
             elif action == "get_settings":
-                from app.database.engine import get_session
-                from app.repositories.settings_repo import SettingsRepository
-                session = get_session()
-                try:
-                    repo = SettingsRepository(session)
-                    s = repo.get_settings()
-                    response = {"status": "success", "data": {
-                        "shop_name": s.shop_name,
-                        "owner_name": s.owner_name,
-                        "phone": s.phone,
-                        "address": s.address,
-                        "currency_symbol": s.currency,
-                        "measurement_unit": s.measurement_unit,
-                        "twilio_account_sid": s.twilio_account_sid,
-                        "twilio_auth_token": s.twilio_auth_token,
-                        "twilio_sender_number": s.twilio_sender_number
-                    }}
-                finally:
-                    session.close()
+                # Return cached settings if available (avoids DB hit on every page load)
+                if self._settings_cache is not None:
+                    response = {"status": "success", "data": self._settings_cache}
+                else:
+                    from app.database.engine import get_session
+                    from app.repositories.settings_repo import SettingsRepository
+                    session = get_session()
+                    try:
+                        repo = SettingsRepository(session)
+                        s = repo.get_settings()
+                        self._settings_cache = {
+                            "shop_name": s.shop_name,
+                            "owner_name": s.owner_name,
+                            "phone": s.phone,
+                            "address": s.address,
+                            "currency_symbol": s.currency,
+                            "measurement_unit": s.measurement_unit,
+                            "twilio_account_sid": s.twilio_account_sid,
+                            "twilio_auth_token": s.twilio_auth_token,
+                            "twilio_sender_number": s.twilio_sender_number
+                        }
+                        response = {"status": "success", "data": self._settings_cache}
+                    finally:
+                        session.close()
                     
             elif action == "update_settings":
                 from app.database.engine import get_session
@@ -851,6 +882,7 @@ class WebBridge(QObject):
                     repo = SettingsRepository(session)
                     repo.update_settings(**payload)
                     session.commit()
+                    self._settings_cache = None  # Invalidate cache so next get_settings fetches fresh data
                     response = {"status": "success"}
                 finally:
                     session.close()
@@ -885,10 +917,9 @@ class WebBridge(QObject):
                             shutil.copy2(db_path, os.path.join(temp_dir, "tailor_shop.db"))
                             
                             # 2. Copy uploads folder if it exists
-                            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                            uploads_dir = os.path.join(base_dir, "assets", "www", "uploads")
-                            if os.path.exists(uploads_dir):
-                                shutil.copytree(uploads_dir, os.path.join(temp_dir, "uploads"))
+                            from app.config import UPLOADS_DIR
+                            if os.path.exists(UPLOADS_DIR):
+                                shutil.copytree(UPLOADS_DIR, os.path.join(temp_dir, "uploads"))
                                 
                             # 3. Zip it all up
                             shutil.make_archive(save_path.replace('.zip', ''), 'zip', temp_dir)
@@ -962,14 +993,13 @@ class WebBridge(QObject):
                                     
                                 # 2. Restore Uploads (Photos)
                                 extracted_uploads = os.path.join(temp_dir, "uploads")
-                                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                                current_uploads = os.path.join(base_dir, "assets", "www", "uploads")
+                                from app.config import UPLOADS_DIR
                                 
                                 if os.path.exists(extracted_uploads):
                                     # Clear current uploads if they exist to avoid mixing
-                                    if os.path.exists(current_uploads):
-                                        shutil.rmtree(current_uploads)
-                                    shutil.copytree(extracted_uploads, current_uploads)
+                                    if os.path.exists(UPLOADS_DIR):
+                                        shutil.rmtree(UPLOADS_DIR)
+                                    shutil.copytree(extracted_uploads, UPLOADS_DIR)
                                     
                         else:
                             # Legacy .db file support

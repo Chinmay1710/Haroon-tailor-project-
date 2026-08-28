@@ -186,8 +186,13 @@ class OrderRepository:
         counts = {status: 0 for status in ["NEW", "CUTTING_COMPLETE", "STITCHING_COMPLETE", "DELIVERED", "CANCELLED"]}
         for status, count in results:
             counts[status] = count
-        # Add overdue count
-        counts["OVERDUE"] = len(self.get_overdue())
+        # Add overdue count using lightweight COUNT instead of full get_overdue() query
+        today = date.today()
+        overdue_count = self.session.query(func.count(Order.id)).filter(
+            Order.delivery_date < today,
+            Order.status.notin_(["DELIVERED", "CANCELLED"]),
+        ).scalar() or 0
+        counts["OVERDUE"] = overdue_count
         return counts
 
     def get_today_orders(self, target_date: date = None) -> list[Order]:

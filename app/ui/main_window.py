@@ -80,9 +80,8 @@ class MainWindow(QMainWindow):
         self.web_view = QWebEngineView()
         self.web_view.setPage(CustomWebPage(self.web_view))
         
-        # CLEAR CACHE to prevent stale HTML from loading
-        profile = self.web_view.page().profile()
-        profile.clearHttpCache()
+        # Allow Chromium to cache CSS/JS/fonts across sessions for faster page loads
+        # (previously clearHttpCache() was called here, causing slow startup)
         
         layout.addWidget(self.web_view)
         

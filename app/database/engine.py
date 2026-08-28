@@ -35,12 +35,15 @@ def get_engine():
             pool_pre_ping=True,
             connect_args={"check_same_thread": False},
         )
-        # Enable WAL mode and foreign keys for SQLite
+        # Enable WAL mode, foreign keys, and performance tuning for SQLite
         @event.listens_for(_engine, "connect")
         def _set_sqlite_pragma(dbapi_conn, connection_record):
             cursor = dbapi_conn.cursor()
             cursor.execute("PRAGMA journal_mode=WAL")
             cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.execute("PRAGMA synchronous=NORMAL")   # Safe with WAL, 2-3x faster writes
+            cursor.execute("PRAGMA cache_size=-8000")     # 8MB cache (default ~2MB)
+            cursor.execute("PRAGMA temp_store=MEMORY")    # Temp tables in RAM
             cursor.close()
 
     return _engine

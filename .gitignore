@@ -25,6 +25,7 @@ tailor_shop.db
 build/
 dist/
 *.spec
+!HaroonTailor.spec
 
 # IDEs and Editors
 .idea/
