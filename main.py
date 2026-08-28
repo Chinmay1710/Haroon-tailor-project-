@@ -4,6 +4,11 @@ from __future__ import annotations
 import sys
 import os
 
+# FORCE SOFTWARE RENDERING FOR OLD GPUS
+os.environ["QT_OPENGL"] = "software"
+os.environ["QT_OPENGL_BUILTIN"] = "1"
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu --no-sandbox"
+
 # Ensure the project root is on the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 

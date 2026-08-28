@@ -18,7 +18,6 @@ from app.services.expense_service import ExpenseService
 from app.services.report_service import ReportService
 from app.services.backup_service import BackupService
 from app.services.worker_service import worker_service
-from app.services.stock_service import StockService
 from app.utils.logger import get_logger
 from app.ui.web_bridge import WebBridge
 
@@ -104,6 +103,7 @@ class MainWindow(QMainWindow):
         try:
             repo = SettingsRepository(session)
             if not repo.is_setup_done():
+                # We don't have a setup HTML in the reference, but we can fallback or just go to dashboard
                 self._navigate_to("dashboard")
             else:
                 self._navigate_to("dashboard")
@@ -126,6 +126,7 @@ class MainWindow(QMainWindow):
 
     def _handle_dictation_result(self, textarea_id: str, text: str, error: str):
         """Sends the transcription result to the Javascript frontend."""
+        # Escape strings for safe JS injection
         import json
         text_json = json.dumps(text)
         error_json = json.dumps(error)
