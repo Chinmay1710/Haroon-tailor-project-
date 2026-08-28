@@ -18,6 +18,7 @@ from app.services.expense_service import ExpenseService
 from app.services.report_service import ReportService
 from app.services.backup_service import BackupService
 from app.services.worker_service import worker_service
+from app.services.stock_service import StockService
 from app.utils.logger import get_logger
 from app.ui.web_bridge import WebBridge
 
@@ -65,21 +66,9 @@ class MainWindow(QMainWindow):
             'expense': ExpenseService(),
             'report': ReportService(),
             'backup': BackupService(),
-            'worker': worker_service
+            'worker': worker_service,
+            'stock': StockService()
         }
-
-        # Start Worker Portal Server
-        try:
-            from app.web.server import WebServerThread
-            self.web_server = WebServerThread()
-            self.web_server.start()
-            
-            from app.web.tunnel import NgrokTunnel
-            self.tunnel = NgrokTunnel()
-            self.tunnel_url = self.tunnel.start()
-        except Exception as e:
-            logger.error(f"Failed to start web server/tunnel: {e}")
-            self.tunnel_url = None
 
         self._build_web_ui()
 
@@ -115,7 +104,6 @@ class MainWindow(QMainWindow):
         try:
             repo = SettingsRepository(session)
             if not repo.is_setup_done():
-                # We don't have a setup HTML in the reference, but we can fallback or just go to dashboard
                 self._navigate_to("dashboard")
             else:
                 self._navigate_to("dashboard")
@@ -124,8 +112,9 @@ class MainWindow(QMainWindow):
 
     def _navigate_to(self, page_name: str):
         """Navigate the web view to the corresponding HTML file."""
+        from app.config import ASSETS_DIR
         html_file = f"{page_name}.html"
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets', 'www', 'html'))
+        base_dir = os.path.join(ASSETS_DIR, 'www', 'html')
         file_path = os.path.join(base_dir, html_file)
         
         if os.path.exists(file_path):
@@ -137,7 +126,6 @@ class MainWindow(QMainWindow):
 
     def _handle_dictation_result(self, textarea_id: str, text: str, error: str):
         """Sends the transcription result to the Javascript frontend."""
-        # Escape strings for safe JS injection
         import json
         text_json = json.dumps(text)
         error_json = json.dumps(error)
