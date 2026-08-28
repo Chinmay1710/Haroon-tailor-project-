@@ -857,7 +857,7 @@ class WebBridge(QObject):
 
             elif action == "create_backup":
                 from PySide6.QtWidgets import QFileDialog
-                import shutil, os, zipfile, tempfile
+                import zipfile, tempfile
                 from app.config import DATABASE_PATH
                 from app.database.engine import get_session, get_engine
                 from app.repositories.settings_repo import SettingsRepository
@@ -927,7 +927,7 @@ class WebBridge(QObject):
 
             elif action == "restore_backup":
                 from PySide6.QtWidgets import QFileDialog
-                import shutil, os, zipfile, tempfile
+                import zipfile, tempfile
                 from app.config import DATABASE_PATH
                 from app.database.engine import close_db, init_db
                 
@@ -987,7 +987,7 @@ class WebBridge(QObject):
             elif action == "erase_all_data":
                 from app.database.engine import close_db, init_db
                 from app.config import DATABASE_PATH
-                import os
+
                 
                 try:
                     close_db()
