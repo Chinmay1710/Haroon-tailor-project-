@@ -3,12 +3,18 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QWidget
 from PySide6.QtPrintSupport import QPrinter, QPrintDialog
-from PySide6.QtGui import QPainter, QFont, QColor, QPen, QPageSize
+from PySide6.QtGui import QPainter, QFont, QColor, QPen, QPageSize, QImage
 from PySide6.QtCore import Qt, QRectF, QPointF
 
 from app.services.order_service import OrderService
 from app.utils.formatters import format_date_display
 from app.utils.logger import get_logger
+
+# Import thermal printer utilities from receipt_printer
+from app.printing.receipt_printer import _configure_thermal_printer, THERMAL_PRINTER_NAME, _make_fonts
+
+import qrcode
+from io import BytesIO
 
 logger = get_logger(__name__)
 
@@ -30,12 +36,15 @@ def print_stitching_slip(order_id: int, parent_widget: QWidget = None):
         session.close()
 
     printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-    printer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
+    _configure_thermal_printer(printer)
+    printer.setPrinterName(THERMAL_PRINTER_NAME)
 
     dialog = QPrintDialog(printer, parent_widget)
     dialog.setWindowTitle("Print Stitching Slip")
     if dialog.exec() != QPrintDialog.DialogCode.Accepted:
         return
+
+    _configure_thermal_printer(printer)
 
     painter = QPainter()
     if not painter.begin(printer):
@@ -43,115 +52,174 @@ def print_stitching_slip(order_id: int, parent_widget: QWidget = None):
         return
 
     try:
-        page_rect = printer.pageRect(QPrinter.Unit.Point)
-        width = page_rect.width()
-        margin = 40
-        content_width = width - 2 * margin
-        y = margin
+        device_rect = printer.paperRect(QPrinter.Unit.DevicePixel)
+        point_rect = printer.paperRect(QPrinter.Unit.Point)
+        
+        scale = 384.0 / max(1.0, point_rect.width())
+        painter.scale(scale, scale)
 
-        title_font = QFont("Public Sans", 16, QFont.Weight.Bold)
-        header_font = QFont("Public Sans", 12, QFont.Weight.Bold)
-        normal_font = QFont("Public Sans", 10)
-        large_font = QFont("Public Sans", 14, QFont.Weight.Bold)
+        width = point_rect.width()
+        margin = 12.0
+        content_width = width - (2.0 * margin)
+        y = 5.0
 
-        # Header
-        painter.setFont(title_font)
-        painter.setPen(QColor("#091426"))
-        painter.drawText(QRectF(margin, y, content_width, 24),
-                         Qt.AlignmentFlag.AlignCenter, f"{shop_name} — STITCHING SLIP")
-        y += 35
+        (
+            title_font,
+            shop_detail_font,
+            receipt_title_font,
+            normal_font,
+            value_font,
+            bold_font,
+            small_font,
+        ) = _make_fonts(scale)
 
-        # Order info
-        def draw_row(label, value):
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, False)
+        painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, False)
+
+        def draw_dashed_line():
             nonlocal y
-            painter.setFont(normal_font)
-            painter.setPen(QColor("#666666"))
-            painter.drawText(QRectF(margin, y, content_width * 0.35, 18),
-                             Qt.AlignmentFlag.AlignLeft, label)
-            painter.setPen(QColor("#091426"))
-            painter.drawText(QRectF(margin + content_width * 0.35, y, content_width * 0.65, 18),
-                             Qt.AlignmentFlag.AlignLeft, value)
-            y += 20
-
-        draw_row("Order Number:", order.order_number)
-        draw_row("Customer:", order.customer.name if order.customer else "—")
-        draw_row("Order Date:", format_date_display(order.order_date))
-        draw_row("Delivery Date:", format_date_display(order.delivery_date))
-
-        y += 10
-        painter.setPen(QPen(QColor("#091426"), 2))
-        painter.drawLine(QPointF(margin, y), QPointF(width - margin, y))
-        y += 15
-
-        # For each item
-        for item in (order.items or []):
-            painter.setFont(large_font)
-            painter.setPen(QColor("#091426"))
-            painter.drawText(QRectF(margin, y, content_width, 22),
-                             Qt.AlignmentFlag.AlignLeft,
-                             f"{item.clothing_type} × {item.quantity}")
-            y += 30
-
-            # Measurements
-            if item.measurements:
-                painter.setFont(header_font)
-                painter.drawText(QRectF(margin, y, content_width, 18),
-                                 Qt.AlignmentFlag.AlignLeft, "Measurements:")
-                y += 22
-
-                col_width = content_width / 3
-                col = 0
-                for m in item.measurements:
-                    x = margin + col * col_width
-                    painter.setFont(normal_font)
-                    painter.setPen(QColor("#666666"))
-                    painter.drawText(QRectF(x, y, col_width, 16),
-                                     Qt.AlignmentFlag.AlignLeft,
-                                     f"{m.field_name}:")
-                    painter.setPen(QColor("#091426"))
-                    painter.setFont(QFont("Public Sans", 11, QFont.Weight.Bold))
-                    painter.drawText(QRectF(x, y + 16, col_width, 18),
-                                     Qt.AlignmentFlag.AlignLeft,
-                                     f"{m.field_value} {m.unit}")
-                    col += 1
-                    if col >= 3:
-                        col = 0
-                        y += 38
-                if col > 0:
-                    y += 38
-            else:
-                painter.setFont(normal_font)
-                painter.setPen(QColor("#999999"))
-                painter.drawText(QRectF(margin, y, content_width, 18),
-                                 Qt.AlignmentFlag.AlignLeft, "No measurements recorded")
-                y += 22
-
-            y += 10
-            painter.setPen(QPen(QColor("#cccccc"), 1))
+            y += 5
+            pen = QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.DashLine)
+            painter.setPen(pen)
             painter.drawLine(QPointF(margin, y), QPointF(width - margin, y))
-            y += 15
+            painter.setPen(QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.SolidLine))
+            y += 5
 
-        # Special instructions
-        if order.special_instructions:
-            painter.setFont(header_font)
-            painter.setPen(QColor("#091426"))
-            painter.drawText(QRectF(margin, y, content_width, 18),
-                             Qt.AlignmentFlag.AlignLeft, "SPECIAL INSTRUCTIONS:")
-            y += 22
-            painter.setFont(QFont("Public Sans", 11))
-            painter.setPen(QColor("#333333"))
-            painter.drawText(QRectF(margin, y, content_width, 80),
-                             Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.TextWordWrap,
-                             order.special_instructions)
-            y += 60
+        def draw_row(left: str, right: str, font_left=normal_font, font_right=normal_font, right_bold=False):
+            nonlocal y
+            painter.setFont(font_left)
+            painter.drawText(
+                QRectF(margin, y, content_width * 0.5, 18),
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                left
+            )
+            painter.setFont(bold_font if right_bold else font_right)
+            painter.drawText(
+                QRectF(margin + content_width * 0.4, y, content_width * 0.6, 18),
+                Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+                right
+            )
+            y += 18
 
-        # Status
-        y += 20
-        painter.setFont(large_font)
-        painter.setPen(QColor("#091426"))
-        painter.drawText(QRectF(margin, y, content_width, 22),
-                         Qt.AlignmentFlag.AlignLeft,
-                         f"Status: {order.status}")
+        # 1. STITCHING SLIP Title
+        painter.setFont(title_font)
+        painter.drawText(
+            QRectF(margin, y, content_width, 24),
+            Qt.AlignmentFlag.AlignCenter,
+            "STITCHING SLIP"
+        )
+        y += 24
+
+        # 2. Shop Name
+        painter.setFont(shop_detail_font)
+        painter.drawText(
+            QRectF(margin, y, content_width, 14),
+            Qt.AlignmentFlag.AlignCenter,
+            shop_name
+        )
+        y += 14
+
+        draw_dashed_line()
+
+        # 3. Order Details
+        draw_row("Order No:", order.order_number, font_left=bold_font, right_bold=True)
+        draw_row("Due:", format_date_display(order.delivery_date))
+
+        draw_dashed_line()
+
+        # 4. Customer
+        customer_name = order.customer.name if order.customer else "Walk-in"
+        painter.setFont(normal_font)
+        painter.drawText(QRectF(margin, y, content_width * 0.35, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, "Customer:")
+        painter.setFont(bold_font)
+        painter.drawText(QRectF(margin + content_width * 0.35, y, content_width * 0.65, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, customer_name)
+        y += 18
+
+        draw_dashed_line()
+
+        # 5. Garments
+        painter.setFont(bold_font)
+        painter.drawText(QRectF(margin, y, content_width, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, "Garments:")
+        y += 18
+        painter.setFont(normal_font)
+        for item in (order.items or []):
+            painter.drawText(QRectF(margin, y, content_width, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, f"{item.clothing_type} (x{item.quantity})")
+            y += 18
+
+        draw_dashed_line()
+
+        # 6. Measurements
+        painter.setFont(bold_font)
+        painter.drawText(QRectF(margin, y, content_width, 18), Qt.AlignmentFlag.AlignCenter, "MEASUREMENTS")
+        y += 22
+
+        for item in (order.items or []):
+            if item.measurements:
+                painter.setFont(bold_font)
+                painter.drawText(QRectF(margin, y, content_width, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, f"{item.clothing_type}")
+                
+                # underline it
+                fm = painter.fontMetrics()
+                tw = fm.horizontalAdvance(item.clothing_type)
+                painter.drawLine(QPointF(margin, y + 16), QPointF(margin + tw, y + 16))
+                
+                y += 18
+                
+                for m in item.measurements:
+                    draw_row(f"{m.field_name}:", f"{m.field_value}\"", font_right=bold_font)
+                
+                y += 5
+
+        draw_dashed_line()
+
+        # 7. Cut / Sewn By
+        y += 5
+        painter.setFont(normal_font)
+        painter.drawText(QRectF(margin, y, content_width * 0.5, 18), Qt.AlignmentFlag.AlignLeft, "Cut By: _______")
+        painter.drawText(QRectF(margin + content_width * 0.5, y, content_width * 0.5, 18), Qt.AlignmentFlag.AlignRight, "Sewn By: _______")
+        y += 25
+
+        # 8. QR Code
+        qr_size = int(content_width * 0.5)
+        qr_x = margin + (content_width - qr_size) / 2
+        
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=0,
+        )
+        qr.add_data(f"haroon-tailor://order/{order.order_number}")
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert PIL image to QImage
+        buf = BytesIO()
+        img.save(buf, format="PNG")
+        qimg = QImage.fromData(buf.getvalue())
+        
+        painter.drawImage(QRectF(qr_x, y, qr_size, qr_size), qimg)
+        y += qr_size + 10
+
+        # Scan text
+        painter.setFont(small_font)
+        painter.drawText(QRectF(margin, y, content_width, 14), Qt.AlignmentFlag.AlignCenter, "Scan to Update Status")
+        y += 14
+
+        # Generated date
+        from datetime import datetime
+        now_str = datetime.now().strftime("%d %b %Y - %I:%M:%S %p")
+        painter.drawText(QRectF(margin, y, content_width, 14), Qt.AlignmentFlag.AlignCenter, f"Generated: {now_str}")
+        y += 14
+
+        # Fix for printer stopping early: feed paper by drawing blank space at the bottom
+        y += 80
+        painter.setPen(QColor(255, 255, 255, 1)) # practically invisible
+        painter.drawText(QRectF(margin, y, 10, 10), Qt.AlignmentFlag.AlignLeft, ".")
+
+    except Exception:
+        logger.exception(f"Error while drawing stitching slip for order {order.order_number}")
+        raise
 
     finally:
         painter.end()

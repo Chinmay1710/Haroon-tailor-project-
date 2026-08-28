@@ -86,6 +86,21 @@ class WebBridge(QObject):
                 response = {"status": "success"}
 
             # ────────────────────────────────────────────────────────────
+            # PRINTING
+            # ────────────────────────────────────────────────────────────
+            elif action == "print_receipt":
+                order_id = payload.get("order_id")
+                from app.printing.receipt_printer import print_customer_receipt
+                print_customer_receipt(order_id, self.parent())
+                response = {"status": "success"}
+
+            elif action == "print_stitching_slip":
+                order_id = payload.get("order_id")
+                from app.printing.stitching_slip import print_stitching_slip
+                print_stitching_slip(order_id, self.parent())
+                response = {"status": "success"}
+
+            # ────────────────────────────────────────────────────────────
             # DICTATION
             # ────────────────────────────────────────────────────────────
             elif action == "start_dictation":

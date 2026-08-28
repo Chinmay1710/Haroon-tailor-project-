@@ -14,8 +14,14 @@ from PySide6.QtGui import (
     QColor,
     QPen,
     QPageSize,
+    QPageLayout,
 )
-from PySide6.QtCore import Qt, QRectF, QPointF, QSizeF
+from PySide6.QtCore import (
+    Qt,
+    QRectF,
+    QPointF,
+    QSizeF,
+)
 
 from app.services.order_service import OrderService
 from app.services.payment_service import PaymentService
@@ -35,19 +41,25 @@ THERMAL_PRINTER_NAME = "POS58 Printer"
 # A height of 250mm gives enough room for a normal tailor receipt while
 # allowing the Windows thermal printer driver to handle the roll.
 THERMAL_PAPER_WIDTH_MM = 58.0
-THERMAL_PAPER_HEIGHT_MM = 250.0
+THERMAL_PAPER_HEIGHT_MM = 180.0
 
 # Small thermal-printer margins.
 THERMAL_MARGIN_MM = 3.0
 
 
 def _configure_thermal_printer(printer: QPrinter) -> None:
-    """Configure a QPrinter for a 58mm thermal POS printer."""
+    """Configure a QPrinter for a 58mm thermal POS printer.
 
-    # High resolution is generally more appropriate for thermal printers.
+    The Windows POS58 driver can expose different PySide6
+    setPageMargins() overloads. We therefore avoid that API entirely and
+    use the full physical page while applying the receipt margin ourselves
+    in _draw_thermal_receipt().
+    """
+
+    # High resolution for the thermal printer.
     printer.setResolution(203)
 
-    # 58mm x 250mm custom page.
+    # 58mm x 180mm custom receipt page.
     page_size = QPageSize(
         QSizeF(
             THERMAL_PAPER_WIDTH_MM,
@@ -59,38 +71,43 @@ def _configure_thermal_printer(printer: QPrinter) -> None:
 
     printer.setPageSize(page_size)
 
-    # Keep the printable content inside a small margin.
-    printer.setPageMargins(
-        THERMAL_MARGIN_MM,
-        THERMAL_MARGIN_MM,
-        THERMAL_MARGIN_MM,
-        THERMAL_MARGIN_MM,
-        QPrinter.Unit.Millimeter,
-    )
+    # Use the complete physical page. The drawing code applies its own
+    # safe thermal-printer margin, so we do not call setPageMargins().
+    printer.setFullPage(True)
 
-    # Use color mode even though the thermal printer is monochrome.
+    # Thermal printers are normally monochrome.
     printer.setColorMode(QPrinter.ColorMode.GrayScale)
 
     # One copy.
     printer.setCopyCount(1)
 
 
-def _make_fonts():
-    """Create fonts suitable for a 58mm thermal receipt."""
+def _make_fonts(scale: float = 1.0):
+    """Create compact, readable fonts suitable for a 58mm thermal receipt."""
 
-    # Fonts are intentionally smaller than the previous A4 implementation.
-    #
-    # Arial is commonly available on Windows and gives reasonable fallback
-    # support for Indian-language characters.
-    title_font = QFont("Arial", 13, QFont.Weight.Bold)
-    shop_detail_font = QFont("Arial", 7)
-    receipt_title_font = QFont("Arial", 9, QFont.Weight.Bold)
-
-    normal_font = QFont("Arial", 7)
-    value_font = QFont("Arial", 7)
-
-    bold_font = QFont("Arial", 7, QFont.Weight.Bold)
-    small_font = QFont("Arial", 6)
+    title_font = QFont("Courier New")
+    title_font.setPointSizeF(9.0 / scale)
+    title_font.setWeight(QFont.Weight.Black)
+    
+    shop_detail_font = QFont("Courier New")
+    shop_detail_font.setPointSizeF(7.0 / scale)
+    
+    receipt_title_font = QFont("Courier New")
+    receipt_title_font.setPointSizeF(8.0 / scale)
+    receipt_title_font.setWeight(QFont.Weight.Black)
+    
+    normal_font = QFont("Courier New")
+    normal_font.setPointSizeF(7.0 / scale)
+    
+    value_font = QFont("Courier New")
+    value_font.setPointSizeF(7.0 / scale)
+    
+    bold_font = QFont("Courier New")
+    bold_font.setPointSizeF(7.0 / scale)
+    bold_font.setWeight(QFont.Weight.Black)
+    
+    small_font = QFont("Courier New")
+    small_font.setPointSizeF(6.0 / scale)
 
     return (
         title_font,
@@ -184,7 +201,7 @@ def _draw_wrapped_text(
     painter.drawText(
         rect,
         Qt.AlignmentFlag.AlignLeft
-        | Qt.AlignmentFlag.TextWordWrap,
+        | Qt.TextFlag.TextWordWrap,
         str(text),
     )
 
@@ -192,12 +209,12 @@ def _draw_wrapped_text(
     # This is intentionally conservative for thermal printing.
     lines = max(
         1,
-        len(str(text)) // max(1, int(rect.width() / 4.0)) + 1,
+        len(str(text)) // max(1, int(rect.width() / 3.5)) + 1,
     )
 
     return min(
         rect.height(),
-        lines * 9.0,
+        lines * 8.0,
     )
 
 
@@ -211,25 +228,18 @@ def _draw_thermal_receipt(
     shop_address: str,
     currency: str,
 ) -> None:
-    """Draw the complete receipt using a 58mm thermal layout."""
+    """Draw the complete receipt matching the exact HTML layout."""
 
-    page_rect = printer.pageRect(QPrinter.Unit.Point)
+    device_rect = printer.paperRect(QPrinter.Unit.DevicePixel)
+    point_rect = printer.paperRect(QPrinter.Unit.Point)
+    
+    scale = 384.0 / max(1.0, point_rect.width())
+    painter.scale(scale, scale)
 
-    width = page_rect.width()
-
-    # Work inside the printer's printable page.
-    margin = max(
-        6.0,
-        width * (THERMAL_MARGIN_MM / THERMAL_PAPER_WIDTH_MM),
-    )
-
+    width = point_rect.width()
+    margin = 12.0
     content_width = width - (2.0 * margin)
-
-    y = 4.0
-
-    # -----------------------------------------------------------------------
-    # Fonts
-    # -----------------------------------------------------------------------
+    y = 5.0
 
     (
         title_font,
@@ -239,521 +249,157 @@ def _draw_thermal_receipt(
         value_font,
         bold_font,
         small_font,
-    ) = _make_fonts()
+    ) = _make_fonts(scale)
 
-    # -----------------------------------------------------------------------
-    # General painter configuration
-    # -----------------------------------------------------------------------
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing, False)
+    painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, False)
+    painter.setPen(QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.SolidLine))
 
-    painter.setRenderHint(QPainter.RenderHint.TextAntialiasing, True)
-    painter.setPen(QColor("#000000"))
+    def draw_dashed_line():
+        nonlocal y
+        y += 5
+        pen = QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.DashLine)
+        painter.setPen(pen)
+        painter.drawLine(QPointF(margin, y), QPointF(width - margin, y))
+        painter.setPen(QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.SolidLine))
+        y += 5
 
-    # -----------------------------------------------------------------------
-    # Shop header
-    # -----------------------------------------------------------------------
-
-    painter.setFont(title_font)
-
-    _draw_centered_text(
-        painter,
-        margin,
-        y,
-        content_width,
-        22,
-        shop_name,
-    )
-
-    y += 23
-
-    painter.setFont(shop_detail_font)
-
-    if shop_address:
-        # Address may be longer than one line.
-        address_rect = QRectF(
-            margin,
-            y,
-            content_width,
-            22,
-        )
-
+    def draw_row(left: str, right: str, font_left=normal_font, font_right=normal_font, right_bold=False):
+        nonlocal y
+        painter.setFont(font_left)
         painter.drawText(
-            address_rect,
-            Qt.AlignmentFlag.AlignCenter
-            | Qt.AlignmentFlag.TextWordWrap,
-            str(shop_address),
+            QRectF(margin, y, content_width * 0.5, 18),
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+            left
         )
+        painter.setFont(bold_font if right_bold else font_right)
+        painter.drawText(
+            QRectF(margin + content_width * 0.3, y, content_width * 0.7, 18),
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+            right
+        )
+        y += 18
 
-        y += 16
+    # 1. Shop Name
+    painter.setFont(title_font)
+    painter.drawText(
+        QRectF(margin, y, content_width, 24),
+        Qt.AlignmentFlag.AlignCenter,
+        shop_name
+    )
+    y += 24
 
+    # 2. Shop Details
+    painter.setFont(shop_detail_font)
+    if shop_address:
+        painter.drawText(
+            QRectF(margin, y, content_width, 14),
+            Qt.AlignmentFlag.AlignCenter,
+            shop_address
+        )
+        y += 14
     if shop_phone:
-        _draw_centered_text(
-            painter,
-            margin,
-            y,
-            content_width,
-            13,
-            f"Phone: {shop_phone}",
+        painter.drawText(
+            QRectF(margin, y, content_width, 14),
+            Qt.AlignmentFlag.AlignCenter,
+            f"Ph: {shop_phone}"
         )
-
         y += 14
 
-    y += 3
+    draw_dashed_line()
 
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
-
-    y += 7
-
-    # -----------------------------------------------------------------------
-    # Receipt title
-    # -----------------------------------------------------------------------
-
+    # 3. RECEIPT Title
     painter.setFont(receipt_title_font)
-
-    _draw_centered_text(
-        painter,
-        margin,
-        y,
-        content_width,
-        16,
-        "CUSTOMER RECEIPT",
+    painter.drawText(
+        QRectF(margin, y, content_width, 18),
+        Qt.AlignmentFlag.AlignCenter,
+        "RECEIPT"
     )
+    y += 18
 
-    y += 20
+    # 4. Order Details
+    from app.utils.formatters import format_date_display, format_currency
+    draw_row("Order No:", order.order_number, right_bold=True)
+    draw_row("Date:", format_date_display(order.order_date))
+    draw_row("Delivery:", format_date_display(order.delivery_date))
 
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
+    draw_dashed_line()
 
-    y += 6
-
-    # -----------------------------------------------------------------------
-    # Helper for two-column rows
-    # -----------------------------------------------------------------------
-
-    def draw_row(
-        label: str,
-        value: str,
-        bold_value: bool = False,
-    ) -> None:
-        nonlocal y
-
-        label_width = content_width * 0.43
-        value_width = content_width * 0.57
-
-        painter.setFont(normal_font)
-        painter.setPen(QColor("#000000"))
-
-        _draw_left_text(
-            painter,
-            margin,
-            y,
-            label_width,
-            14,
-            label,
-        )
-
-        painter.setFont(
-            bold_font if bold_value else value_font
-        )
-
-        _draw_right_text(
-            painter,
-            margin + label_width,
-            y,
-            value_width,
-            14,
-            value,
-        )
-
-        y += 15
-
-    # -----------------------------------------------------------------------
-    # Order details
-    # -----------------------------------------------------------------------
-
-    draw_row(
-        "Order No:",
-        order.order_number,
-    )
-
-    draw_row(
-        "Date:",
-        format_date_display(order.order_date),
-    )
-
-    customer_name = (
-        order.customer.name
-        if order.customer
-        else "—"
-    )
-
-    draw_row(
-        "Customer:",
-        customer_name,
-    )
-
+    # 5. Customer Details
+    customer_name = order.customer.name if order.customer else "Walk-in"
+    draw_row("Customer:", customer_name, right_bold=True)
     if order.customer and order.customer.mobile:
-        draw_row(
-            "Mobile:",
-            order.customer.mobile,
-        )
+        draw_row("Ph:", order.customer.mobile)
 
-    draw_row(
-        "Delivery:",
-        format_date_display(order.delivery_date),
-    )
+    draw_dashed_line()
 
-    y += 3
-
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
-
-    y += 7
-
-    # -----------------------------------------------------------------------
-    # Items header
-    # -----------------------------------------------------------------------
-
+    # 6. Items Header
     painter.setFont(bold_font)
+    painter.drawText(QRectF(margin, y, content_width * 0.5, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, "Item")
+    painter.drawText(QRectF(margin + content_width * 0.4, y, content_width * 0.2, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, "Qty")
+    painter.drawText(QRectF(margin + content_width * 0.6, y, content_width * 0.4, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, "Total")
+    y += 18
 
-    # Column positions.
-    item_x = margin
-    qty_x = margin + content_width * 0.62
-    amount_x = margin + content_width * 0.74
+    draw_dashed_line()
 
-    item_width = content_width * 0.60
-    qty_width = content_width * 0.12
-    amount_width = content_width * 0.26
-
-    _draw_left_text(
-        painter,
-        item_x,
-        y,
-        item_width,
-        14,
-        "Item",
-    )
-
-    _draw_right_text(
-        painter,
-        qty_x,
-        y,
-        qty_width,
-        14,
-        "Qty",
-    )
-
-    _draw_right_text(
-        painter,
-        amount_x,
-        y,
-        amount_width,
-        14,
-        "Amount",
-    )
-
-    y += 15
-
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
-
-    y += 4
-
-    # -----------------------------------------------------------------------
-    # Items
-    # -----------------------------------------------------------------------
-
+    # 7. Items Loop
     painter.setFont(normal_font)
-
     for item in (order.items or []):
-        clothing_type = str(
-            item.clothing_type or "Item"
-        )
+        painter.drawText(QRectF(margin, y, content_width * 0.5, 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, item.clothing_type)
+        painter.drawText(QRectF(margin + content_width * 0.4, y, content_width * 0.2, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, str(item.quantity))
+        painter.drawText(QRectF(margin + content_width * 0.6, y, content_width * 0.4, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, format_currency(item.price * item.quantity, currency))
+        y += 18
 
-        quantity = str(
-            item.quantity or 0
-        )
+    draw_dashed_line()
 
-        amount = format_currency(
-            item.price * item.quantity,
-            currency,
-        )
-
-        # Item name
-        painter.setFont(normal_font)
-
-        _draw_left_text(
-            painter,
-            item_x,
-            y,
-            item_width,
-            16,
-            clothing_type,
-        )
-
-        # Quantity
-        _draw_right_text(
-            painter,
-            qty_x,
-            y,
-            qty_width,
-            16,
-            quantity,
-        )
-
-        # Amount
-        _draw_right_text(
-            painter,
-            amount_x,
-            y,
-            amount_width,
-            16,
-            amount,
-        )
-
-        y += 17
-
-    if not order.items:
-        _draw_left_text(
-            painter,
-            margin,
-            y,
-            content_width,
-            16,
-            "No items",
-        )
-
-        y += 17
-
-    y += 2
-
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
-
-    y += 7
-
-    # -----------------------------------------------------------------------
-    # Payment summary
-    # -----------------------------------------------------------------------
-
-    draw_row(
-        "TOTAL:",
-        format_currency(
-            order.total_amount,
-            currency,
-        ),
-        bold_value=True,
-    )
-
-    draw_row(
-        "Paid:",
-        format_currency(
-            order.paid_amount,
-            currency,
-        ),
-    )
-
-    draw_row(
-        "DUE:",
-        format_currency(
-            order.remaining_amount,
-            currency,
-        ),
-        bold_value=True,
-    )
-
-    y += 3
-
-    _draw_divider(
-        painter,
-        margin,
-        width - margin,
-        y,
-    )
-
-    y += 7
-
-    # -----------------------------------------------------------------------
-    # Payment history
-    # -----------------------------------------------------------------------
-
+    # 8. Totals
+    draw_row("TOTAL:", format_currency(order.total_amount, currency), font_left=bold_font, right_bold=True)
+    
     if payments:
-        painter.setFont(bold_font)
+        for p in payments:
+            date_str = format_date_display(p.payment_date)
+            draw_row(f"Paid ({date_str}):", f"-{format_currency(p.amount, currency)}")
+    else:
+        draw_row("Paid:", f"-{format_currency(order.paid_amount, currency)}")
 
-        _draw_left_text(
-            painter,
-            margin,
-            y,
-            content_width,
-            15,
-            "PAYMENT HISTORY",
-        )
+    draw_dashed_line()
 
-        y += 17
+    draw_row("DUE:", format_currency(order.remaining_amount, currency), font_left=bold_font, right_bold=True)
 
-        for payment in payments:
-            payment_date = format_date_display(
-                payment.payment_date
-            )
+    draw_dashed_line()
 
-            method = str(
-                payment.payment_method or ""
-            )
-
-            payment_text = (
-                f"{payment_date} - {method}"
-            )
-
-            payment_amount = format_currency(
-                payment.amount,
-                currency,
-            )
-
-            painter.setFont(normal_font)
-
-            _draw_left_text(
-                painter,
-                margin,
-                y,
-                content_width * 0.67,
-                15,
-                payment_text,
-            )
-
-            _draw_right_text(
-                painter,
-                margin + content_width * 0.67,
-                y,
-                content_width * 0.33,
-                15,
-                payment_amount,
-            )
-
-            y += 16
-
-        y += 3
-
-        _draw_divider(
-            painter,
-            margin,
-            width - margin,
-            y,
-        )
-
-        y += 7
-
-    # -----------------------------------------------------------------------
-    # Special instructions
-    # -----------------------------------------------------------------------
-
-    if order.special_instructions:
-        painter.setFont(bold_font)
-
-        _draw_left_text(
-            painter,
-            margin,
-            y,
-            content_width,
-            15,
-            "SPECIAL INSTRUCTIONS",
-        )
-
-        y += 17
-
-        painter.setFont(normal_font)
-
-        instruction_rect = QRectF(
-            margin,
-            y,
-            content_width,
-            70,
-        )
-
-        consumed = _draw_wrapped_text(
-            painter,
-            order.special_instructions,
-            instruction_rect,
-        )
-
-        y += max(
-            18.0,
-            consumed,
-        )
-
-        y += 3
-
-        _draw_divider(
-            painter,
-            margin,
-            width - margin,
-            y,
-        )
-
-        y += 7
-
-    # -----------------------------------------------------------------------
-    # Footer
-    # -----------------------------------------------------------------------
-
-    painter.setFont(bold_font)
-
-    _draw_centered_text(
-        painter,
-        margin,
-        y,
-        content_width,
-        16,
-        "Thank you for your business!",
+    # 9. Footer
+    painter.setFont(normal_font)
+    y += 5
+    painter.drawText(
+        QRectF(margin, y, content_width, 18),
+        Qt.AlignmentFlag.AlignCenter,
+        "Thank you for your business!"
     )
-
     y += 18
 
-    painter.setFont(small_font)
-
-    _draw_centered_text(
-        painter,
-        margin,
-        y,
-        content_width,
-        14,
-        f"Generated by {shop_name}",
+    # Extra space before signature
+    y += 20
+    
+    # Signature line
+    painter.drawText(
+        QRectF(margin, y, content_width, 18),
+        Qt.AlignmentFlag.AlignCenter,
+        "________________________"
     )
-
-    y += 14
-
-    _draw_centered_text(
-        painter,
-        margin,
-        y,
-        content_width,
-        14,
-        "Tailor Shop Manager",
+    y += 15
+    painter.drawText(
+        QRectF(margin, y, content_width, 18),
+        Qt.AlignmentFlag.AlignCenter,
+        "Customer Signature"
     )
-
     y += 18
 
-    # Extra blank space at the end of the receipt.
-    y += 10
+    # Fix for printer stopping early: feed paper by drawing blank space at the bottom
+    y += 80
+    painter.setPen(QColor(255, 255, 255, 1)) # practically invisible
+    painter.drawText(QRectF(margin, y, 10, 10), Qt.AlignmentFlag.AlignLeft, ".")
+
 
 
 # ---------------------------------------------------------------------------
@@ -906,11 +552,6 @@ def print_customer_receipt(
         f"Receipt sent to printer for order "
         f"{order.order_number}"
     )
-
-
-# ---------------------------------------------------------------------------
-# PDF generation
-# ---------------------------------------------------------------------------
 
 def generate_receipt_pdf(
     order_id: int,
