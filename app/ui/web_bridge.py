@@ -103,6 +103,22 @@ class WebBridge(QObject):
                 print_stitching_slip(order_id, self.parent())
                 response = {"status": "success"}
 
+            elif action == "print_pos_document":
+                doc_type = payload.get("type", "receipt")
+                order_id = payload.get("order_id")
+                
+                try:
+                    if doc_type == "receipt":
+                        from app.printing.receipt_printer import print_customer_receipt
+                        print_customer_receipt(order_id, self.parent())
+                    elif doc_type == "stitching_slip":
+                        from app.printing.stitching_slip import print_stitching_slip
+                        print_stitching_slip(order_id, self.parent())
+                    response = {"status": "success"}
+                except Exception as e:
+                    logger.error(f"Failed to print {doc_type}: {e}")
+                    response = {"status": "error", "message": str(e)}
+
             # ────────────────────────────────────────────────────────────
             # DICTATION
             # ────────────────────────────────────────────────────────────
@@ -683,6 +699,17 @@ class WebBridge(QObject):
                 else:
                     response = {"status": "error", "message": "Save cancelled"}
 
+            elif action == "print_html_document":
+                try:
+                    main_window = self.parent()
+                    if hasattr(main_window, '_handle_print_requested'):
+                        main_window._handle_print_requested()
+                        response = {"status": "success"}
+                    else:
+                        response = {"status": "error", "message": "Print handler not found on main window."}
+                except Exception as e:
+                    logger.error(f"Failed to trigger HTML print: {e}")
+                    response = {"status": "error", "message": str(e)}
 
             elif action == "get_all_payments":
                 from app.database.engine import get_session

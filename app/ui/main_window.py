@@ -394,51 +394,31 @@ class MainWindow(QMainWindow):
         This ensures the printed output is IDENTICAL to what the user sees.
         """
         try:
-            logger.info("Print requested directly from HTML preview.")
+            logger.info("Print requested directly from HTML preview. Routing to native POS printer.")
             
-            from PySide6.QtPrintSupport import QPrinter, QPrintDialog
-            from PySide6.QtGui import QPageLayout, QPageSize
-            from PySide6.QtCore import QSizeF, QMarginsF
-            from app.printing.receipt_printer import THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM
+            current_url = self.web_view.url().toString()
             
-            # Configure printer for 58mm thermal paper
-            printer = QPrinter(QPrinter.PrinterMode.HighResolution)
-            
-            # Force 58mm POS paper size
-            page_size = QPageSize(
-                QSizeF(THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM),
-                QPageSize.Unit.Millimeter,
-                "POS58 Receipt"
-            )
-            page_layout = QPageLayout(
-                page_size,
-                QPageLayout.Orientation.Portrait,
-                QMarginsF(0, 0, 0, 0)
-            )
-            printer.setPageLayout(page_layout)
-            
-            # Show printer selection dialog
-            dialog = QPrintDialog(printer, self)
-            
-            if dialog.exec() == QPrintDialog.DialogCode.Accepted:
-                printer_name = printer.printerName()
-                logger.info(f"Selected printer: {printer_name}")
+            import re
+            match = re.search(r"(?:order_id|id)=(\d+)", current_url, re.IGNORECASE)
+            if not match:
+                logger.error(f"Could not determine order ID for printing. Current URL: {current_url}")
+                from PySide6.QtWidgets import QMessageBox
+                QMessageBox.warning(self, "Print Error", "Unable to determine the order for this document.")
+                return
                 
-                # Re-apply 58mm layout after dialog (dialog may reset it)
-                printer.setPageLayout(page_layout)
+            order_id = int(match.group(1))
+            
+            if "receipt_preview.html" in current_url:
+                logger.info(f"Starting customer receipt print for order {order_id}")
+                from app.printing.receipt_printer import print_customer_receipt
+                print_customer_receipt(order_id, self)
+            elif "stitching_slip_preview.html" in current_url:
+                logger.info(f"Starting stitching slip print for order {order_id}")
+                from app.printing.stitching_slip import print_stitching_slip
+                print_stitching_slip(order_id, self)
+            else:
+                logger.warning(f"Unknown print request from URL: {current_url}")
                 
-                def print_done_callback(success):
-                    if success:
-                        logger.info(f"Print job sent successfully to {printer_name}")
-                    else:
-                        logger.error(f"Print job failed for {printer_name}")
-                
-                # Print directly from the WebEngine — same renderer as screen
-                # This is the key: print_() renders the HTML to the printer
-                # using the identical engine that renders on screen,
-                # so fonts, margins, and layout will match exactly.
-                self.web_view.page().print_(printer, print_done_callback)
-
         except Exception as e:
             logger.exception(f"Error handling print request: {e}")
 

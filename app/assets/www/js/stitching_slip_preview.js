@@ -124,3 +124,19 @@ window.savePdf = async function() {
         }
     }
 };
+
+window.printSlip = async function() {
+    let navParamsStr = sessionStorage.getItem("nav_params");
+    let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
+    if (!navParams || !navParams.order_id) {
+        window.API.toast("Unable to find order ID for printing.", "error");
+        return;
+    }
+    
+    try {
+        await window.API.request('print_pos_document', {type: 'stitching_slip', order_id: navParams.order_id});
+    } catch (e) {
+        console.error(e);
+        window.API.toast(e, "error");
+    }
+};
