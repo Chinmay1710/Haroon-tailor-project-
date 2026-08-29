@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init();
 });
 
+window.loadCustomers = loadCustomers;
 async function loadCustomers() {
     try {
         window.API.toast("Loading customers...", "info");

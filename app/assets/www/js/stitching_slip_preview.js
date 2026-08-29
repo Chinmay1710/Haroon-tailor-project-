@@ -91,10 +91,10 @@ async function loadSlipData(orderId) {
             mContainer.innerHTML = '<div style="text-align:center; font-style:italic;">No measurements</div>';
         }
 
-        if (o.scan_url) {
+        if (o.id) {
             document.getElementById('ss-qrcode').innerHTML = '';
             new QRCode(document.getElementById("ss-qrcode"), {
-                text: o.scan_url,
+                text: "ORDER:" + o.id,
                 width: 60,
                 height: 60,
                 colorDark : "#000000",

@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init();
 });
 
+window.loadOrders = loadOrders;
 async function loadOrders() {
     try {
         const data = await window.API.request('get_all_orders');

@@ -189,7 +189,7 @@ def print_stitching_slip(order_id: int, parent_widget: QWidget = None):
             box_size=10,
             border=0,
         )
-        qr.add_data(f"haroon-tailor://order/{order.order_number}")
+        qr.add_data(f"ORDER:{order.id}")
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
         

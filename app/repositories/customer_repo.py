@@ -1,7 +1,7 @@
 from __future__ import annotations
 """Customer repository — database operations for customers."""
 
-from sqlalchemy import or_
+from sqlalchemy import or_, String
 from sqlalchemy.orm import Session
 
 from app.models.customer import Customer
@@ -35,7 +35,7 @@ class CustomerRepository:
             or_(
                 Customer.name.ilike(q),
                 Customer.mobile.ilike(q),
-                Customer.id.cast(str).ilike(q),
+                Customer.id.cast(String).ilike(q),
             )
         ).order_by(Customer.name).all()
 

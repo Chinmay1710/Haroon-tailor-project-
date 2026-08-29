@@ -211,15 +211,147 @@
                                 <span class="text-sm">Stitched</span>
                             </button>
                         </div>
+                        
+                        <div id="scan-finance-section" class="mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200 hidden">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-slate-600">Total:</span>
+                                <span class="font-bold text-slate-800" id="scan-finance-total">₹0</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-slate-600">Paid:</span>
+                                <span class="font-bold text-emerald-600" id="scan-finance-paid">₹0</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">Remaining:</span>
+                                <span class="font-bold text-rose-600" id="scan-finance-remaining">₹0</span>
+                            </div>
+                            <button id="btn-record-payment" onclick="showPaymentModal()" class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-sm active:scale-95 transition-transform flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-sm">payments</span> Record Payment
+                            </button>
+                        </div>
+
                         <p id="scan-msg" class="text-sm text-center font-medium mt-2 hidden"></p>
                     </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: ADMIN DASHBOARD -->
+            <div id="tab-admin" class="tab-content">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-rose-500">admin_panel_settings</span>
+                        Admin Dashboard
+                    </h3>
+
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Customer Details</label>
+                        <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+                            <input type="text" id="admin-cust-name" placeholder="Full Name *" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+                            <input type="tel" id="admin-cust-phone" placeholder="10-digit Mobile Number" maxlength="10" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="text" id="admin-cust-address" placeholder="Address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none">
+                        </div>
+                    </div>
+
+                    <div id="admin-order-form" class="space-y-4">
+                        <h4 class="font-bold text-slate-800 border-b border-slate-100 pb-2">Create New Order</h4>
+                        
+                        <div class="flex gap-4">
+                            <div class="flex-[2]">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Garment Type *</label>
+                                <select id="admin-garment-type" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none" onchange="handleGarmentChange(this.value)">
+                                    <option value="">-- Select Garment --</option>
+                                    <option value="Shirt">Shirt</option>
+                                    <option value="Pant">Pant</option>
+                                    <option value="Kurta">Kurta</option>
+                                    <option value="Blouse">Blouse</option>
+                                    <option value="Suit">Suit</option>
+                                    <option value="Custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Qty *</label>
+                                <input type="number" id="admin-quantity" min="1" value="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Price per item (₹) *</label>
+                            <input type="number" id="admin-price" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <label class="block text-sm font-medium text-slate-700">Measurements</label>
+                                <label class="flex items-center gap-1 text-xs font-medium text-slate-600 cursor-pointer">
+                                    <input type="checkbox" id="admin-save-profile" checked class="rounded border-slate-300 text-slate-900 focus:ring-slate-900">
+                                    Save as profile
+                                </label>
+                            </div>
+                            <div id="admin-measurements-grid" class="grid grid-cols-2 gap-3 mb-2">
+                                <!-- Dynamic measurements will be injected here -->
+                            </div>
+                            <textarea id="admin-measurements-custom" rows="2" placeholder="Additional custom measurements..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Reference Photos</label>
+                            <div class="flex flex-wrap gap-2 mb-2" id="admin-photo-preview">
+                                <!-- Photo previews injected here -->
+                            </div>
+                            <label class="w-full border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center text-slate-500 hover:border-slate-400 hover:bg-slate-50 cursor-pointer transition-colors">
+                                <span class="material-symbols-outlined mb-1 text-2xl">add_a_photo</span>
+                                <span class="text-sm font-medium">Take Photo / Upload</span>
+                                <input type="file" id="admin-photo-input" accept="image/*" capture="environment" multiple class="hidden" onchange="handleMobilePhotoSelect(event)">
+                            </label>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <label class="block text-sm font-medium text-slate-700">Special Instructions</label>
+                                <button type="button" onclick="startSpeechRecognition('admin-instructions')" class="text-blue-600 hover:text-blue-700 flex items-center gap-1 text-xs font-semibold px-2 py-1 bg-blue-50 rounded-lg transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">mic</span> Dictate
+                                </button>
+                            </div>
+                            <textarea id="admin-instructions" rows="2" placeholder="Design notes, pockets, etc." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none resize-none transition-all"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Attach Photo(s)</label>
+                            <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center">
+                                <input type="file" id="admin-photo-camera" accept="image/*" capture="environment" class="hidden" onchange="handleMobilePhotoSelect(event)">
+                                <input type="file" id="admin-photo-upload" accept="image/*" multiple class="hidden" onchange="handleMobilePhotoSelect(event)">
+                                <div class="flex gap-2 justify-center">
+                                    <button type="button" onclick="document.getElementById('admin-photo-camera').click()" class="bg-white border border-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm flex-1">
+                                        <span class="material-symbols-outlined text-xl">photo_camera</span> Click Photo
+                                    </button>
+                                    <button type="button" onclick="document.getElementById('admin-photo-upload').click()" class="bg-white border border-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm flex-1">
+                                        <span class="material-symbols-outlined text-xl">upload_file</span> Upload Picture
+                                    </button>
+                                </div>
+                                <div id="admin-photo-preview" class="flex flex-wrap gap-2 mt-3 empty:hidden justify-center"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Advance Received (₹)</label>
+                            <input type="number" id="admin-advance" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                        </div>
+
+                        <button onclick="submitAdminOrder()" id="admin-submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 transition-all mt-4 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">add_circle</span> Save Customer & Order
+                        </button>
+                        <p id="admin-submit-msg" class="text-sm text-center font-medium mt-2 hidden"></p>
+                    </div>
+
+
                 </div>
             </div>
 
         </main>
 
         <!-- BOTTOM NAVIGATION -->
-        <nav class="bg-white border-t border-slate-200 fixed bottom-0 w-full pb-safe flex justify-around px-2 pt-2 pb-3 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+        <nav id="bottom-nav" class="bg-white border-t border-slate-200 fixed bottom-0 w-full pb-safe flex justify-around px-2 pt-2 pb-3 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
             <button onclick="switchTab('submit')" id="nav-submit" class="nav-btn flex-1 flex flex-col items-center gap-1 p-2 text-slate-900 transition-colors">
                 <div class="nav-indicator px-4 py-1 rounded-full bg-blue-100 transition-all">
                     <span class="material-symbols-outlined text-blue-700" style="font-variation-settings: 'FILL' 1;">add_circle</span>
@@ -240,10 +372,31 @@
                 </div>
                 <span class="text-[11px] font-semibold">Earnings</span>
             </button>
+            
+            <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn flex-1 flex-col items-center gap-1 p-2 text-slate-400 transition-colors hidden">
+                <div class="nav-indicator px-4 py-1 rounded-full transition-all">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                </div>
+                <span class="text-[11px] font-semibold">Admin</span>
+            </button>
         </nav>
     </div>
 
     <script>
+        // Patch fetch to automatically bypass the localtunnel warning screen for API requests
+        const originalFetch = window.fetch;
+        window.fetch = function() {
+            let [resource, config] = arguments;
+            if(config === undefined) {
+                config = {};
+            }
+            if(config.headers === undefined) {
+                config.headers = {};
+            }
+            config.headers['bypass-tunnel-reminder'] = 'true';
+            return originalFetch(resource, config);
+        };
+
         let currentWorker = null;
         let garmentRates = [];
         let stockItems = [];
@@ -259,6 +412,10 @@
             const savedWorker = localStorage.getItem('worker_session');
             if(savedWorker) {
                 currentWorker = JSON.parse(savedWorker);
+                if (!currentWorker.pin) {
+                    logout();
+                    return;
+                }
                 showPortal();
             }
         };
@@ -270,10 +427,13 @@
                 garmentRates = data.rates;
                 
                 const select = document.getElementById('garment-type');
-                select.innerHTML = '<option value="">Select Garment</option>';
-                garmentRates.forEach(r => {
-                    select.innerHTML += `<option value="${r.garment_type}">${r.garment_type} (₹${r.rate})</option>`;
-                });
+                if (select) {
+                    select.innerHTML = '<option value="">Select Garment</option>';
+                    garmentRates.forEach(r => {
+                        select.innerHTML += `<option value="${r.garment_type}">${r.garment_type} (₹${r.rate})</option>`;
+                    });
+                }
+
             } catch(e) {
                 console.error("Failed to load rates", e);
             }
@@ -357,7 +517,35 @@
                 document.getElementById('quantity').required = true;
             }
 
-            switchTab('submit');
+            const isAdmin = currentWorker.worker_role === 'ADMIN';
+            const adminNav = document.getElementById('nav-admin');
+            const bottomNav = document.getElementById('bottom-nav');
+            const mainContent = document.getElementById('main-content');
+            
+            if (isAdmin) {
+                if (bottomNav) bottomNav.classList.add('hidden');
+                if (mainContent) {
+                    mainContent.classList.remove('pb-24');
+                    mainContent.classList.add('pb-6');
+                }
+            } else {
+                if (bottomNav) bottomNav.classList.remove('hidden');
+                if (mainContent) {
+                    mainContent.classList.add('pb-24');
+                    mainContent.classList.remove('pb-6');
+                }
+                if (adminNav) {
+                    adminNav.classList.add('hidden');
+                    adminNav.classList.remove('flex');
+                }
+                const submitNav = document.getElementById('nav-submit');
+                if (submitNav) {
+                    submitNav.classList.add('hidden');
+                    submitNav.classList.remove('flex');
+                }
+            }
+
+            switchTab(isAdmin ? 'admin' : 'scan');
         }
 
         function switchTab(tabId) {
@@ -438,7 +626,7 @@
 
         async function loadLedger() {
             try {
-                const res = await fetch(`/api/worker/${currentWorker.id}/ledger`);
+                const res = await fetch(`/api/worker/${currentWorker.id}/ledger?t=${Date.now()}`);
                 const data = await res.json();
                 const l = data.ledger;
                 
@@ -450,7 +638,7 @@
 
         async function loadHistory() {
             try {
-                const res = await fetch(`/api/worker/${currentWorker.id}/entries`);
+                const res = await fetch(`/api/worker/${currentWorker.id}/entries?t=${Date.now()}`);
                 const data = await res.json();
                 const container = document.getElementById('history-container');
                 
@@ -512,8 +700,14 @@
 
         async function onScanSuccess(decodedText, decodedResult) {
             if(html5QrcodeScanner) {
-                html5QrcodeScanner.stop();
-                html5QrcodeScanner.clear();
+                try {
+                    await html5QrcodeScanner.stop();
+                } catch(e) {
+                    console.warn("Scanner stop error:", e);
+                }
+                try {
+                    html5QrcodeScanner.clear();
+                } catch(e) {}
                 document.getElementById('start-scan-btn').classList.remove('hidden');
                 document.getElementById('start-scan-btn').innerHTML = '<span class="material-symbols-outlined">qr_code_scanner</span> Scan Again';
             }
@@ -522,25 +716,141 @@
                 scannedOrderId = decodedText.split(":")[1];
                 await fetchOrderDetails(scannedOrderId);
             } else {
-                alert("Invalid QR Code");
+                alert("Invalid QR Code: " + decodedText);
             }
         }
 
         async function fetchOrderDetails(id) {
             try {
-                const res = await fetch(`/api/orders/${id}`);
+                const res = await fetch(`/api/orders/${id}?t=${Date.now()}`);
                 if (!res.ok) throw new Error('Order not found');
                 const data = await res.json();
                 
                 document.getElementById('scan-order-num').textContent = data.order.order_number;
-                document.getElementById('scan-customer-name').textContent = "Customer: " + data.order.customer_name;
+                
+                let detailsHtml = `<p class="font-bold text-slate-800">${data.order.customer_name}</p>`;
+                
+                let itemsHtml = '<div class="mt-3 border-t border-purple-200 pt-3"><p class="text-xs text-purple-600 font-semibold uppercase tracking-wider mb-1">Garments</p><ul class="list-disc pl-4 text-sm text-slate-700">';
+                if (data.order.items && data.order.items.length > 0) {
+                    data.order.items.forEach(item => {
+                        itemsHtml += `<li><b>${item.clothing_type}</b> (Qty: ${item.quantity})</li>`;
+                    });
+                } else {
+                    itemsHtml += '<li>No items found</li>';
+                }
+                itemsHtml += '</ul></div>';
+                
+                document.getElementById('scan-customer-name').innerHTML = detailsHtml + itemsHtml;
+                
                 document.getElementById('scan-order-status').textContent = data.order.status;
+                
+                // Financial Info
+                const total = data.order.total_amount || 0;
+                const paid = data.order.paid_amount || 0;
+                const remaining = data.order.remaining_amount || 0;
+                
+                if (total > 0) {
+                    document.getElementById('scan-finance-section').classList.remove('hidden');
+                    document.getElementById('scan-finance-total').textContent = `₹${total.toFixed(2)}`;
+                    document.getElementById('scan-finance-paid').textContent = `₹${paid.toFixed(2)}`;
+                    document.getElementById('scan-finance-remaining').textContent = `₹${remaining.toFixed(2)}`;
+                    
+                    if (remaining > 0) {
+                        document.getElementById('btn-record-payment').classList.remove('hidden');
+                        document.getElementById('payment-modal-remaining').textContent = `₹${remaining.toFixed(2)}`;
+                        document.getElementById('payment-amount').value = remaining.toFixed(2);
+                    } else {
+                        document.getElementById('btn-record-payment').classList.add('hidden');
+                    }
+                } else {
+                    document.getElementById('scan-finance-section').classList.add('hidden');
+                }
                 
                 document.getElementById('scan-result').classList.remove('hidden');
                 document.getElementById('scan-result').classList.add('flex');
                 document.getElementById('scan-msg').classList.add('hidden');
             } catch (e) {
                 alert("Could not load order details.");
+            }
+        }
+
+        function showPaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            const content = document.getElementById('payment-modal-content');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Small delay for transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function hidePaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            const content = document.getElementById('payment-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.getElementById('payment-amount').value = '';
+                document.getElementById('payment-note').value = '';
+                document.getElementById('payment-method').value = 'Cash';
+            }, 300);
+        }
+
+        async function submitPayment() {
+            if(!scannedOrderId) return;
+            
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+            const method = document.getElementById('payment-method').value;
+            const note = document.getElementById('payment-note').value;
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+            
+            const btn = document.getElementById('submit-payment-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Processing...';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch(`/api/orders/${scannedOrderId}/payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pin: currentWorker.pin,
+                        amount: amount,
+                        payment_method: method,
+                        note: note
+                    })
+                });
+                
+                const data = await res.json();
+                if(data.status === 'success') {
+                    hidePaymentModal();
+                    // Refresh order details to show new balance
+                    await fetchOrderDetails(scannedOrderId);
+                    
+                    const msg = document.getElementById('scan-msg');
+                    msg.textContent = `₹${amount} collected successfully!`;
+                    msg.classList.remove('hidden', 'text-slate-500', 'text-red-500');
+                    msg.classList.add('text-green-500');
+                } else {
+                    alert(data.detail || "Error saving payment");
+                }
+            } catch (e) {
+                alert("Network error while processing payment");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 
@@ -570,10 +880,245 @@
                 msg.textContent = "Order updated successfully!";
                 msg.classList.replace('text-slate-500', 'text-green-500');
                 document.getElementById('scan-order-status').textContent = stage;
+                
+                // Refresh data in background
+                loadLedger();
+                loadHistory();
             } catch (e) {
                 msg.textContent = "Error: " + e.message;
                 msg.classList.replace('text-slate-500', 'text-red-500');
             }
+        }
+
+        // Admin Functions
+        const MEASUREMENT_TEMPLATES = {
+            "Shirt": ["Length", "Shoulder", "Chest", "Waist", "Hip", "Sleeve Length", "Bicep", "Cuff", "Collar", "Front Length", "Back Length"],
+            "Pant": ["Length", "Waist", "Hip", "Thigh", "Knee", "Bottom", "Rise"],
+            "Kurta": ["Length", "Shoulder", "Chest", "Waist", "Hip", "Sleeve Length", "Collar", "Side Slit"],
+            "Blouse": ["Length", "Shoulder", "Bust", "Waist", "Sleeve", "Armhole", "Neck Front", "Neck Back"],
+            "Suit": ["Jacket Length", "Shoulder", "Chest", "Waist", "Sleeve", "Pant Length", "Pant Waist", "Pant Hip"]
+        };
+
+        function handleGarmentChange(value) {
+            // Auto set price when garment typed matches a rate
+            const rate = garmentRates.find(r => r.garment_type.toLowerCase() === value.toLowerCase());
+            if(rate) document.getElementById('admin-price').value = rate.rate;
+
+            // Generate measurement fields
+            const grid = document.getElementById('admin-measurements-grid');
+            grid.innerHTML = '';
+            
+            // Try to match a template (case-insensitive)
+            const templateKey = Object.keys(MEASUREMENT_TEMPLATES).find(k => k.toLowerCase() === value.toLowerCase());
+            
+            if (templateKey) {
+                const fields = MEASUREMENT_TEMPLATES[templateKey];
+                fields.forEach(field => {
+                    grid.innerHTML += `
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">${field}</label>
+                            <div class="relative">
+                                <input type="text" data-field="${field}" class="measurement-field w-full px-3 py-2 pr-6 rounded-lg border border-slate-200 focus:border-slate-900 focus:ring-1 bg-white outline-none text-sm">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">"</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        
+        // Mobile Photo Attachment Handling
+        let mobilePhotosBase64 = [];
+        
+        async function handleMobilePhotoSelect(event) {
+            const files = event.target.files;
+            if(!files || files.length === 0) return;
+            
+            const previewContainer = document.getElementById('admin-photo-preview');
+            
+            for(let file of files) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64Str = e.target.result;
+                    mobilePhotosBase64.push(base64Str);
+                    
+                    const idx = mobilePhotosBase64.length - 1;
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = "relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm";
+                    imgDiv.innerHTML = `
+                        <img src="${base64Str}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeMobilePhoto(${idx}, this.parentElement)" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-md border-2 border-white">
+                            <span class="material-symbols-outlined text-[12px]">close</span>
+                        </button>
+                    `;
+                    previewContainer.appendChild(imgDiv);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function removeMobilePhoto(idx, el) {
+            mobilePhotosBase64[idx] = null;
+            el.remove();
+        }
+
+        async function submitAdminOrder() {
+            const btn = document.getElementById('admin-submit-btn');
+            const msg = document.getElementById('admin-submit-msg');
+            
+            // Customer Details
+            const name = document.getElementById('admin-cust-name').value;
+            const mobile = document.getElementById('admin-cust-phone').value;
+            const address = document.getElementById('admin-cust-address').value;
+            
+            // Order Details
+            const garment_type = document.getElementById('admin-garment-type').value;
+            const quantity = parseInt(document.getElementById('admin-quantity').value) || 1;
+            const price = parseFloat(document.getElementById('admin-price').value) || 0;
+            const special_instructions = document.getElementById('admin-instructions').value;
+            const advance_amount = parseFloat(document.getElementById('admin-advance').value) || 0;
+            
+            if (!name) {
+                alert("Customer Name is required.");
+                return;
+            }
+            if (!mobile) {
+                alert("Mobile number is required.");
+                return;
+            }
+            const mobileRegex = /^[0-9]{10}$/;
+            if (!mobileRegex.test(mobile)) {
+                alert("Mobile number must be exactly 10 digits");
+                return;
+            }
+            if (!garment_type) {
+                alert("Please select a Garment Type.");
+                return;
+            }
+
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Saving...';
+            btn.disabled = true;
+
+            try {
+                // 1. Create Customer
+                const custRes = await fetch('/api/customers/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, mobile: '+91 ' + mobile, address: address})
+                });
+                const custData = await custRes.json();
+                if (!custRes.ok) throw new Error("Failed to create customer");
+
+                const customer_id = custData.customer_id;
+
+                // 2. Gather Measurements
+                let measurements_text = "";
+                const fields = document.querySelectorAll('.admin-meas-input');
+                fields.forEach(f => {
+                    if (f.value.trim()) {
+                        measurements_text += `${f.dataset.name}: ${f.value.trim()}\n`;
+                    }
+                });
+                const custom_meas = document.getElementById('admin-measurements-custom').value.trim();
+                if (custom_meas) {
+                    measurements_text += (measurements_text ? '\\n' : '') + custom_meas;
+                }
+
+                // 3. Create Order
+                const save_profile = document.getElementById('admin-save-profile').checked;
+                const payload = {
+                    customer_id: customer_id,
+                    garment_type,
+                    quantity,
+                    price,
+                    measurements_text,
+                    special_instructions,
+                    advance_amount,
+                    save_profile,
+                    image_base64: mobilePhotosBase64
+                };
+
+                const res = await fetch('/api/orders/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!res.ok) throw new Error("Failed to create order");
+                
+                msg.textContent = "Customer and Order created successfully!";
+                msg.classList.remove('hidden', 'text-red-500');
+                msg.classList.add('text-green-500');
+                
+                // Reset form
+                document.getElementById('admin-cust-name').value = '';
+                document.getElementById('admin-cust-phone').value = '';
+                document.getElementById('admin-cust-address').value = '';
+                document.getElementById('admin-garment-type').value = '';
+                document.getElementById('admin-quantity').value = '1';
+                document.getElementById('admin-price').value = '';
+                document.getElementById('admin-measurements-grid').innerHTML = '';
+                document.getElementById('admin-measurements-custom').value = '';
+                document.getElementById('admin-instructions').value = '';
+                document.getElementById('admin-advance').value = '0';
+                document.getElementById('admin-photo-preview').innerHTML = '';
+                mobilePhotosBase64 = [];
+                
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+            } catch (e) {
+                msg.textContent = "Error: " + e.message;
+                msg.classList.remove('hidden', 'text-green-500');
+                msg.classList.add('text-red-500');
+            } finally {
+                btn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Save Customer & Order';
+                btn.disabled = false;
+            }
+        }
+        function startSpeechRecognition(elementId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech recognition is not supported in this browser. Please try Google Chrome.");
+                return;
+            }
+            
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-IN'; // Optimized for Indian accent/context
+
+            const targetInput = document.getElementById(elementId);
+            const originalPlaceholder = targetInput.placeholder;
+            
+            // Visual feedback
+            targetInput.placeholder = "Listening... Speak now";
+            targetInput.classList.remove('border-slate-200', 'focus:border-slate-900');
+            targetInput.classList.add('border-blue-500', 'ring-2', 'ring-blue-200', 'bg-blue-50');
+
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                if (targetInput.value) {
+                    targetInput.value += ' ' + text;
+                } else {
+                    targetInput.value = text;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error", event.error);
+                if (event.error !== 'no-speech') {
+                    alert("Microphone error: " + event.error);
+                }
+            };
+
+            recognition.onend = () => {
+                // Restore visual state
+                targetInput.placeholder = originalPlaceholder;
+                targetInput.classList.add('border-slate-200', 'focus:border-slate-900');
+                targetInput.classList.remove('border-blue-500', 'ring-2', 'ring-blue-200', 'bg-blue-50');
+            };
+
+            recognition.start();
         }
     </script>
 </body>

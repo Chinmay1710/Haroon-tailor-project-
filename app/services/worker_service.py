@@ -46,7 +46,7 @@ class WorkerService:
         with get_session() as session:
             worker = session.query(Worker).filter(func.lower(Worker.name) == name.lower(), Worker.pin == pin, Worker.is_active == True).first()
             if worker:
-                return {"id": worker.id, "name": worker.name, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
+                return {"id": worker.id, "name": worker.name, "pin": worker.pin, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
             return None
 
     # --- Garment Rates ---

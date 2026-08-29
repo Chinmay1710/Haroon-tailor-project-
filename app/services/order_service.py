@@ -292,13 +292,13 @@ class OrderService:
                 # Force status update if invalid transition but worker completed it anyway
                 logger.info(f"Invalid transition from {order.status} to {new_status}. Forcing update.")
                 order = order_repo.update_status(order_id, new_status)
-                
+            
+            session.commit()
+            
             # Pre-load customer details before commit
             customer_name = order.customer.name if order.customer else None
             customer_mobile = order.customer.mobile if order.customer else None
             order_number = order.order_number
-
-            session.commit()
             
             # 3. Send WhatsApp if STITCHING_COMPLETE
             if new_status == "STITCHING_COMPLETE" and customer_mobile:

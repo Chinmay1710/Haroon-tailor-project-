@@ -14,16 +14,95 @@ class NgrokTunnel:
 
     def start(self) -> Optional[str]:
         global GLOBAL_TUNNEL_URL
+        
+        # Check if a static domain is configured
         try:
-            from pyngrok import ngrok
-            logger.info(f"Starting ngrok tunnel for port {self.port}")
-            self.tunnel = ngrok.connect(self.port)
-            self.public_url = self.tunnel.public_url
-            GLOBAL_TUNNEL_URL = self.public_url
-            logger.info(f"Ngrok tunnel established: {self.public_url}")
-            return self.public_url
+            import json
+            import os
+            
+            # The config file is in the root directory
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            config_file = os.path.join(root_dir, "ngrok_config.json")
+            
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+                    if config.get("domain"):
+                        domain = config["domain"]
+                        if not domain.startswith("http"):
+                            domain = "https://" + domain
+                        self.public_url = domain
+                        GLOBAL_TUNNEL_URL = self.public_url
+                        logger.info(f"Using statically configured tunnel URL: {self.public_url}")
+                        return self.public_url
         except Exception as e:
-            logger.error(f"Failed to start ngrok: {e}")
+            logger.error(f"Error reading tunnel config: {e}")
+
+        try:
+            import subprocess
+            import re
+            import os
+            import json
+            
+            logger.info("Starting cloudflared tunnel...")
+            
+            exe_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cloudflared.exe")
+            if not os.path.exists(exe_path):
+                # Fallback to just cloudflared if in PATH or in cwd
+                exe_path = "cloudflared.exe" if os.path.exists("cloudflared.exe") else "cloudflared"
+
+            # Check for Cloudflare Zero Trust Configuration (Permanent Domain)
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            cf_config_file = os.path.join(root_dir, "cloudflare_config.json")
+            
+            if os.path.exists(cf_config_file):
+                try:
+                    with open(cf_config_file, 'r') as f:
+                        cf_config = json.load(f)
+                        token = cf_config.get("token")
+                        domain = cf_config.get("domain")
+                        
+                        if token and domain:
+                            if not domain.startswith("http"):
+                                domain = "https://" + domain
+                                
+                            logger.info(f"Starting Permanent Cloudflare Zero Trust tunnel: {domain}")
+                            self.public_url = domain
+                            GLOBAL_TUNNEL_URL = self.public_url
+                            
+                            self.lt_process = subprocess.Popen(
+                                [exe_path, "tunnel", "run", "--token", token],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                text=True
+                            )
+                            return self.public_url
+                except Exception as e:
+                    logger.error(f"Error reading cloudflare_config.json: {e}")
+
+            # Fallback to Free Quick Tunnel (Random Domain)
+            logger.info("No token found. Starting temporary Quick Tunnel...")
+            self.lt_process = subprocess.Popen(
+                [exe_path, "tunnel", "--url", f"http://localhost:{self.port}"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True
+            )
+            
+            # Wait for the trycloudflare URL in the output
+            for line in iter(self.lt_process.stdout.readline, ''):
+                match = re.search(r'(https?://[a-zA-Z0-9-]+\.trycloudflare\.com)', line)
+                if match:
+                    self.public_url = match.group(1)
+                    GLOBAL_TUNNEL_URL = self.public_url
+                    logger.info(f"Cloudflare tunnel established: {self.public_url}")
+                    return self.public_url
+                    
+            raise Exception("Cloudflare tunnel did not return a URL")
+        except Exception as e_lt:
+            logger.error(f"Failed to start cloudflared: {e_lt}")
+            
+            # Fallback to local IP
             try:
                 import socket
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -41,6 +120,12 @@ class NgrokTunnel:
                 return self.public_url
 
     def stop(self):
+        if hasattr(self, 'lt_process') and self.lt_process:
+            try:
+                self.lt_process.terminate()
+            except:
+                pass
+                
         if self.tunnel:
             try:
                 from pyngrok import ngrok

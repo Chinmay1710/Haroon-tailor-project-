@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    
+    <div id="form-container" class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 overflow-hidden transform transition-all">
+        
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Welcome!</h2>
+            <p class="text-gray-500 mt-2">Please fill in your details to stay connected.</p>
+        </div>
+
+        <form id="customer-form" class="space-y-5">
+            <div>
+                <label for="name" class="block text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
+                <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-800" placeholder="Enter your full name">
+            </div>
+
+            <div>
+                <label for="mobile" class="block text-sm font-semibold text-gray-700 mb-1">Mobile Number *</label>
+                <input type="tel" id="mobile" name="mobile" required class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-800" placeholder="Enter your mobile number">
+            </div>
+
+            <div>
+                <label for="address" class="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+                <textarea id="address" name="address" rows="3" class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-800 resize-none" placeholder="Enter your address (optional)"></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                <span>Submit Details</span>
+                <svg id="loading-spinner" class="animate-spin h-5 w-5 hidden text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+
+    </div>
+
+    <!-- Success State -->
+    <div id="success-container" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-md p-10 text-center transform transition-all scale-95 opacity-0">
+        <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Thank You!</h2>
+        <p class="text-gray-500 text-lg">Your details have been saved successfully.</p>
+        <p class="text-gray-400 mt-6 text-sm">You can close this window now.</p>
+    </div>
+
+    <script>
+        document.getElementById('customer-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submit-btn');
+            const spinner = document.getElementById('loading-spinner');
+            
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btn.classList.add('opacity-80');
+
+            const data = {
+                name: document.getElementById('name').value,
+                mobile: document.getElementById('mobile').value,
+                address: document.getElementById('address').value
+            };
+
+            try {
+                const response = await fetch('/api/customers/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const formContainer = document.getElementById('form-container');
+                    const successContainer = document.getElementById('success-container');
+                    
+                    formContainer.classList.add('hidden');
+                    successContainer.classList.remove('hidden');
+                    
+                    // Simple animation
+                    setTimeout(() => {
+                        successContainer.classList.remove('scale-95', 'opacity-0');
+                        successContainer.classList.add('scale-100', 'opacity-100');
+                    }, 50);
+                } else {
+                    const err = await response.json();
+                    alert("Error: " + (err.detail || "Failed to submit"));
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Network error. Please try again.");
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btn.classList.remove('opacity-80');
+            }
+        });
+    </script>
+</body>
+</html>

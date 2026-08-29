@@ -14,6 +14,9 @@ from app.config import ASSETS_DIR
 
 logger = logging.getLogger(__name__)
 
+# Global reference to the WebBridge for signaling the UI thread
+bridge_instance = None
+
 app = FastAPI(title="Haroon Tailor Worker Portal")
 
 app.add_middleware(
@@ -38,12 +41,88 @@ class LoginRequest(BaseModel):
     name: str
     pin: str
 
+class CustomerRequest(BaseModel):
+    name: str
+    mobile: str = ""
+    address: str = ""
+
+class MobileOrderRequest(BaseModel):
+    customer_id: int
+    garment_type: str
+    quantity: int
+    price: float
+    measurements_text: str = ""
+    special_instructions: str = ""
+    advance_amount: float = 0.0
+    save_profile: bool = False
+    image_base64: Optional[List[str]] = None
+
+
 @app.post("/api/login")
 def login(req: LoginRequest):
     worker = worker_service.authenticate_worker(req.name, req.pin)
     if not worker:
         raise HTTPException(status_code=401, detail="Invalid name or PIN")
     return {"status": "success", "worker": worker}
+
+@app.post("/api/customers/add")
+def add_customer(req: CustomerRequest):
+    from app.services.customer_service import CustomerService
+    try:
+        cust_srv = CustomerService()
+        customer = cust_srv.create_customer(name=req.name, mobile=req.mobile, address=req.address)
+        if bridge_instance:
+            bridge_instance.notification_requested.emit("Success", f"New Customer Added: {customer.name}")
+            if hasattr(bridge_instance, "customer_added"):
+                bridge_instance.customer_added.emit()
+        return {"status": "success", "customer_id": customer.id}
+    except Exception as e:
+        logger.error(f"Failed to add customer via API: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/customers")
+def search_customers(q: str = ""):
+    from app.services.customer_service import CustomerService
+    cust_srv = CustomerService()
+    customers = cust_srv.search_customers(q)
+    return {
+        "status": "success",
+        "customers": [{"id": c.id, "name": c.name, "mobile": c.mobile} for c in customers]
+    }
+
+@app.post("/api/orders/create")
+def create_mobile_order(req: MobileOrderRequest):
+    from app.services.order_service import OrderService
+    from datetime import date
+    try:
+        srv = OrderService()
+        items = [{
+            "clothing_type": req.garment_type,
+            "quantity": req.quantity,
+            "price": req.price,
+            "notes": "Measurements: " + req.measurements_text if req.measurements_text else ""
+        }]
+        
+        order = srv.create_order(
+            customer_id=req.customer_id,
+            items=items,
+            order_date=date.today(),
+            delivery_date=None,
+            special_instructions=req.special_instructions,
+            advance_amount=req.advance_amount
+        )
+        
+        if bridge_instance:
+            bridge_instance.notification_requested.emit("Success", f"New Order Added: {order.order_number}")
+            if hasattr(bridge_instance, "order_updated"):
+                bridge_instance.order_updated.emit()
+                
+        return {"status": "success", "order_id": order.id, "order_number": order.order_number}
+    except Exception as e:
+        logger.error(f"Failed to create order via API: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 
 class WorkEntryRequest(BaseModel):
     garment_type: Optional[str] = None
@@ -117,10 +196,58 @@ def get_order_details(order_id: int):
             "id": order.id,
             "order_number": order.order_number,
             "customer_name": order.customer.name if order.customer else "Unknown",
+            "customer_mobile": order.customer.mobile if order.customer else "",
+            "customer_address": order.customer.address if order.customer else "",
             "status": order.status,
+            "total_amount": order.total_amount,
+            "paid_amount": order.paid_amount,
+            "remaining_amount": order.remaining_amount,
             "items": items
         }
     }
+
+class PaymentRequest(BaseModel):
+    pin: str
+    amount: float
+    payment_method: str = "Cash"
+    note: str = ""
+
+@app.post("/api/orders/{order_id}/payment")
+def submit_order_payment(order_id: int, req: PaymentRequest):
+    # 1. Verify PIN by checking all workers (same as stage update)
+    workers = worker_service.get_all_workers()
+    matched_worker = None
+    for w in workers:
+        if w["pin"] == req.pin and w["is_active"]:
+            matched_worker = w
+            break
+            
+    if not matched_worker:
+        raise HTTPException(status_code=401, detail="Invalid PIN")
+        
+    # 2. Add the payment
+    from app.services.payment_service import PaymentService
+    srv = PaymentService()
+    try:
+        payment = srv.add_payment(
+            order_id=order_id,
+            amount=req.amount,
+            payment_method=req.payment_method,
+            note=f"Collected by {matched_worker['name']} (Mobile) - {req.note}"
+        )
+        
+        if bridge_instance:
+            bridge_instance.notification_requested.emit("Success", f"Payment of ₹{req.amount} collected for Order {order_id}")
+            if hasattr(bridge_instance, "order_updated"):
+                bridge_instance.order_updated.emit()
+            if hasattr(bridge_instance, "dashboard_updated"):
+                bridge_instance.dashboard_updated.emit()
+                
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Failed to add mobile payment: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 class StageRequest(BaseModel):
     pin: str
@@ -152,16 +279,84 @@ def submit_order_stage(order_id: int, req: StageRequest):
             extra_amount=req.extra_amount,
             extra_desc=req.extra_desc
         )
+        
+        if bridge_instance:
+            bridge_instance.notification_requested.emit("Info", f"Order {order_id} status updated to {req.stage.replace('_', ' ')}")
+            if hasattr(bridge_instance, "order_added"):
+                bridge_instance.order_added.emit()
+                
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+class MobileOrderRequest(BaseModel):
+    customer_id: int
+    garment_type: str
+    quantity: int
+    price: float
+    measurements_text: str = ""
+    special_instructions: str = ""
+    advance_amount: float = 0.0
+    save_profile: bool = False
+    image_base64: Optional[List[str]] = None
+
+@app.post("/api/orders/create")
+def create_mobile_order(req: MobileOrderRequest):
+    logger.info(f"Creating new order from worker portal for customer: {req.customer_id}")
+    try:
+        from app.services.order_service import OrderService
+        from datetime import date
+        
+        srv = OrderService()
+        
+        # Try to parse measurements_text into a dictionary
+        measurements_dict = {}
+        if req.measurements_text:
+            # simple parsing: comma or newline separated "key: value"
+            import re
+            parts = re.split(r'[,\n]', req.measurements_text)
+            for part in parts:
+                if ':' in part:
+                    k, v = part.split(':', 1)
+                    measurements_dict[k.strip()] = v.strip()
+                elif part.strip():
+                    measurements_dict[part.strip()] = ""
+                    
+        item_data = {
+            "clothing_type": req.garment_type,
+            "quantity": req.quantity,
+            "price": req.price,
+            "measurements": measurements_dict,
+            "save_profile": req.save_profile,
+            "image_base64": req.image_base64
+        }
+        
+        order = srv.create_order(
+            customer_id=req.customer_id,
+            items=[item_data],
+            order_date=date.today(),
+            delivery_date=None,
+            special_instructions=req.special_instructions,
+            advance_amount=req.advance_amount
+        )
+        
+        # Trigger desktop reload
+        if bridge_instance:
+            bridge_instance.notification_requested.emit("Success", f"New Order Created: {order.order_number}")
+            if hasattr(bridge_instance, "order_added"):
+                bridge_instance.order_added.emit()
+                
+        return {"status": "success", "order_id": order.id, "order_number": order.order_number}
+    except Exception as e:
+        logger.error(f"Failed to create mobile order: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/", response_class=HTMLResponse)
 def index():
     # Return the mobile portal HTML
     index_path = os.path.join(mobile_assets_dir, "index.html")
     if os.path.exists(index_path):
-        with open(index_path, "r") as f:
+        with open(index_path, "r", encoding="utf-8") as f:
             return f.read()
     return "<h1>Worker Portal not found</h1>"
 

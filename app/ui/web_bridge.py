@@ -21,6 +21,8 @@ class WebBridge(QObject):
     restore_requested = Signal()
     notification_requested = Signal(str, str)
     dictation_result_requested = Signal(str, str, str)
+    customer_added = Signal()
+    order_added = Signal()
     
     def __init__(self, services, parent=None):
         super().__init__(parent)
@@ -230,6 +232,29 @@ class WebBridge(QObject):
             # ────────────────────────────────────────────────────────────
             # CUSTOMERS
             # ────────────────────────────────────────────────────────────
+            elif action == "get_customer_qr_url":
+                tunnel_url = getattr(self.parent(), "tunnel_url", None)
+                if tunnel_url:
+                    qr_url = f"{tunnel_url}/static/customer_form.html"
+                    try:
+                        import qrcode
+                        import io
+                        import base64
+                        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+                        qr.add_data(qr_url)
+                        qr.make(fit=True)
+                        img = qr.make_image(fill_color="black", back_color="white")
+                        buffered = io.BytesIO()
+                        img.save(buffered, format="PNG")
+                        img_str = base64.b64encode(buffered.getvalue()).decode()
+                        base64_url = f"data:image/png;base64,{img_str}"
+                    except Exception as e:
+                        print(f"Error generating QR locally: {e}")
+                        base64_url = ""
+                    response = {"status": "success", "data": {"url": qr_url, "base64": base64_url}}
+                else:
+                    response = {"status": "error", "message": "Worker Portal (Tunnel) is not running"}
+
             elif action == "get_customers":
                 from app.database.engine import get_session
                 session = get_session()

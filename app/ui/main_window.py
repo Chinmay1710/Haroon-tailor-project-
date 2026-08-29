@@ -217,6 +217,21 @@ class MainWindow(QMainWindow):
         self.bridge.dictation_result_requested.connect(
             self._handle_dictation_result
         )
+        
+        self.bridge.customer_added.connect(
+            self._on_customer_added
+        )
+
+        self.bridge.order_added.connect(
+            self._on_order_added
+        )
+
+        # Register bridge instance in the web server so API requests can emit signals
+        try:
+            import app.web.server
+            app.web.server.bridge_instance = self.bridge
+        except Exception as e:
+            logger.error(f"Failed to register bridge in server: {e}")
 
         # Register bridge object for JavaScript.
         self.channel.registerObject(
@@ -347,6 +362,25 @@ class MainWindow(QMainWindow):
         self.web_view.page().runJavaScript(
             script
         )
+
+    def _on_customer_added(self):
+        """Trigger UI refresh when a customer is added via the QR code portal."""
+        # This will call loadCustomers() if it exists on the page
+        script = "if (typeof window.loadCustomers === 'function') { window.loadCustomers(); } else if (window.location.href.includes('customers')) { window.location.reload(); }"
+        self.web_view.page().runJavaScript(script)
+
+    def _on_order_added(self):
+        """Trigger UI refresh when an order is added via the QR code portal."""
+        script = """
+        if (typeof window.loadOrders === 'function') { 
+            window.loadOrders(); 
+        } else if (typeof window.loadDashboard === 'function') { 
+            window.loadDashboard(); 
+        } else {
+            window.location.reload();
+        }
+        """
+        self.web_view.page().runJavaScript(script)
 
     def _handle_print_requested(self):
         """Handle the print request from the receipt preview.
