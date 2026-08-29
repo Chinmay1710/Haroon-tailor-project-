@@ -438,8 +438,19 @@ class MainWindow(QMainWindow):
                     except Exception as e:
                         logger.error(f"Failed to print PDF via OS: {e}")
                 
-                # Request the page to print itself to a PDF byte array
-                page_layout = printer.pageLayout()
+                # Force 58mm POS receipt layout regardless of the printer's default
+                from PySide6.QtGui import QPageLayout, QPageSize
+                from PySide6.QtCore import QSizeF, QMarginsF
+                from app.printing.receipt_printer import THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM
+                
+                page_size = QPageSize(
+                    QSizeF(THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM),
+                    QPageSize.Unit.Millimeter,
+                    "POS58 Receipt"
+                )
+                page_layout = QPageLayout(page_size, QPageLayout.Orientation.Portrait, QMarginsF(0, 0, 0, 0))
+                
+                # Request the page to print itself to a PDF byte array using our forced 58mm layout
                 self.web_view.page().printToPdf(pdf_generated_callback, page_layout)
 
         except Exception as e:
