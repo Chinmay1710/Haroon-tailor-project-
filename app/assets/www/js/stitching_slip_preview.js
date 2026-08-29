@@ -108,3 +108,19 @@ async function loadSlipData(orderId) {
         window.API.toast("Failed to load stitching slip: " + e, "error");
     }
 }
+
+window.savePdf = async function() {
+    let navParamsStr = sessionStorage.getItem("nav_params");
+    let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
+    if (!navParams || !navParams.order_id) return;
+    
+    try {
+        const res = await window.API.request('save_pdf', {type: 'slip', order_id: navParams.order_id});
+        window.API.toast(res?.message || "Saved successfully!", "success");
+    } catch (e) {
+        if (e !== "Save cancelled") {
+            console.error(e);
+            window.API.toast(e, "error");
+        }
+    }
+};

@@ -88,3 +88,19 @@ async function loadOrderData(orderId) {
         window.API.toast("Failed to load receipt: " + e, "error");
     }
 }
+
+window.savePdf = async function() {
+    let navParamsStr = sessionStorage.getItem("nav_params");
+    let navParams = navParamsStr ? JSON.parse(navParamsStr) : null;
+    if (!navParams || !navParams.order_id) return;
+    
+    try {
+        const res = await window.API.request('save_pdf', {type: 'receipt', order_id: navParams.order_id});
+        window.API.toast(res?.message || "Saved successfully!", "success");
+    } catch (e) {
+        if (e !== "Save cancelled") {
+            console.error(e);
+            window.API.toast(e, "error");
+        }
+    }
+};

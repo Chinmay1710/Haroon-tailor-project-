@@ -50,7 +50,10 @@
         <button onclick="window.history.back()" class="px-4 py-2 bg-gray-200 rounded text-sm font-sans flex items-center gap-1">
             <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Back
         </button>
-        <button onclick="let np = sessionStorage.getItem('nav_params'); if(np) { window.API.request('print_stitching_slip', {order_id: JSON.parse(np).order_id}); }" class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-sans flex items-center gap-1">
+        <button onclick="window.savePdf()" class="px-4 py-2 bg-green-600 text-white rounded text-sm font-sans flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px;">download</span> Save PDF
+        </button>
+        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-sans flex items-center gap-1">
             <span class="material-symbols-outlined" style="font-size:16px;">print</span> Print
         </button>
     </div>

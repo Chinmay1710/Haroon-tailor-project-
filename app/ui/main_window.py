@@ -233,6 +233,10 @@ class MainWindow(QMainWindow):
         except Exception as e:
             logger.error(f"Failed to register bridge in server: {e}")
 
+        self.bridge.save_pdf_requested.connect(
+            self._handle_save_pdf
+        )
+
         # Register bridge object for JavaScript.
         self.channel.registerObject(
             "bridge",
@@ -384,105 +388,97 @@ class MainWindow(QMainWindow):
 
     def _handle_print_requested(self):
         """Handle the print request from the receipt preview.
-
-        The physical customer receipt is printed using the dedicated
-        58mm thermal receipt printer implementation instead of
-        QWebEnginePage.print().
+        
+        The user requested that the print EXACTLY matches the HTML preview.
+        We will use printToPdf to generate a temporary PDF and then send it to the system printer.
         """
-
         try:
-            logger.info(
-                "Customer receipt print requested"
-            )
-
-            # -----------------------------------------------------------
-            # Import the dedicated thermal receipt printer.
-            # -----------------------------------------------------------
-
-            from app.printing.receipt_printer import (
-                print_customer_receipt,
-            )
-
-            # -----------------------------------------------------------
-            # Get current page URL.
-            # -----------------------------------------------------------
-
-            current_url = (
-                self.web_view.url().toString()
-            )
-
-            logger.info(
-                f"Print requested from page: "
-                f"{current_url}"
-            )
-
-            # -----------------------------------------------------------
-            # Find order ID.
-            #
-            # Expected examples:
-            #
-            # receipt_preview.html?order_id=123
-            # receipt_preview.html?id=123
-            #
-            # We do NOT use QWebEnginePage.print().
-            # -----------------------------------------------------------
-
-            match = re.search(
-                r"(?:order_id|id)=(\d+)",
-                current_url,
-                re.IGNORECASE,
-            )
-
-            if not match:
-                logger.error(
-                    "Could not determine order ID "
-                    f"for printing. Current URL: "
-                    f"{current_url}"
-                )
-
-                QMessageBox.warning(
-                    self,
-                    "Print Receipt",
-                    "Unable to determine the order "
-                    "for this receipt.",
-                )
-
-                return
-
-            order_id = int(
-                match.group(1)
-            )
-
-            logger.info(
-                f"Starting customer receipt print "
-                f"for order {order_id}"
-            )
-
-            # -----------------------------------------------------------
-            # Send the order to the 58mm thermal printer.
-            # -----------------------------------------------------------
-
-            print_customer_receipt(
-                order_id,
-                self,
-            )
-
-            logger.info(
-                f"Customer receipt print request "
-                f"completed for order {order_id}"
-            )
+            logger.info("Print requested directly from HTML preview.")
+            
+            from PySide6.QtPrintSupport import QPrinter, QPrintDialog
+            from PySide6.QtCore import QByteArray
+            
+            # Ask user for printer
+            printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+            dialog = QPrintDialog(printer, self)
+            
+            if dialog.exec() == QPrintDialog.DialogCode.Accepted:
+                printer_name = printer.printerName()
+                logger.info(f"Selected printer: {printer_name}")
+                
+                def pdf_generated_callback(pdf_data: QByteArray):
+                    if pdf_data.isEmpty():
+                        logger.error("Generated PDF data is empty.")
+                        return
+                    
+                    import tempfile
+                    import os
+                    import platform
+                    
+                    fd, temp_path = tempfile.mkstemp(suffix=".pdf")
+                    with os.fdopen(fd, 'wb') as f:
+                        f.write(pdf_data.data())
+                    
+                    logger.info(f"HTML printed to temporary PDF: {temp_path}")
+                    
+                    # Print the PDF using OS tools
+                    try:
+                        sys_platform = platform.system().lower()
+                        if sys_platform == 'darwin':
+                            # macOS
+                            cmd = f'lpr -P "{printer_name}" "{temp_path}"'
+                            os.system(cmd)
+                        elif sys_platform == 'windows':
+                            # Windows
+                            os.startfile(temp_path, "print")
+                        else:
+                            # Linux
+                            cmd = f'lp -d "{printer_name}" "{temp_path}"'
+                            os.system(cmd)
+                    except Exception as e:
+                        logger.error(f"Failed to print PDF via OS: {e}")
+                
+                # Request the page to print itself to a PDF byte array
+                page_layout = printer.pageLayout()
+                self.web_view.page().printToPdf(pdf_generated_callback, page_layout)
 
         except Exception as e:
-            logger.exception(
-                "Failed to print customer receipt"
-            )
+            logger.exception(f"Error handling print request: {e}")
 
-            QMessageBox.critical(
-                self,
-                "Print Error",
-                "Unable to print the receipt.\n\n"
-                f"{e}",
+    def _handle_save_pdf(self, pdf_type: str, output_path: str):
+        """Handle save pdf request from web bridge using printToPdf."""
+        try:
+            logger.info(f"Save PDF requested: type={pdf_type}, path={output_path}")
+            
+            def pdf_generated_callback(pdf_data: QByteArray):
+                if pdf_data.isEmpty():
+                    logger.error("Generated PDF data is empty.")
+                    return
+                
+                try:
+                    with open(output_path, 'wb') as f:
+                        f.write(pdf_data.data())
+                    logger.info(f"PDF successfully saved to {output_path}")
+                except Exception as e:
+                    logger.error(f"Failed to write PDF file: {e}")
+            
+            from PySide6.QtGui import QPageLayout, QPageSize
+            from PySide6.QtCore import QSizeF, QMarginsF
+            from app.printing.receipt_printer import THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM
+            
+            # Use 58mm POS receipt layout for both receipt and stitching slip
+            # as requested by the user to match structures.
+            page_size = QPageSize(
+                QSizeF(THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM),
+                QPageSize.Unit.Millimeter,
+                "POS58 Receipt"
             )
+            page_layout = QPageLayout(page_size, QPageLayout.Orientation.Portrait, QMarginsF(0, 0, 0, 0))
+            
+            self.web_view.page().printToPdf(pdf_generated_callback, page_layout)
+            
+        except Exception as e:
+            logger.exception(f"Error handling save pdf request: {e}")
 
     # ─── Close Event ───────────────────────────────────────────────────
 

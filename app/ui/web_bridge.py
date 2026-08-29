@@ -23,6 +23,7 @@ class WebBridge(QObject):
     dictation_result_requested = Signal(str, str, str)
     customer_added = Signal()
     order_added = Signal()
+    save_pdf_requested = Signal(str, str)
     
     def __init__(self, services, parent=None):
         super().__init__(parent)
@@ -670,6 +671,19 @@ class WebBridge(QObject):
             # ────────────────────────────────────────────────────────────
             # PAYMENTS
             # ────────────────────────────────────────────────────────────
+            elif action == "save_pdf":
+                pdf_type = payload.get("type", "receipt")
+                order_id = payload.get("order_id")
+                from PySide6.QtWidgets import QFileDialog
+                output_path, _ = QFileDialog.getSaveFileName(self.parent(), "Save PDF", f"{pdf_type.capitalize()}_Order_{order_id}.pdf", "PDF Files (*.pdf)")
+                
+                if output_path:
+                    self.save_pdf_requested.emit(pdf_type, output_path)
+                    response = {"status": "success", "data": {"message": f"Saving PDF to {output_path}..."}}
+                else:
+                    response = {"status": "error", "message": "Save cancelled"}
+
+
             elif action == "get_all_payments":
                 from app.database.engine import get_session
                 from app.repositories.payment_repo import PaymentRepository
