@@ -70,7 +70,7 @@ class WorkerService:
 
     # --- Work Entries ---
 
-    def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float) -> Dict[str, Any]:
+    def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float, auto_approve: bool = False) -> Dict[str, Any]:
         with get_session() as session:
             worker = session.query(Worker).get(worker_id)
             if not worker:
@@ -92,7 +92,7 @@ class WorkerService:
                 extra_work_description=extra_work_description,
                 extra_amount=extra_amount,
                 total_amount=total_amount,
-                status="PENDING"
+                status="APPROVED" if auto_approve else "PENDING"
             )
             session.add(entry)
             session.commit()

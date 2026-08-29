@@ -149,10 +149,16 @@
 <input class="block w-full pl-10 pr-3 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md text-on-surface placeholder-on-surface-variant/60 focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" placeholder="Search workers..." type="text"/>
 </div>
 <!-- Page Primary Action -->
-<button class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap" onclick="document.getElementById('add-worker-modal').classList.remove('hidden')">
-<span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
-                        Add Worker
-                    </button>
+<div class="flex gap-3">
+    <button class="bg-primary text-on-primary shadow-sm px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors whitespace-nowrap" onclick="openLogWorkModal()">
+        <span class="material-symbols-outlined text-[20px]" data-icon="work">work</span>
+        Log Work
+    </button>
+    <button class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap" onclick="document.getElementById('add-worker-modal').classList.remove('hidden')">
+        <span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
+        Add Worker
+    </button>
+</div>
 </div>
 </div>
 <!-- Portal Info Banner -->
@@ -342,6 +348,53 @@
 </div>
 </div>
 
+<!-- Log Work Modal -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="log-work-modal">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[500px] max-w-[95vw] max-h-[90vh] overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
+<h3 class="font-headline-sm">Log Work</h3>
+<button class="p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('log-work-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="p-6 overflow-y-auto flex-1 space-y-4">
+<input type="hidden" id="lw-worker-id">
+<p id="lw-worker-name-display" class="font-bold text-lg mb-2 text-primary hidden"></p>
+
+<div id="lw-worker-select-container" class="mb-4">
+    <label class="block font-label-md mb-1.5">Select Worker</label>
+    <select id="lw-worker-select" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+        <option value="">-- Choose Worker --</option>
+    </select>
+</div>
+
+<div class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4">
+    <div class="flex justify-between items-center mb-2">
+        <label class="block font-label-md">Garments Made</label>
+        <button onclick="addLogWorkRow()" class="text-xs bg-primary text-on-primary px-2 py-1 rounded hover:bg-primary/90">+ Add Row</button>
+    </div>
+    <div id="lw-garments-container" class="space-y-2">
+        <!-- populated by js -->
+    </div>
+</div>
+
+<div class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest space-y-4">
+    <div>
+        <label class="block font-label-md mb-1.5">Extra Work Description (Optional)</label>
+        <input id="lw-extra-desc" type="text" placeholder="e.g. Alteration, buttons" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+    </div>
+    <div>
+        <label class="block font-label-md mb-1.5">Extra Amount (₹)</label>
+        <input id="lw-extra-amount" type="number" min="0" value="0" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+    </div>
+</div>
+
+</div>
+<div class="px-6 py-4 border-t flex justify-end gap-3 bg-surface/50">
+<button class="px-5 py-2 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors font-label-lg" onclick="document.getElementById('log-work-modal').classList.add('hidden')">Cancel</button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary shadow-sm hover:bg-primary/90 transition-colors font-label-lg" onclick="saveLogWork()">Save Work</button>
+</div>
+</div>
+</div>
+
 <!-- Scripts -->
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <script src="../js/api.js?v=1787471943"></script>
@@ -387,11 +440,15 @@
             } catch(e) { console.error(e); }
         }
 
+        let globalWorkersList = [];
+
         async function loadWorkers() {
             try {
                 const res = await window.API.request('get_all_workers');
                 const tbody = document.getElementById('workers-list');
                 tbody.innerHTML = '';
+                
+                globalWorkersList = res.workers || [];
                 
                 if (!res.workers || res.workers.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant">No workers found.</td></tr>`;
@@ -419,7 +476,8 @@
                         <td class="px-6 py-4 font-bold text-green-700">₹${ledger.total_earned.toFixed(0)}</td>
                         <td class="px-6 py-4 font-bold text-orange-600">₹${ledger.total_advance.toFixed(0)}</td>
                         <td class="px-6 py-4 font-bold text-lg">₹${ledger.remaining_balance.toFixed(0)}</td>
-                        <td class="px-6 py-4 text-right">
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <button onclick="openLogWorkModal(${w.id}, '${w.name}')" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition-colors mr-2">Log Work</button>
                             <button onclick="openAdvanceModal(${w.id}, '${w.name}')" class="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors">Give Advance</button>
                         </td>
                     `;
@@ -537,6 +595,112 @@
             }
         }
         
+        // Log Work Functions
+        let availableGarments = [];
+        
+        async function fetchAvailableGarments() {
+            try {
+                const res = await window.API.request('get_garment_rates');
+                availableGarments = res.rates || [];
+            } catch(e) {}
+        }
+        
+        async function openLogWorkModal(workerId = null, workerName = '') {
+            document.getElementById('lw-extra-desc').value = '';
+            document.getElementById('lw-extra-amount').value = '0';
+            
+            if (workerId) {
+                document.getElementById('lw-worker-id').value = workerId;
+                document.getElementById('lw-worker-name-display').textContent = workerName;
+                document.getElementById('lw-worker-name-display').classList.remove('hidden');
+                document.getElementById('lw-worker-select-container').classList.add('hidden');
+            } else {
+                document.getElementById('lw-worker-id').value = '';
+                document.getElementById('lw-worker-name-display').classList.add('hidden');
+                document.getElementById('lw-worker-select-container').classList.remove('hidden');
+                
+                const select = document.getElementById('lw-worker-select');
+                select.innerHTML = '<option value="">-- Choose Worker --</option>';
+                globalWorkersList.forEach(w => {
+                    select.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+                });
+            }
+            
+            document.getElementById('lw-garments-container').innerHTML = '';
+            
+            if(availableGarments.length === 0) {
+                await fetchAvailableGarments();
+            }
+            addLogWorkRow();
+            
+            document.getElementById('log-work-modal').classList.remove('hidden');
+        }
+        
+        function addLogWorkRow() {
+            const container = document.getElementById('lw-garments-container');
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center lw-garment-row";
+            
+            let optionsHtml = '<option value="">-- Select Garment --</option>';
+            availableGarments.forEach(g => {
+                optionsHtml += `<option value="${g.garment_type}">${g.garment_type} (₹${g.rate})</option>`;
+            });
+            
+            row.innerHTML = `
+                <select class="flex-1 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-select">
+                    ${optionsHtml}
+                </select>
+                <input type="number" min="1" value="1" class="w-20 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-qty" placeholder="Qty">
+                <button onclick="this.parentElement.remove()" class="text-error hover:bg-error/10 p-1.5 rounded-full"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+            `;
+            container.appendChild(row);
+        }
+        
+        async function saveLogWork() {
+            let worker_id = document.getElementById('lw-worker-id').value;
+            if (!worker_id) {
+                worker_id = document.getElementById('lw-worker-select').value;
+            }
+            worker_id = parseInt(worker_id);
+            if (!worker_id) {
+                alert("Please select a worker.");
+                return;
+            }
+            
+            const extra_desc = document.getElementById('lw-extra-desc').value;
+            const extra_amount = parseFloat(document.getElementById('lw-extra-amount').value) || 0;
+            
+            const rows = document.querySelectorAll('.lw-garment-row');
+            const items = [];
+            
+            rows.forEach(row => {
+                const garmentType = row.querySelector('.lw-garment-select').value;
+                const qty = parseInt(row.querySelector('.lw-garment-qty').value);
+                if (garmentType && qty > 0) {
+                    items.push({ garment_type: garmentType, quantity: qty });
+                }
+            });
+            
+            if (items.length === 0 && extra_amount <= 0) {
+                alert("Please add at least one garment or an extra amount.");
+                return;
+            }
+            
+            try {
+                await window.API.request('submit_manual_work', {
+                    worker_id: worker_id,
+                    items: items,
+                    extra_desc: extra_desc,
+                    extra_amount: extra_amount
+                });
+                document.getElementById('log-work-modal').classList.add('hidden');
+                loadWorkers();
+            } catch(e) {
+                console.error(e);
+                alert("Error logging work");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", initWorkers);
 
 </script>

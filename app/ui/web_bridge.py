@@ -1143,6 +1143,38 @@ class WebBridge(QObject):
                 history = worker_srv.get_stock_usage_history()
                 response = {"status": "success", "data": {"history": history}}
 
+            elif action == "submit_manual_work":
+                worker_srv = self.services["worker"]
+                worker_id = payload.get("worker_id")
+                items = payload.get("items", [])
+                extra_desc = payload.get("extra_desc", "")
+                extra_amount = float(payload.get("extra_amount", 0))
+
+                if items:
+                    for i, item in enumerate(items):
+                        ext_amt = extra_amount if i == 0 else 0
+                        ext_desc = extra_desc if i == 0 else ""
+                        worker_srv.submit_work_entry(
+                            worker_id=worker_id,
+                            garment_type=item.get("garment_type"),
+                            quantity=int(item.get("quantity", 1)),
+                            bill_number="Manual Log",
+                            extra_work_description=ext_desc,
+                            extra_amount=ext_amt,
+                            auto_approve=True
+                        )
+                else:
+                    worker_srv.submit_work_entry(
+                        worker_id=worker_id,
+                        garment_type=None,
+                        quantity=0,
+                        bill_number="Manual Log",
+                        extra_work_description=extra_desc,
+                        extra_amount=extra_amount,
+                        auto_approve=True
+                    )
+                response = {"status": "success"}
+
             else:
                 response = {"status": "error", "message": f"Unknown action: {action}"}
         except Exception as e:

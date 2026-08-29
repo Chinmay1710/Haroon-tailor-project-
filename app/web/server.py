@@ -155,6 +155,24 @@ def submit_work_entry(worker_id: int, req: WorkEntryRequest):
             
     return {"status": "success", "entry": res}
 
+class WorkerAdvanceRequest(BaseModel):
+    order_id: int
+    amount: float
+    payment_method: str = "Cash"
+    note: str = ""
+
+@app.post("/api/worker/{worker_id}/advance")
+def submit_worker_advance(worker_id: int, req: WorkerAdvanceRequest):
+    notes = f"Order {req.order_id} ({req.payment_method})"
+    if req.note:
+        notes += f" - {req.note}"
+    try:
+        advance = worker_service.record_advance(worker_id, req.amount, notes)
+        return {"status": "success", "advance": advance}
+    except Exception as e:
+        logger.error(f"Failed to record worker advance: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
 @app.get("/api/worker/{worker_id}/entries")
 def get_worker_entries(worker_id: int):
     entries = worker_service.get_worker_entries(worker_id)
