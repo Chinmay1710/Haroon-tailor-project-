@@ -389,69 +389,55 @@ class MainWindow(QMainWindow):
     def _handle_print_requested(self):
         """Handle the print request from the receipt preview.
         
-        The user requested that the print EXACTLY matches the HTML preview.
-        We will use printToPdf to generate a temporary PDF and then send it to the system printer.
+        Uses QWebEnginePage.print_() to render the HTML directly to the printer
+        using the SAME rendering engine that displays it on screen.
+        This ensures the printed output is IDENTICAL to what the user sees.
         """
         try:
             logger.info("Print requested directly from HTML preview.")
             
             from PySide6.QtPrintSupport import QPrinter, QPrintDialog
-            from PySide6.QtCore import QByteArray
+            from PySide6.QtGui import QPageLayout, QPageSize
+            from PySide6.QtCore import QSizeF, QMarginsF
+            from app.printing.receipt_printer import THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM
             
-            # Ask user for printer
+            # Configure printer for 58mm thermal paper
             printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+            
+            # Force 58mm POS paper size
+            page_size = QPageSize(
+                QSizeF(THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM),
+                QPageSize.Unit.Millimeter,
+                "POS58 Receipt"
+            )
+            page_layout = QPageLayout(
+                page_size,
+                QPageLayout.Orientation.Portrait,
+                QMarginsF(0, 0, 0, 0)
+            )
+            printer.setPageLayout(page_layout)
+            
+            # Show printer selection dialog
             dialog = QPrintDialog(printer, self)
             
             if dialog.exec() == QPrintDialog.DialogCode.Accepted:
                 printer_name = printer.printerName()
                 logger.info(f"Selected printer: {printer_name}")
                 
-                def pdf_generated_callback(pdf_data: QByteArray):
-                    if pdf_data.isEmpty():
-                        logger.error("Generated PDF data is empty.")
-                        return
-                    
-                    import tempfile
-                    import os
-                    import platform
-                    
-                    fd, temp_path = tempfile.mkstemp(suffix=".pdf")
-                    with os.fdopen(fd, 'wb') as f:
-                        f.write(pdf_data.data())
-                    
-                    logger.info(f"HTML printed to temporary PDF: {temp_path}")
-                    
-                    # Print the PDF using OS tools
-                    try:
-                        sys_platform = platform.system().lower()
-                        if sys_platform == 'darwin':
-                            # macOS
-                            cmd = f'lpr -P "{printer_name}" "{temp_path}"'
-                            os.system(cmd)
-                        elif sys_platform == 'windows':
-                            # Windows
-                            os.startfile(temp_path, "print")
-                        else:
-                            # Linux
-                            cmd = f'lp -d "{printer_name}" "{temp_path}"'
-                            os.system(cmd)
-                    except Exception as e:
-                        logger.error(f"Failed to print PDF via OS: {e}")
+                # Re-apply 58mm layout after dialog (dialog may reset it)
+                printer.setPageLayout(page_layout)
                 
-                # Force 58mm POS receipt layout regardless of the printer's default
-                from PySide6.QtGui import QPageLayout, QPageSize
-                from PySide6.QtCore import QSizeF, QMarginsF
-                from app.printing.receipt_printer import THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM
+                def print_done_callback(success):
+                    if success:
+                        logger.info(f"Print job sent successfully to {printer_name}")
+                    else:
+                        logger.error(f"Print job failed for {printer_name}")
                 
-                page_size = QPageSize(
-                    QSizeF(THERMAL_PAPER_WIDTH_MM, THERMAL_PAPER_HEIGHT_MM),
-                    QPageSize.Unit.Millimeter,
-                    "POS58 Receipt"
-                )
-                page_layout = QPageLayout(page_size, QPageLayout.Orientation.Portrait, QMarginsF(0, 0, 0, 0))
-                
-                # Request the page to print itself to a PDF byte array using our forced 58mm layout
-                self.web_view.page().printToPdf(pdf_generated_callback, page_layout)
+                # Print directly from the WebEngine — same renderer as screen
+                # This is the key: print_() renders the HTML to the printer
+                # using the identical engine that renders on screen,
+                # so fonts, margins, and layout will match exactly.
+                self.web_view.page().print_(printer, print_done_callback)
 
         except Exception as e:
             logger.exception(f"Error handling print request: {e}")
