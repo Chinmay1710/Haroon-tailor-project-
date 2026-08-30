@@ -78,8 +78,8 @@ class BackupService:
                             
             file_size = os.path.getsize(final_hd_path)
             
-            # 3. Copy to Google Drive if available
-            if gdrive_dir:
+            # 3. Copy to Google Drive if available and different from hard drive dir
+            if gdrive_dir and os.path.abspath(gdrive_dir) != os.path.abspath(hard_drive_dir):
                 final_gdrive_path = os.path.join(gdrive_dir, backup_filename)
                 shutil.copy2(final_hd_path, final_gdrive_path)
 
