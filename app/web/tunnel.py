@@ -14,29 +14,6 @@ class NgrokTunnel:
 
     def start(self) -> Optional[str]:
         global GLOBAL_TUNNEL_URL
-        
-        # Check if a static domain is configured
-        try:
-            import json
-            import os
-            
-            # Read config from %APPDATA%\TailorShopManager instead of root folder
-            from app.config import APP_DATA_DIR
-            config_file = os.path.join(APP_DATA_DIR, "cloudflare_config.json")
-            
-            if os.path.exists(config_file):
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
-                    if config.get("domain"):
-                        domain = config["domain"]
-                        if not domain.startswith("http"):
-                            domain = "https://" + domain
-                        self.public_url = domain
-                        GLOBAL_TUNNEL_URL = self.public_url
-                        logger.info(f"Using statically configured tunnel URL: {self.public_url}")
-                        return self.public_url
-        except Exception as e:
-            logger.error(f"Error reading tunnel config: {e}")
 
         try:
             import subprocess
@@ -57,6 +34,7 @@ class NgrokTunnel:
                     exe_path = "cloudflared.exe" if os.path.exists("cloudflared.exe") else "cloudflared"
 
             # Check for Cloudflare Zero Trust Configuration (Permanent Domain) in AppData
+            from app.config import APP_DATA_DIR
             cf_config_file = os.path.join(APP_DATA_DIR, "cloudflare_config.json")
             
             if os.path.exists(cf_config_file):
