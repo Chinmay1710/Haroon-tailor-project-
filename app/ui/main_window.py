@@ -180,8 +180,12 @@ class MainWindow(QMainWindow):
         # ---------------------------------------------------------------
         # Web view
         # ---------------------------------------------------------------
+        from app.config import APP_DATA_DIR
+        profile = QWebEngineProfile.defaultProfile()
+        profile.setPersistentStoragePath(os.path.join(APP_DATA_DIR, "web_storage"))
 
         self.web_view = QWebEngineView()
+
 
         self.web_view.setPage(
             CustomWebPage(
