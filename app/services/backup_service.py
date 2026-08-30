@@ -12,6 +12,7 @@ from sqlalchemy import text
 from app.config import DATABASE_PATH, BACKUP_DEFAULT_DIR, UPLOADS_DIR
 from app.database.engine import get_session, close_db, init_db, get_engine
 from app.repositories.settings_repo import SettingsRepository
+from app.models.customer import Customer
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -30,6 +31,11 @@ class BackupService:
         
         session = get_session()
         try:
+            # Safeguard: if database is completely empty (no customers), don't overwrite backup
+            if session.query(Customer).count() == 0:
+                logger.info("Database is empty (0 customers). Skipping backup to prevent overwriting.")
+                return ""
+            
             repo = SettingsRepository(session)
             settings = repo.get_settings()
             if settings.backup_location and os.path.exists(settings.backup_location):
