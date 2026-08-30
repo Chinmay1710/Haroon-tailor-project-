@@ -376,7 +376,7 @@ function renderMeasurementFields(type, values) {
             <div>
                 <label class="block font-label-sm text-on-surface-variant mb-1 truncate" title="${field}">${field}</label>
                 <div class="relative">
-                    <input type="number" step="0.25" id="${safeId}" data-field="${field}" value="${val}" class="meas-input w-full p-2.5 bg-surface-container-lowest border border-outline-variant rounded focus:border-primary outline-none font-body-lg">
+                    <input type="text" id="${safeId}" data-field="${field}" value="${val}" class="meas-input w-full p-2.5 bg-surface-container-lowest border border-outline-variant rounded focus:border-primary outline-none font-body-lg">
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-sm opacity-50">"</span>
                 </div>
             </div>
@@ -686,10 +686,11 @@ window.saveOrder = async function() {
         } else {
             const response = await window.API.request('create_order', payload);
             window.API.toast(`Order ${response.order_number} created successfully!`, "success");
-            // Open WhatsApp with pre-typed message
+            // Open WhatsApp with pre-typed message immediately
             if (response && response.whatsapp_url) {
                 window.API.request('open_whatsapp_url', {url: response.whatsapp_url});
             }
+            
             setTimeout(() => {
                 window.API.request('navigate_to', {page: 'order_details', id: response.id});
             }, 1000);
