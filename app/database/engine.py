@@ -77,7 +77,9 @@ def init_db():
     import app.models.worker        # noqa: F401
     import app.models.stock         # noqa: F401
 
+    from app.database.migrations import auto_migrate
     engine = get_engine()
+    auto_migrate(engine, Base)
     Base.metadata.create_all(engine)
 
 
