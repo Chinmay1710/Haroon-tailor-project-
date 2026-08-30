@@ -20,9 +20,9 @@ class NgrokTunnel:
             import json
             import os
             
-            # The config file is in the root directory
-            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            config_file = os.path.join(root_dir, "ngrok_config.json")
+            # Read config from %APPDATA%\TailorShopManager instead of root folder
+            from app.config import APP_DATA_DIR
+            config_file = os.path.join(APP_DATA_DIR, "cloudflare_config.json")
             
             if os.path.exists(config_file):
                 with open(config_file, 'r') as f:
@@ -46,14 +46,18 @@ class NgrokTunnel:
             
             logger.info("Starting cloudflared tunnel...")
             
-            exe_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cloudflared.exe")
-            if not os.path.exists(exe_path):
-                # Fallback to just cloudflared if in PATH or in cwd
-                exe_path = "cloudflared.exe" if os.path.exists("cloudflared.exe") else "cloudflared"
+            import sys
+            
+            # Resolve executable path correctly when frozen by PyInstaller
+            if getattr(sys, 'frozen', False):
+                exe_path = os.path.join(sys._MEIPASS, "cloudflared.exe")
+            else:
+                exe_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "cloudflared.exe")
+                if not os.path.exists(exe_path):
+                    exe_path = "cloudflared.exe" if os.path.exists("cloudflared.exe") else "cloudflared"
 
-            # Check for Cloudflare Zero Trust Configuration (Permanent Domain)
-            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            cf_config_file = os.path.join(root_dir, "cloudflare_config.json")
+            # Check for Cloudflare Zero Trust Configuration (Permanent Domain) in AppData
+            cf_config_file = os.path.join(APP_DATA_DIR, "cloudflare_config.json")
             
             if os.path.exists(cf_config_file):
                 try:

@@ -5,8 +5,16 @@ block_cipher = None
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=[],
-    datas=[('app/assets', 'assets')],
+    binaries=[
+        ('node.exe', '.'),
+        ('cloudflared.exe', '.')
+    ],
+    datas=[
+        ('app/assets', 'assets'),
+        ('app/services/whatsapp', 'app/services/whatsapp'),
+        ('node_modules', 'node_modules'),
+        ('.puppeteer_cache', '.puppeteer_cache')
+    ],
     hiddenimports=[
         'PySide6.QtWebEngineWidgets', 'PySide6.QtWebEngineCore', 'PySide6.QtWebChannel', 
         'sqlalchemy', 'sqlite3', 'reportlab',
@@ -17,7 +25,10 @@ a = Analysis(
         'app.services.order_service', 'app.services.customer_service', 'app.services.whatsapp_service',
         'app.services.backup_service', 'app.services.pdf_service',
         'app.web.tunnel', 'app.web.server', 'app.printing.receipt_printer',
-        'pyngrok', 'fastapi', 'uvicorn', 'pydantic', 'qrcode', 'speech_recognition'
+        'pyngrok', 'fastapi', 'uvicorn', 'pydantic', 'qrcode', 'speech_recognition',
+        'uvicorn.logging', 'uvicorn.loops', 'uvicorn.loops.auto', 'uvicorn.protocols',
+        'uvicorn.protocols.http.auto', 'uvicorn.protocols.websockets.auto', 'uvicorn.lifespan',
+        'uvicorn.lifespan.on', 'app.database.migrations'
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
