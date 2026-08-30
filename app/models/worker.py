@@ -80,6 +80,7 @@ class WorkEntry(Base):
     total_amount = Column(Float, default=0.0, nullable=False)
     
     status = Column(String(20), default="PENDING", nullable=False) # PENDING, APPROVED, REJECTED
+    is_settled = Column(Boolean, default=False, nullable=False)
     
     worker = relationship("Worker", back_populates="work_entries")
 
@@ -93,5 +94,6 @@ class WorkerAdvance(Base):
     amount = Column(Float, default=0.0, nullable=False)
     date = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     notes = Column(String(255), nullable=True)
+    is_settled = Column(Boolean, default=False, nullable=False)
     
     worker = relationship("Worker", back_populates="advances")

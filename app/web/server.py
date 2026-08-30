@@ -132,6 +132,7 @@ class WorkEntryRequest(BaseModel):
     extra_amount: float = 0.0
     stock_item_id: Optional[int] = None
     stock_quantity: float = 0.0
+    is_present: bool = False
 
 @app.post("/api/worker/{worker_id}/work-entry")
 def submit_work_entry(worker_id: int, req: WorkEntryRequest):
@@ -141,7 +142,8 @@ def submit_work_entry(worker_id: int, req: WorkEntryRequest):
         quantity=req.quantity,
         bill_number=req.bill_number,
         extra_work_description=req.extra_work_description,
-        extra_amount=req.extra_amount
+        extra_amount=req.extra_amount,
+        is_present=req.is_present
     )
     if "error" in res:
         raise HTTPException(status_code=400, detail=res["error"])

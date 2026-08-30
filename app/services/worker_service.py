@@ -19,8 +19,21 @@ class WorkerService:
     def get_all_workers(self) -> List[Dict[str, Any]]:
         with get_session() as session:
             workers = session.query(Worker).all()
-            return [
-                {
+            
+            result = []
+            for w in workers:
+                total_earned = session.query(func.sum(WorkEntry.total_amount)).filter(
+                    WorkEntry.worker_id == w.id, 
+                    WorkEntry.status == "APPROVED",
+                    WorkEntry.is_settled == False
+                ).scalar() or 0.0
+                
+                total_advance = session.query(func.sum(WorkerAdvance.amount)).filter(
+                    WorkerAdvance.worker_id == w.id,
+                    WorkerAdvance.is_settled == False
+                ).scalar() or 0.0
+
+                result.append({
                     "id": w.id,
                     "name": w.name,
                     "phone": w.phone,
@@ -29,10 +42,14 @@ class WorkerService:
                     "worker_role": getattr(w, "worker_role", WorkerRole.STITCHING.value),
                     "daily_rate": w.daily_rate,
                     "is_active": w.is_active,
-                    "created_at": w.created_at.isoformat() if w.created_at else None
-                }
-                for w in workers
-            ]
+                    "created_at": w.created_at.isoformat() if w.created_at else None,
+                    "ledger": {
+                        "total_earned": total_earned,
+                        "total_advance": total_advance,
+                        "remaining_balance": total_earned - total_advance
+                    }
+                })
+            return result
 
     def add_worker(self, name: str, phone: str, pin: str, worker_type: str = WorkerType.PIECE_RATE.value, worker_role: str = WorkerRole.STITCHING.value, daily_rate: float = 0.0) -> Dict[str, Any]:
         with get_session() as session:
@@ -44,7 +61,13 @@ class WorkerService:
 
     def authenticate_worker(self, name: str, pin: str) -> Optional[Dict[str, Any]]:
         with get_session() as session:
-            worker = session.query(Worker).filter(func.lower(Worker.name) == name.lower(), Worker.pin == pin, Worker.is_active == True).first()
+            clean_name = name.strip().lower()
+            clean_pin = pin.strip()
+            worker = session.query(Worker).filter(
+                func.lower(func.trim(Worker.name)) == clean_name, 
+                func.trim(Worker.pin) == clean_pin, 
+                Worker.is_active == True
+            ).first()
             if worker:
                 return {"id": worker.id, "name": worker.name, "pin": worker.pin, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
             return None
@@ -70,7 +93,7 @@ class WorkerService:
 
     # --- Work Entries ---
 
-    def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float, auto_approve: bool = False) -> Dict[str, Any]:
+    def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float, auto_approve: bool = False, is_present: bool = False) -> Dict[str, Any]:
         with get_session() as session:
             worker = session.query(Worker).get(worker_id)
             if not worker:
@@ -82,7 +105,16 @@ class WorkerService:
                 if g_rate:
                     total_amount += (g_rate.rate * quantity)
             elif worker.worker_type == WorkerType.DAILY_SALARY.value:
-                total_amount += worker.daily_rate
+                # For daily salary workers, only add their daily rate if marked present
+                if is_present:
+                    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+                    already_present = session.query(WorkEntry).filter(
+                        WorkEntry.worker_id == worker_id,
+                        WorkEntry.entry_date >= today_start,
+                        WorkEntry.total_amount > WorkEntry.extra_amount
+                    ).first()
+                    if not already_present:
+                        total_amount += worker.daily_rate
 
             entry = WorkEntry(
                 worker_id=worker_id,
@@ -98,6 +130,22 @@ class WorkerService:
             session.commit()
             session.refresh(entry)
             return {"id": entry.id, "status": entry.status}
+            
+    def edit_pending_entry(self, entry_id: int, new_quantity: int, new_extra_amount: float, new_total_amount: float) -> Dict[str, Any]:
+        with get_session() as session:
+            entry = session.query(WorkEntry).filter(WorkEntry.id == entry_id).first()
+            if not entry:
+                return {"error": "Entry not found"}
+            if entry.status != "PENDING":
+                return {"error": "Only pending entries can be edited"}
+                
+            entry.quantity = new_quantity
+            entry.extra_amount = new_extra_amount
+            entry.total_amount = new_total_amount
+            
+            session.commit()
+            session.refresh(entry)
+            return {"id": entry.id, "status": "updated"}
 
     def get_worker_entries(self, worker_id: int) -> List[Dict[str, Any]]:
         with get_session() as session:
@@ -158,8 +206,16 @@ class WorkerService:
             if not worker:
                 return {}
 
-            total_earned = session.query(func.sum(WorkEntry.total_amount)).filter(WorkEntry.worker_id == worker_id, WorkEntry.status == "APPROVED").scalar() or 0.0
-            total_advance = session.query(func.sum(WorkerAdvance.amount)).filter(WorkerAdvance.worker_id == worker_id).scalar() or 0.0
+            total_earned = session.query(func.sum(WorkEntry.total_amount)).filter(
+                WorkEntry.worker_id == worker_id, 
+                WorkEntry.status == "APPROVED",
+                WorkEntry.is_settled == False
+            ).scalar() or 0.0
+            
+            total_advance = session.query(func.sum(WorkerAdvance.amount)).filter(
+                WorkerAdvance.worker_id == worker_id,
+                WorkerAdvance.is_settled == False
+            ).scalar() or 0.0
 
             return {
                 "worker_id": worker_id,
@@ -167,6 +223,88 @@ class WorkerService:
                 "total_earned": total_earned,
                 "total_advance": total_advance,
                 "remaining_balance": total_earned - total_advance
+            }
+            
+    def settle_worker_account(self, worker_id: int) -> bool:
+        """Mark all existing work entries and advances for this worker as settled."""
+        with get_session() as session:
+            worker = session.query(Worker).get(worker_id)
+            if not worker:
+                return False
+                
+            session.query(WorkEntry).filter(WorkEntry.worker_id == worker_id, WorkEntry.is_settled == False).update({"is_settled": True})
+            session.query(WorkerAdvance).filter(WorkerAdvance.worker_id == worker_id, WorkerAdvance.is_settled == False).update({"is_settled": True})
+            session.commit()
+            return True
+
+    def delete_worker(self, worker_id: int) -> bool:
+        """Delete a worker and all their related entries (work entries, advances, tasks)."""
+        with get_session() as session:
+            worker = session.query(Worker).get(worker_id)
+            if not worker:
+                return False
+            # Delete related records first
+            session.query(WorkEntry).filter(WorkEntry.worker_id == worker_id).delete()
+            session.query(WorkerAdvance).filter(WorkerAdvance.worker_id == worker_id).delete()
+            session.query(WorkerTask).filter(WorkerTask.worker_id == worker_id).delete()
+            session.delete(worker)
+            session.commit()
+            return True
+
+    def get_worker_history(self, worker_id: int) -> Dict[str, Any]:
+        """Get combined work entries and advances for a worker, sorted by date."""
+        with get_session() as session:
+            worker = session.query(Worker).get(worker_id)
+            if not worker:
+                return {"worker_name": "Unknown", "history": []}
+
+            # Get work entries
+            entries = session.query(WorkEntry).filter(
+                WorkEntry.worker_id == worker_id
+            ).order_by(WorkEntry.entry_date.desc()).all()
+
+            # Get advances
+            advances = session.query(WorkerAdvance).filter(
+                WorkerAdvance.worker_id == worker_id
+            ).order_by(WorkerAdvance.date.desc()).all()
+
+            history = []
+            for e in entries:
+                desc = ""
+                if e.garment_type:
+                    desc = f"{e.quantity}x {e.garment_type}"
+                if e.extra_work_description:
+                    desc += f" + {e.extra_work_description}" if desc else e.extra_work_description
+                if not desc:
+                    desc = "Daily Salary"
+
+                history.append({
+                    "type": "WORK",
+                    "date": e.entry_date.isoformat() if e.entry_date else "",
+                    "description": desc,
+                    "amount": e.total_amount,
+                    "status": e.status,
+                    "extra_amount": e.extra_amount or 0,
+                    "is_settled": e.is_settled
+                })
+
+            for a in advances:
+                history.append({
+                    "type": "ADVANCE",
+                    "date": a.date.isoformat() if a.date else "",
+                    "description": a.notes or "Advance Payment",
+                    "amount": a.amount,
+                    "status": "PAID",
+                    "extra_amount": 0,
+                    "is_settled": a.is_settled
+                })
+
+            # Sort combined history by date descending
+            history.sort(key=lambda x: x["date"], reverse=True)
+
+            return {
+                "worker_name": worker.name,
+                "history": history
             }
 
     def get_stock_usage_history(self) -> List[Dict[str, Any]]:

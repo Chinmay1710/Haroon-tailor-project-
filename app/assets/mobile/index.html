@@ -63,7 +63,7 @@
         </header>
 
         <!-- CONTENT AREA -->
-        <main class="flex-1 overflow-y-auto no-scrollbar relative z-10 -mt-2 pt-6 px-4 pb-24" id="main-content">
+        <main class="flex-1 overflow-y-auto no-scrollbar relative z-10 -mt-2 pt-6 px-4 pb-32" id="main-content">
             
             <!-- TAB 1: SUBMIT WORK (PIECE RATE & DAILY SALARY) -->
             <div id="tab-submit" class="tab-content active">
@@ -98,9 +98,15 @@
                         </div>
 
                         <!-- Daily Salary Note -->
-                        <div id="daily-salary-fields" class="hidden bg-blue-50 text-blue-800 p-3 rounded-xl text-sm mb-4">
-                            <p class="font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">info</span> Daily Work Log</p>
-                            <p class="opacity-90">Enter details of what you worked on today.</p>
+                        <div id="daily-salary-fields" class="hidden bg-blue-50 text-blue-800 p-4 rounded-xl text-sm mb-4">
+                            <p class="font-semibold flex items-center gap-1 mb-2"><span class="material-symbols-outlined text-[16px]">info</span> Daily Work Log</p>
+                            <label class="flex items-center gap-3 cursor-pointer bg-white/50 p-3 rounded-lg border border-blue-100">
+                                <input type="checkbox" id="is-present" class="w-5 h-5 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                                <div>
+                                    <span class="font-bold block">Mark as Present Today</span>
+                                    <span class="text-xs opacity-80">This will log your daily wage</span>
+                                </div>
+                            </label>
                         </div>
 
                         <div class="h-px bg-slate-100 my-4"></div>
@@ -135,10 +141,13 @@
                             </div>
                         </div>
 
-                        <button type="submit" id="submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 active:scale-[0.98] transition-all mt-6 flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined">send</span> Submit Entry
-                        </button>
-                        <p id="submit-msg" class="text-sm text-center font-medium mt-2 hidden"></p>
+                        <!-- Messages & Submit -->
+                        <div class="pb-16">
+                            <p id="submit-msg" class="text-sm text-center font-medium mb-3 hidden"></p>
+                            <button type="submit" id="submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg">
+                                <span class="material-symbols-outlined">send</span> Submit Entry
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -485,8 +494,8 @@
         }
 
         async function login() {
-            const name = document.getElementById('login-name').value;
-            const pin = document.getElementById('login-pin').value;
+            const name = document.getElementById('login-name').value.trim();
+            const pin = document.getElementById('login-pin').value.trim();
             const btn = document.getElementById('login-btn');
             const error = document.getElementById('login-error');
             
@@ -554,27 +563,28 @@
             if (isAdmin) {
                 if (bottomNav) bottomNav.classList.add('hidden');
                 if (mainContent) {
-                    mainContent.classList.remove('pb-24');
+                    mainContent.classList.remove('pb-32');
                     mainContent.classList.add('pb-6');
                 }
             } else {
                 if (bottomNav) bottomNav.classList.remove('hidden');
                 if (mainContent) {
-                    mainContent.classList.add('pb-24');
+                    mainContent.classList.add('pb-32');
                     mainContent.classList.remove('pb-6');
                 }
                 if (adminNav) {
                     adminNav.classList.add('hidden');
                     adminNav.classList.remove('flex');
                 }
+                // We deliberately keep nav-submit visible for regular workers
                 const submitNav = document.getElementById('nav-submit');
                 if (submitNav) {
-                    submitNav.classList.add('hidden');
-                    submitNav.classList.remove('flex');
+                    submitNav.classList.remove('hidden');
+                    submitNav.classList.add('flex');
                 }
             }
 
-            switchTab(isAdmin ? 'admin' : 'scan');
+            switchTab(isAdmin ? 'admin' : 'submit');
         }
 
         function switchTab(tabId) {
@@ -609,6 +619,7 @@
             
             btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Submitting...';
             btn.disabled = true;
+            const isDaily = currentWorker.worker_type === 'DAILY_SALARY';
             
             const payload = {
                 garment_type: document.getElementById('garment-type').value || null,
@@ -617,7 +628,8 @@
                 extra_work_description: document.getElementById('extra-desc').value || null,
                 extra_amount: parseFloat(document.getElementById('extra-amount').value) || 0.0,
                 stock_item_id: parseInt(document.getElementById('stock-item-id').value) || null,
-                stock_quantity: parseFloat(document.getElementById('stock-quantity').value) || 0.0
+                stock_quantity: parseFloat(document.getElementById('stock-quantity').value) || 0.0,
+                is_present: isDaily ? document.getElementById('is-present').checked : false
             };
 
             try {
@@ -638,8 +650,18 @@
                     document.getElementById('extra-amount').value = "0";
                     document.getElementById('stock-item-id').value = "";
                     document.getElementById('stock-quantity').value = "0";
+                    document.getElementById('is-present').checked = false;
                     
-                    setTimeout(() => msg.classList.add('hidden'), 3000);
+                    loadLedger();
+                    fetchStockItems();
+                    
+                    // Switch to the Earnings (ledger) tab
+                    switchTab('ledger');
+                    
+                    // Reset the submit button text back to normal
+                    btn.innerHTML = '<span class="material-symbols-outlined">send</span> Submit Entry';
+                    btn.disabled = false;
+                    msg.classList.add('hidden');
                 } else {
                     throw new Error("Failed to submit");
                 }

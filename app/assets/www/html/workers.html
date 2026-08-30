@@ -347,6 +347,7 @@
 </div>
 </div>
 </div>
+</div>
 
 <!-- Log Work Modal -->
 <div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="log-work-modal">
@@ -361,12 +362,19 @@
 
 <div id="lw-worker-select-container" class="mb-4">
     <label class="block font-label-md mb-1.5">Select Worker</label>
-    <select id="lw-worker-select" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+    <select id="lw-worker-select" onchange="handleWorkerSelectChange()" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
         <option value="">-- Choose Worker --</option>
     </select>
 </div>
 
-<div class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4">
+<div id="lw-attendance-section" class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4 hidden">
+    <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" id="lw-is-present" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary">
+        <span class="font-label-md">Mark Present for Today (Adds Daily Wage)</span>
+    </label>
+</div>
+
+<div id="lw-garments-section" class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4">
     <div class="flex justify-between items-center mb-2">
         <label class="block font-label-md">Garments Made</label>
         <button onclick="addLogWorkRow()" class="text-xs bg-primary text-on-primary px-2 py-1 rounded hover:bg-primary/90">+ Add Row</button>
@@ -395,10 +403,78 @@
 </div>
 </div>
 
+<!-- Worker History Modal -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="worker-history-modal">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[650px] max-w-[95vw] max-h-[85vh] overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
+<h3 class="font-headline-sm" id="history-modal-title">Worker Payment History</h3>
+<div class="flex items-center gap-2">
+    <button id="btn-settle-account" class="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded hover:bg-green-600 hover:text-white transition-colors font-bold" onclick="settleAccount()">Settle Account</button>
+    <button class="p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('worker-history-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-1 min-h-0">
+<div id="history-summary" class="flex gap-4 mb-6 shrink-0">
+    <!-- Summary cards filled by JS -->
+</div>
+<div class="overflow-y-auto border border-surface-container-highest rounded-lg" style="max-height: 300px;">
+<table class="w-full text-left border-collapse">
+    <thead class="sticky top-0 z-10 bg-surface shadow-sm">
+        <tr class="border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider bg-surface/95 backdrop-blur">
+            <th class="px-4 py-3 font-medium">Date</th>
+            <th class="px-4 py-3 font-medium">Type</th>
+            <th class="px-4 py-3 font-medium">Description</th>
+            <th class="px-4 py-3 font-medium">Status</th>
+            <th class="px-4 py-3 font-medium text-right">Amount</th>
+        </tr>
+    </thead>
+    <tbody id="history-list" class="divide-y divide-surface-container-highest">
+        <tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">Loading...</td></tr>
+    </tbody>
+</table>
+</div>
+</div>
+<div class="px-6 py-4 border-t flex justify-end bg-surface/50">
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-lg hover:bg-primary/90" onclick="document.getElementById('worker-history-modal').classList.add('hidden')">Close</button>
+</div>
+</div>
+</div>
+
 <!-- Scripts -->
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 <script src="../js/api.js?v=1787471943"></script>
 <script src="../js/app.js?v=1787471943"></script>
+
+<!-- Edit Entry Modal -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="edit-entry-modal">
+<div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[400px] overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
+<h3 class="font-headline-sm">Edit Pending Entry</h3>
+<button class="p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('edit-entry-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="p-6 space-y-4">
+<input type="hidden" id="edit-entry-id">
+<p class="text-sm text-on-surface-variant mb-2">Worker: <span id="edit-worker-name" class="font-bold text-on-surface"></span></p>
+
+<div>
+<label class="block font-label-md mb-1.5">Quantity</label>
+<input id="edit-quantity" type="number" class="w-full px-3 py-2.5 rounded-lg border bg-surface outline-none">
+</div>
+<div>
+<label class="block font-label-md mb-1.5">Extra Amount (₹)</label>
+<input id="edit-extra-amount" type="number" class="w-full px-3 py-2.5 rounded-lg border bg-surface outline-none">
+</div>
+<div>
+<label class="block font-label-md mb-1.5 text-primary">Final Total Amount (₹)</label>
+<input id="edit-total-amount" type="number" class="w-full px-3 py-2.5 rounded-lg border bg-primary/10 font-bold outline-none">
+</div>
+</div>
+<div class="px-6 py-4 border-t flex justify-end gap-3 bg-surface/50">
+<button class="px-5 py-2 rounded-lg" onclick="document.getElementById('edit-entry-modal').classList.add('hidden')">Cancel</button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary" onclick="saveEditEntry()">Update</button>
+</div>
+</div>
+</div>
 
 <script>
 
@@ -456,8 +532,7 @@
                 }
                 
                 for (const w of res.workers) {
-                    const l_res = await window.API.request('get_worker_ledger', {worker_id: w.id});
-                    const ledger = l_res.ledger || {total_earned:0, total_advance:0, remaining_balance:0};
+                    const ledger = w.ledger || {total_earned:0, total_advance:0, remaining_balance:0};
                     
                     const badge = w.worker_type === 'DAILY_SALARY' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
                     const typeStr = w.worker_type === 'DAILY_SALARY' ? `Daily (₹${w.daily_rate})` : 'Piece Rate';
@@ -465,10 +540,10 @@
                     const roleStr = w.worker_role || 'STITCHING';
                     
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-surface-container-lowest/50";
+                    tr.className = "hover:bg-surface-container-lowest/50 cursor-pointer";
                     tr.innerHTML = `
-                        <td class="px-6 py-4">
-                            <div class="font-bold">${w.name}</div>
+                        <td class="px-6 py-4" onclick="openWorkerHistory(${w.id}, '${w.name.replace(/'/g, "\\'")}')">
+                            <div class="font-bold text-primary hover:underline">${w.name}</div>
                             <div class="text-xs text-on-surface-variant">PIN: ${w.pin} | ${w.phone || ''}</div>
                         </td>
                         <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${roleBadge} font-bold uppercase tracking-wider">${roleStr}</span></td>
@@ -477,8 +552,9 @@
                         <td class="px-6 py-4 font-bold text-orange-600">₹${ledger.total_advance.toFixed(0)}</td>
                         <td class="px-6 py-4 font-bold text-lg">₹${ledger.remaining_balance.toFixed(0)}</td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <button onclick="openLogWorkModal(${w.id}, '${w.name}')" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition-colors mr-2">Log Work</button>
-                            <button onclick="openAdvanceModal(${w.id}, '${w.name}')" class="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors">Give Advance</button>
+                            <button onclick="event.stopPropagation(); openLogWorkModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition-colors mr-1" title="Log Work">Log Work</button>
+                            <button onclick="event.stopPropagation(); openAdvanceModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors mr-1" title="Give Advance">Advance</button>
+                            <button onclick="event.stopPropagation(); deleteWorker(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-red-100 text-red-700 px-2.5 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors" title="Delete Worker"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -523,13 +599,64 @@
                         <td class="px-6 py-4 font-bold">${e.worker_name}</td>
                         <td class="px-6 py-4 text-sm">${desc}</td>
                         <td class="px-6 py-4 font-bold text-lg">₹${e.total_amount}</td>
-                        <td class="px-6 py-4 text-right">
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <button onclick="openEditModal(${e.id}, '${e.worker_name}', ${e.quantity || 1}, ${e.extra_amount || 0}, ${e.total_amount})" class="text-white bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700 mr-1"><span class="material-symbols-outlined text-[14px] align-middle">edit</span></button>
                             <button onclick="approveEntry(${e.id}, 'APPROVED')" class="text-white bg-green-600 px-3 py-1 rounded text-sm hover:bg-green-700">Approve</button>
                             <button onclick="approveEntry(${e.id}, 'REJECTED')" class="text-white bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700 ml-1">Reject</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
+            } catch(e) { console.error(e); }
+        }
+
+        let currentEditUnitRate = 0;
+
+        function openEditModal(id, workerName, qty, extraAmount, totalAmount) {
+            document.getElementById('edit-entry-id').value = id;
+            document.getElementById('edit-worker-name').textContent = workerName;
+            document.getElementById('edit-quantity').value = qty;
+            document.getElementById('edit-extra-amount').value = extraAmount;
+            document.getElementById('edit-total-amount').value = totalAmount;
+            
+            // Calculate base amount and unit rate
+            const total = parseFloat(totalAmount) || 0;
+            const extra = parseFloat(extraAmount) || 0;
+            const baseAmount = total - extra;
+            const quantity = parseInt(qty) || 1;
+            
+            // For piece rate, baseAmount = qty * rate. For daily salary (qty might be 0 or 1), treat baseAmount as fixed.
+            currentEditUnitRate = quantity > 0 ? (baseAmount / quantity) : baseAmount;
+
+            function recalculateTotal() {
+                const q = parseInt(document.getElementById('edit-quantity').value) || 0;
+                const e = parseFloat(document.getElementById('edit-extra-amount').value) || 0;
+                // If it's a daily salary type with 0 qty initially, maintain the base amount
+                const base = (quantity === 0) ? currentEditUnitRate : (q * currentEditUnitRate);
+                document.getElementById('edit-total-amount').value = base + e;
+            }
+
+            document.getElementById('edit-quantity').oninput = recalculateTotal;
+            document.getElementById('edit-extra-amount').oninput = recalculateTotal;
+
+            document.getElementById('edit-entry-modal').classList.remove('hidden');
+        }
+
+        async function saveEditEntry() {
+            const id = document.getElementById('edit-entry-id').value;
+            const qty = document.getElementById('edit-quantity').value;
+            const extra = document.getElementById('edit-extra-amount').value;
+            const total = document.getElementById('edit-total-amount').value;
+            
+            try {
+                await window.API.request('edit_pending_entry', {
+                    entry_id: parseInt(id),
+                    quantity: parseInt(qty) || 0,
+                    extra_amount: parseFloat(extra) || 0,
+                    total_amount: parseFloat(total) || 0
+                });
+                document.getElementById('edit-entry-modal').classList.add('hidden');
+                loadPending();
             } catch(e) { console.error(e); }
         }
 
@@ -569,7 +696,16 @@
         function openAdvanceModal(workerId, workerName) {
             document.getElementById('adv-worker-id').value = workerId;
             document.getElementById('adv-worker-name').textContent = workerName;
-            document.getElementById('adv-amount').value = '';
+            
+            let pending = '';
+            if (globalWorkersList) {
+                const w = globalWorkersList.find(x => x.id == workerId);
+                if (w && w.ledger && w.ledger.remaining_balance > 0) {
+                    pending = Math.round(w.ledger.remaining_balance);
+                }
+            }
+            
+            document.getElementById('adv-amount').value = pending;
             document.getElementById('adv-notes').value = '';
             document.getElementById('advance-modal').classList.remove('hidden');
         }
@@ -614,6 +750,7 @@
                 document.getElementById('lw-worker-name-display').textContent = workerName;
                 document.getElementById('lw-worker-name-display').classList.remove('hidden');
                 document.getElementById('lw-worker-select-container').classList.add('hidden');
+                updateLogWorkUIForWorker(workerId);
             } else {
                 document.getElementById('lw-worker-id').value = '';
                 document.getElementById('lw-worker-name-display').classList.add('hidden');
@@ -624,6 +761,7 @@
                 globalWorkersList.forEach(w => {
                     select.innerHTML += `<option value="${w.id}">${w.name}</option>`;
                 });
+                updateLogWorkUIForWorker(null);
             }
             
             document.getElementById('lw-garments-container').innerHTML = '';
@@ -634,6 +772,35 @@
             addLogWorkRow();
             
             document.getElementById('log-work-modal').classList.remove('hidden');
+        }
+
+        function handleWorkerSelectChange() {
+            const workerId = document.getElementById('lw-worker-select').value;
+            updateLogWorkUIForWorker(workerId ? parseInt(workerId) : null);
+        }
+
+        function updateLogWorkUIForWorker(workerId) {
+            const garmentsSection = document.getElementById('lw-garments-section');
+            const attendanceSection = document.getElementById('lw-attendance-section');
+            const isPresentCheckbox = document.getElementById('lw-is-present');
+            
+            isPresentCheckbox.checked = true; // default to present
+
+            if (!workerId) {
+                garmentsSection.classList.remove('hidden');
+                attendanceSection.classList.add('hidden');
+                return;
+            }
+
+            const worker = globalWorkersList.find(w => w.id === workerId);
+            if (worker && worker.worker_type === 'DAILY_SALARY') {
+                attendanceSection.classList.remove('hidden');
+                // We keep garments section visible as well in case they did extra piece work? 
+                // Or hide it to keep it simple? The user said "agr ham uska kuch exta work dalte he to vo bhi update kr do total me". 
+                // Extra work might just use the "Extra Amount" fields below. Let's keep garments visible but optional.
+            } else {
+                attendanceSection.classList.add('hidden');
+            }
         }
         
         function addLogWorkRow() {
@@ -670,6 +837,8 @@
             const extra_desc = document.getElementById('lw-extra-desc').value;
             const extra_amount = parseFloat(document.getElementById('lw-extra-amount').value) || 0;
             
+            const is_present = document.getElementById('lw-is-present').checked;
+            
             const rows = document.querySelectorAll('.lw-garment-row');
             const items = [];
             
@@ -681,8 +850,11 @@
                 }
             });
             
-            if (items.length === 0 && extra_amount <= 0) {
-                alert("Please add at least one garment or an extra amount.");
+            const worker = globalWorkersList.find(w => w.id === worker_id);
+            const isDaily = worker && worker.worker_type === 'DAILY_SALARY';
+            
+            if (items.length === 0 && extra_amount <= 0 && !(isDaily && is_present)) {
+                alert("Please add at least one garment, an extra amount, or mark present (for daily workers).");
                 return;
             }
             
@@ -691,13 +863,138 @@
                     worker_id: worker_id,
                     items: items,
                     extra_desc: extra_desc,
-                    extra_amount: extra_amount
+                    extra_amount: extra_amount,
+                    is_present: is_present
                 });
                 document.getElementById('log-work-modal').classList.add('hidden');
                 loadWorkers();
             } catch(e) {
                 console.error(e);
                 alert("Error logging work");
+            }
+        }
+
+        async function deleteWorker(workerId, workerName) {
+            if (!confirm(`Are you sure you want to delete worker "${workerName}"?\n\nThis will also delete all their work entries, advances, and task records. This action cannot be undone.`)) {
+                return;
+            }
+            try {
+                await window.API.request('delete_worker', {worker_id: workerId});
+                loadWorkers();
+            } catch(e) {
+                console.error(e);
+                alert("Failed to delete worker: " + e);
+            }
+        }
+
+        async function openWorkerHistory(workerId, workerName) {
+            document.getElementById('history-modal-title').textContent = workerName + ' — Payment History';
+            document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant"><span class="material-symbols-outlined animate-spin text-2xl">refresh</span></td></tr>';
+            document.getElementById('history-summary').innerHTML = '';
+            document.getElementById('worker-history-modal').classList.remove('hidden');
+
+            try {
+                const res = await window.API.request('get_worker_history', {worker_id: workerId});
+                const ledgerRes = await window.API.request('get_worker_ledger', {worker_id: workerId});
+                const ledger = ledgerRes.ledger || {};
+
+                // Current worker globally to use in Settle Account
+                document.getElementById('history-modal-title').dataset.workerId = workerId;
+                document.getElementById('history-modal-title').dataset.workerName = workerName;
+                document.getElementById('btn-settle-account').dataset.balance = ledger.remaining_balance || 0;
+
+                // Summary cards
+                document.getElementById('history-summary').innerHTML = `
+                    <div class="flex-1 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                        <div class="text-xs text-green-600 font-bold uppercase tracking-wider mb-1">Unsettled Earned</div>
+                        <div class="text-2xl font-bold text-green-700">₹${(ledger.total_earned || 0).toFixed(0)}</div>
+                    </div>
+                    <div class="flex-1 bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+                        <div class="text-xs text-orange-600 font-bold uppercase tracking-wider mb-1">Unsettled Advance</div>
+                        <div class="text-2xl font-bold text-orange-600">₹${(ledger.total_advance || 0).toFixed(0)}</div>
+                    </div>
+                    <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                        <div class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Current Balance</div>
+                        <div class="text-2xl font-bold text-blue-700">₹${(ledger.remaining_balance || 0).toFixed(0)}</div>
+                    </div>
+                `;
+
+                if (ledger.total_earned === 0 && ledger.total_advance === 0) {
+                    document.getElementById('btn-settle-account').classList.add('hidden');
+                } else {
+                    document.getElementById('btn-settle-account').classList.remove('hidden');
+                }
+
+                const tbody = document.getElementById('history-list');
+                tbody.innerHTML = '';
+
+                const history = res.history || [];
+                if (history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">No payment history found.</td></tr>';
+                    return;
+                }
+
+                history.forEach(h => {
+                    const date = h.date ? new Date(h.date).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : '-';
+                    const isWork = h.type === 'WORK';
+                    const typeBadge = isWork
+                        ? '<span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-800 font-bold">WORK</span>'
+                        : '<span class="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold">ADVANCE</span>';
+                    
+                    const statusBadge = h.status === 'APPROVED' ? 'bg-green-100 text-green-800'
+                        : h.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800'
+                        : h.status === 'REJECTED' ? 'bg-red-100 text-red-800'
+                        : 'bg-blue-100 text-blue-800';
+
+                    let amountColor = isWork ? 'text-green-700' : 'text-orange-600';
+                    let amountPrefix = isWork ? '+' : '-';
+                    
+                    let settledBadge = '';
+                    let rowClass = '';
+                    if (h.is_settled) {
+                        amountColor = 'text-on-surface-variant';
+                        rowClass = 'opacity-60 bg-surface-container-lowest';
+                        settledBadge = '<span class="ml-2 text-[10px] bg-surface-container-highest px-1.5 py-0.5 rounded text-on-surface-variant uppercase font-bold tracking-wider">Settled</span>';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = `border-b border-surface-container-highest/50 last:border-0 ${rowClass}`;
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 text-sm">${date}</td>
+                        <td class="px-4 py-3">${typeBadge}</td>
+                        <td class="px-4 py-3 text-sm">${h.description}${settledBadge}</td>
+                        <td class="px-4 py-3"><span class="text-xs px-2 py-0.5 rounded ${statusBadge} font-bold">${h.status}</span></td>
+                        <td class="px-4 py-3 text-right font-bold ${amountColor}">${amountPrefix}₹${h.amount.toFixed(0)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-error">Failed to load history</td></tr>';
+            }
+        }
+        
+        async function settleAccount() {
+            const workerId = document.getElementById('history-modal-title').dataset.workerId;
+            const workerName = document.getElementById('history-modal-title').dataset.workerName;
+            const balance = parseFloat(document.getElementById('btn-settle-account').dataset.balance || "0");
+            
+            if (Math.abs(balance) > 0.01) {
+                alert(`Cannot settle account yet.\n\nRemaining Balance: ₹${balance.toFixed(0)}\n\nPlease complete the balance (bring it to ₹0) by logging work or giving advance before settling.`);
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to Settle the account for ${workerName}?\n\nThis will mark all current work and advances as paid/settled, bringing the balance to ₹0. Old history will be kept, but the ledger will start fresh from today.`)) {
+                return;
+            }
+            
+            try {
+                await window.API.request('settle_worker_account', {worker_id: workerId});
+                openWorkerHistory(workerId, workerName); // refresh modal
+                loadWorkers(); // refresh background table
+            } catch(e) {
+                console.error(e);
+                alert("Failed to settle account: " + e);
             }
         }
 

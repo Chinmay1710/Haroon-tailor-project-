@@ -9,7 +9,7 @@ import threading
 import os
 import shutil
 import glob
-from app.config import APP_DATA_DIR
+from app.config import APP_DATA_DIR, UPLOADS_DIR
 from app.printing.receipt_printer import generate_receipt_pdf
 from app.web import tunnel
 
@@ -189,6 +189,19 @@ class WebBridge(QObject):
                 success = worker_srv.approve_entry(payload.get("entry_id"), payload.get("status"))
                 response = {"status": "success" if success else "error"}
 
+            elif action == "edit_pending_entry":
+                worker_srv = self.services["worker"]
+                result = worker_srv.edit_pending_entry(
+                    entry_id=payload.get("entry_id"),
+                    new_quantity=int(payload.get("quantity", 0)),
+                    new_extra_amount=float(payload.get("extra_amount", 0.0)),
+                    new_total_amount=float(payload.get("total_amount", 0.0))
+                )
+                if "error" in result:
+                    response = {"status": "error", "message": result["error"]}
+                else:
+                    response = {"status": "success"}
+
             elif action == "record_advance":
                 worker_srv = self.services["worker"]
                 advance = worker_srv.record_advance(payload.get("worker_id"), float(payload.get("amount", 0)), payload.get("notes", ""))
@@ -198,6 +211,30 @@ class WebBridge(QObject):
                 worker_srv = self.services["worker"]
                 ledger = worker_srv.get_worker_ledger(payload.get("worker_id"))
                 response = {"status": "success", "data": {"ledger": ledger}}
+
+            elif action == "delete_worker":
+                worker_srv = self.services["worker"]
+                worker_id = payload.get("worker_id") or payload.get("id")
+                success = worker_srv.delete_worker(int(worker_id))
+                if success:
+                    response = {"status": "success"}
+                else:
+                    response = {"status": "error", "message": "Worker not found"}
+
+            elif action == "get_worker_history":
+                worker_srv = self.services["worker"]
+                worker_id = payload.get("worker_id")
+                history_data = worker_srv.get_worker_history(int(worker_id))
+                response = {"status": "success", "data": history_data}
+
+            elif action == "settle_worker_account":
+                worker_srv = self.services["worker"]
+                worker_id = payload.get("worker_id")
+                success = worker_srv.settle_worker_account(int(worker_id))
+                if success:
+                    response = {"status": "success"}
+                else:
+                    response = {"status": "error", "message": "Worker not found"}
 
 
             # ────────────────────────────────────────────────────────────
@@ -635,13 +672,26 @@ class WebBridge(QObject):
                     }
                     
                     for item in o.items:
+                        image_path_out = ""
+                        if item.image_path:
+                            # Split by comma for multiple images
+                            paths = item.image_path.split(',')
+                            abs_paths = []
+                            for p in paths:
+                                p = p.strip()
+                                if p:
+                                    # the path is typically '../uploads/items/filename.jpg'
+                                    filename = os.path.basename(p)
+                                    abs_paths.append(f"file://{os.path.join(UPLOADS_DIR, 'items', filename)}")
+                            image_path_out = ",".join(abs_paths)
+                            
                         item_data = {
                             "id": item.id,
                             "clothing_type": item.clothing_type,
                             "quantity": item.quantity,
                             "price": item.price,
                             "notes": item.notes or "",
-                            "image_path": getattr(item, "image_path", None) or "",
+                            "image_path": image_path_out,
                             "measurements": {}
                         }
                         for m in item.measurements:
@@ -999,7 +1049,6 @@ class WebBridge(QObject):
                             shutil.copy2(db_path, os.path.join(temp_dir, "tailor_shop.db"))
                             
                             # 2. Copy uploads folder if it exists
-                            from app.config import UPLOADS_DIR
                             if os.path.exists(UPLOADS_DIR):
                                 shutil.copytree(UPLOADS_DIR, os.path.join(temp_dir, "uploads"))
                                 
@@ -1075,7 +1124,6 @@ class WebBridge(QObject):
                                     
                                 # 2. Restore Uploads (Photos)
                                 extracted_uploads = os.path.join(temp_dir, "uploads")
-                                from app.config import UPLOADS_DIR
                                 
                                 if os.path.exists(extracted_uploads):
                                     # Clear current uploads if they exist to avoid mixing
@@ -1176,6 +1224,7 @@ class WebBridge(QObject):
                 items = payload.get("items", [])
                 extra_desc = payload.get("extra_desc", "")
                 extra_amount = float(payload.get("extra_amount", 0))
+                is_present = bool(payload.get("is_present", False))
 
                 if items:
                     for i, item in enumerate(items):
@@ -1188,7 +1237,8 @@ class WebBridge(QObject):
                             bill_number="Manual Log",
                             extra_work_description=ext_desc,
                             extra_amount=ext_amt,
-                            auto_approve=True
+                            auto_approve=True,
+                            is_present=is_present if i == 0 else False
                         )
                 else:
                     worker_srv.submit_work_entry(
@@ -1198,7 +1248,8 @@ class WebBridge(QObject):
                         bill_number="Manual Log",
                         extra_work_description=extra_desc,
                         extra_amount=extra_amount,
-                        auto_approve=True
+                        auto_approve=True,
+                        is_present=is_present
                     )
                 response = {"status": "success"}
 
@@ -1214,7 +1265,6 @@ class WebBridge(QObject):
             if isinstance(obj, dict):
                 for k, v in obj.items():
                     if isinstance(v, str) and v.startswith("../uploads/items/"):
-                        from app.config import UPLOADS_DIR
                         filename = v.split("/")[-1]
                         abs_path = os.path.join(UPLOADS_DIR, "items", filename)
                         obj[k] = f"file:///{abs_path}".replace("\\", "/")
