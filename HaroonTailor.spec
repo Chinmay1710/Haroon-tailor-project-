@@ -10,8 +10,12 @@ a = Analysis(
     hiddenimports=[
         'PySide6.QtWebEngineWidgets', 'PySide6.QtWebEngineCore', 'PySide6.QtWebChannel', 
         'sqlalchemy', 'sqlite3', 'reportlab',
+        'app.models.customer', 'app.models.measurement', 'app.models.order',
+        'app.models.payment', 'app.models.expense', 'app.models.settings',
         'app.models.worker', 'app.models.stock',
         'app.services.stock_service', 'app.services.worker_service', 'app.services.dictation_service',
+        'app.services.order_service', 'app.services.customer_service', 'app.services.whatsapp_service',
+        'app.services.backup_service', 'app.services.pdf_service',
         'app.web.tunnel', 'app.web.server', 'app.printing.receipt_printer',
         'pyngrok', 'fastapi', 'uvicorn', 'pydantic', 'qrcode', 'speech_recognition'
     ],
