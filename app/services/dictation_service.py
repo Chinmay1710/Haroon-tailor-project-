@@ -110,6 +110,13 @@ class DictationService(QObject):
         except Exception as e:
             error = f"An error occurred: {e}"
             logger.error(error)
+            
+        # Clean up the temporary audio file
+        try:
+            if os.path.exists(self.audio_path):
+                os.remove(self.audio_path)
+        except Exception as cleanup_err:
+            logger.warning(f"Failed to delete temp audio file: {cleanup_err}")
         
         # Emit the result back to the main thread
         self.dictation_finished.emit(textarea_id, text, error)

@@ -12,6 +12,9 @@ import glob
 from app.config import APP_DATA_DIR, UPLOADS_DIR
 from app.printing.receipt_printer import generate_receipt_pdf
 from app.web import tunnel
+import logging
+
+logger = logging.getLogger(__name__)
 
 class WebBridge(QObject):
     """Bridge between Javascript and Python."""
