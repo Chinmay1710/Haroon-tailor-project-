@@ -1000,7 +1000,8 @@ class WebBridge(QObject):
                             "measurement_unit": s.measurement_unit,
                             "twilio_account_sid": s.twilio_account_sid,
                             "twilio_auth_token": s.twilio_auth_token,
-                            "twilio_sender_number": s.twilio_sender_number
+                            "twilio_sender_number": s.twilio_sender_number,
+                            "dictation_language": s.dictation_language
                         }
                         response = {"status": "success", "data": self._settings_cache}
                     finally:

@@ -22,8 +22,9 @@ class ShopSettings(Base):
     date_format = Column(String(20), default=DEFAULT_DATE_FORMAT)
     receipt_paper_size = Column(String(10), default=DEFAULT_PAPER_SIZE)
     backup_location = Column(Text, default=BACKUP_DEFAULT_DIR)
-    auto_backup = Column(Boolean, default=False)
+    auto_backup = Column(Boolean, default=True)
     is_setup_done = Column(Boolean, default=False)
+    dictation_language = Column(String(20), default="en-IN")
     
     # Twilio Integration Settings
     twilio_account_sid = Column(String(255), default="")

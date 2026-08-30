@@ -43,7 +43,7 @@ async function loadSettings() {
         
         const dictationSelect = document.getElementById('dictationLanguageSelect');
         if (dictationSelect) {
-            dictationSelect.value = localStorage.getItem('dictationLanguage') || 'en-IN';
+            dictationSelect.value = data.dictation_language || 'en-IN';
         }
     } catch (e) {
         console.error(e);
@@ -68,7 +68,7 @@ async function saveSettings() {
     
     const dictationSelect = document.getElementById('dictationLanguageSelect');
     if (dictationSelect) {
-        localStorage.setItem('dictationLanguage', dictationSelect.value);
+        payload.dictation_language = dictationSelect.value;
     }
     
     try {
