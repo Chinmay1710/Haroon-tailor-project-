@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // However, API might not be connected immediately. We should poll or wait for QWebChannel.
     // To ensure it runs only when QWebChannel is ready, we can check for window.pyBridge
     
+    window.initDashboard = initDashboard;
     function initDashboard() {
         if (!window.pyBridge) {
             setTimeout(initDashboard, 100);

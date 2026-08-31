@@ -374,7 +374,15 @@ class MainWindow(QMainWindow):
     def _on_customer_added(self):
         """Trigger UI refresh when a customer is added via the QR code portal."""
         # This will call loadCustomers() if it exists on the page
-        script = "if (typeof window.loadCustomers === 'function') { window.loadCustomers(); } else if (window.location.href.includes('customers')) { window.location.reload(); }"
+        script = """
+        if (typeof window.loadCustomers === 'function') { 
+            window.loadCustomers(); 
+        } else if (typeof window.initDashboard === 'function') {
+            window.initDashboard();
+        } else { 
+            window.location.reload(true); 
+        }
+        """
         self.web_view.page().runJavaScript(script)
 
     def _on_order_added(self):
@@ -385,7 +393,7 @@ class MainWindow(QMainWindow):
         } else if (typeof window.loadDashboard === 'function') { 
             window.loadDashboard(); 
         } else {
-            window.location.reload();
+            window.location.reload(true);
         }
         """
         self.web_view.page().runJavaScript(script)

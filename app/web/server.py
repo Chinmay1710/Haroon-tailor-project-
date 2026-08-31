@@ -389,6 +389,11 @@ class WebServerThread(Thread):
 
     def run(self):
         logger.info(f"Starting Worker Portal server on {self.host}:{self.port}")
+        import sys, os
+        if sys.stdout is None:
+            sys.stdout = open(os.devnull, 'w')
+        if sys.stderr is None:
+            sys.stderr = open(os.devnull, 'w')
         config = uvicorn.Config(app, host=self.host, port=self.port, log_level="info", access_log=False)
         self.server = uvicorn.Server(config)
         self.server.run()

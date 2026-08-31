@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init();
 });
 
+window.loadCustomers = loadCustomers;
 async function loadCustomers(initialCustomerId) {
     try {
         availableCustomers = await window.API.request('get_customers');

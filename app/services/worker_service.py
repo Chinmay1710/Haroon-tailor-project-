@@ -61,15 +61,16 @@ class WorkerService:
 
     def authenticate_worker(self, name: str, pin: str) -> Optional[Dict[str, Any]]:
         with get_session() as session:
+            session.commit()
             clean_name = name.strip().lower()
             clean_pin = pin.strip()
-            worker = session.query(Worker).filter(
-                func.lower(func.trim(Worker.name)) == clean_name, 
+            workers = session.query(Worker).filter(
                 func.trim(Worker.pin) == clean_pin, 
                 Worker.is_active == True
-            ).first()
-            if worker:
-                return {"id": worker.id, "name": worker.name, "pin": worker.pin, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
+            ).all()
+            for worker in workers:
+                if worker.name.strip().lower() == clean_name:
+                    return {"id": worker.id, "name": worker.name, "pin": worker.pin, "worker_type": worker.worker_type, "worker_role": getattr(worker, "worker_role", WorkerRole.STITCHING.value)}
             return None
 
     # --- Garment Rates ---
