@@ -1,8 +1,14 @@
 from __future__ import annotations
-"""Tailor Shop Manager — main entry point."""
+"""Tailor Shop Manager - main entry point."""
 
 import sys
 import os
+
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
 
 # PRESERVE SANDBOX REQUIREMENT BUT ALLOW GPU ACCELERATION
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox"
@@ -68,3 +74,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
