@@ -10,8 +10,9 @@ if sys.stdout is None:
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
-# PRESERVE SANDBOX REQUIREMENT BUT ALLOW GPU ACCELERATION
-os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox"
+# RESTORE SOFTWARE RENDERING COMPATIBILITY
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox --disable-gpu"
+os.environ["QT_OPENGL"] = "software"
 
 # Ensure the project root is on the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -74,4 +75,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
