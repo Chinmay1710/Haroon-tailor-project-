@@ -16,24 +16,26 @@ class StockRepository:
     def get_low_stock(self) -> list[StockItem]:
         return self.session.query(StockItem).filter(StockItem.quantity <= StockItem.min_quantity).order_by(asc(StockItem.name)).all()
 
-    def create(self, name: str, category: str, quantity: float, unit: str, min_quantity: float) -> StockItem:
+    def create(self, name: str, category: str, quantity: float, unit: str, min_quantity: float, unit_cost: float = 0.0) -> StockItem:
         item = StockItem(
             name=name,
             category=category,
             quantity=quantity,
             unit=unit,
-            min_quantity=min_quantity
+            min_quantity=min_quantity,
+            unit_cost=unit_cost
         )
         self.session.add(item)
         return item
 
-    def update(self, item_id: int, name: str, category: str, unit: str, min_quantity: float) -> StockItem | None:
+    def update(self, item_id: int, name: str, category: str, unit: str, min_quantity: float, unit_cost: float = 0.0) -> StockItem | None:
         item = self.get_by_id(item_id)
         if item:
             item.name = name
             item.category = category
             item.unit = unit
             item.min_quantity = min_quantity
+            item.unit_cost = unit_cost
         return item
 
     def update_quantity(self, item_id: int, new_quantity: float) -> StockItem | None:

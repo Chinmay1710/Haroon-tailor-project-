@@ -16,6 +16,7 @@ class StockItem(Base):
     quantity = Column(Float, default=0.0, nullable=False)
     unit = Column(String(20), default="pieces", nullable=False)
     min_quantity = Column(Float, default=0.0, nullable=False)
+    unit_cost = Column(Float, default=0.0, nullable=False)  # Cost per unit for purchase tracking
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
                         onupdate=lambda: datetime.now(timezone.utc), nullable=False)

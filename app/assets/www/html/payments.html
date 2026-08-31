@@ -120,8 +120,8 @@
         <span class="material-symbols-outlined text-[18px]">visibility</span> Show Amounts
     </button>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-stack_lg">
-<!-- Card 1 -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-stack_lg">
+<!-- Card 1: Total Collected -->
 <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest flex flex-col justify-between">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
@@ -136,7 +136,7 @@
         </p>
 </div>
 </div>
-<!-- Card 2 -->
+<!-- Card 2: Pending Payments -->
 <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest flex flex-col justify-between">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-full bg-error-container/30 flex items-center justify-center text-error">
@@ -149,7 +149,7 @@
 <p class="font-body-sm text-sm text-on-surface-variant mt-1 hidden">Across active orders</p>
 </div>
 </div>
-<!-- Card 3 -->
+<!-- Card 3: Today's Payments -->
 <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest flex flex-col justify-between">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
@@ -162,13 +162,41 @@
 <p class="font-body-sm text-sm text-on-surface-variant mt-1" id="dash-today-transactions-count">0 transactions today</p>
 </div>
 </div>
+<!-- Card 4: Worker Dues -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest flex flex-col justify-between">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-[#f59e0b]/10 flex items-center justify-center text-[#f59e0b]">
+<span class="material-symbols-outlined">engineering</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant">Worker Dues</span>
+</div>
+<div>
+<h3 class="font-display text-display text-on-surface" id="dash-worker-dues" data-amount="0">****</h3>
+<p class="font-body-sm text-sm text-on-surface-variant mt-1" id="dash-worker-count">0 active workers</p>
+</div>
+</div>
+<!-- Card 5: Stock Value -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest flex flex-col justify-between">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-[#10b981]/15 flex items-center justify-center text-[#10b981]">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant">Total Stock Value</span>
+</div>
+<div>
+<h3 class="font-display text-display text-on-surface" id="dash-stock-value" data-amount="0">****</h3>
+<p class="font-body-sm text-sm text-on-surface-variant mt-1" id="dash-stock-count">0 items in inventory</p>
+</div>
+</div>
 </div>
 <!-- Payment Table Area -->
 <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest overflow-hidden">
 <div class="px-6 py-4 border-b border-surface-container-highest flex justify-between items-center bg-surface/50">
-<div class="flex gap-4">
+<div class="flex gap-4 flex-wrap">
     <button id="tab-transactions" class="font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1">Recent Transactions</button>
     <button id="tab-pending" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Pending Balances</button>
+    <button id="tab-workers" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Worker Payments</button>
+    <button id="tab-stock" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Stock</button>
 </div>
 <div class="flex gap-2 relative" id="payment-controls">
     <div class="relative inline-block">

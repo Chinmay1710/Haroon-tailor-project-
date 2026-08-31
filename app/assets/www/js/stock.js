@@ -41,7 +41,7 @@ function renderStockTable(items) {
     tbody.innerHTML = '';
     
     if (items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-on-surface-variant font-label-lg">No stock items found. Click 'New Item' to add one.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-on-surface-variant font-label-lg">No stock items found. Click 'New Item' to add one.</td></tr>`;
         return;
     }
     
@@ -63,6 +63,8 @@ function renderStockTable(items) {
             <td class="py-4 px-6 font-body-md ${qtyColor} text-right">
                 ${item.quantity} ${item.unit}
             </td>
+            <td class="py-4 px-6 font-body-md text-on-surface-variant text-right">${item.unit_cost > 0 ? window.API.formatCurrency(item.unit_cost) : '-'}</td>
+            <td class="py-4 px-6 font-body-md text-on-surface-variant text-right">${(item.unit_cost > 0 && item.quantity > 0) ? window.API.formatCurrency(item.unit_cost * item.quantity) : '-'}</td>
             <td class="py-4 px-6 font-body-md text-on-surface-variant text-right">${item.min_quantity}</td>
             <td class="py-4 px-6 text-center">${statusBadge}</td>
             <td class="py-4 px-6 text-right">
@@ -109,6 +111,8 @@ function openStockModal(itemId = null) {
     document.getElementById('stock-quantity').value = '';
     document.getElementById('stock-unit').value = 'meters';
     document.getElementById('stock-min-quantity').value = '';
+    const unitCostInput = document.getElementById('stock-unit-cost');
+    if (unitCostInput) unitCostInput.value = '';
     
     if (itemId) {
         document.getElementById('modal-title').textContent = 'Edit Stock Item';
@@ -124,6 +128,7 @@ function openStockModal(itemId = null) {
             
             document.getElementById('stock-unit').value = item.unit;
             document.getElementById('stock-min-quantity').value = item.min_quantity;
+            if (unitCostInput) unitCostInput.value = item.unit_cost || 0;
         }
     } else {
         document.getElementById('modal-title').textContent = 'Add Stock Item';
@@ -155,6 +160,8 @@ async function saveStockItem() {
     const category = document.getElementById('stock-category').value;
     const unit = document.getElementById('stock-unit').value;
     const min_quantity = document.getElementById('stock-min-quantity').value;
+    const unitCostInput = document.getElementById('stock-unit-cost');
+    const unit_cost = unitCostInput ? unitCostInput.value : 0;
     
     if (!name) {
         window.API.toast("Item Name is required", "error");
@@ -168,7 +175,8 @@ async function saveStockItem() {
                 name: name,
                 category: category,
                 unit: unit,
-                min_quantity: min_quantity
+                min_quantity: min_quantity,
+                unit_cost: unit_cost
             });
             window.API.toast("Stock item updated successfully", "success");
         } else {
@@ -178,7 +186,8 @@ async function saveStockItem() {
                 category: category,
                 quantity: quantity || 0,
                 unit: unit,
-                min_quantity: min_quantity || 0
+                min_quantity: min_quantity || 0,
+                unit_cost: unit_cost || 0
             });
             window.API.toast("Stock item added successfully", "success");
         }

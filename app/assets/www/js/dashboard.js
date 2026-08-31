@@ -29,6 +29,16 @@ async function loadDashboardStats(date_str = null) {
         document.getElementById('stat-sales-today').innerText = window.API.formatCurrency(data.sales_today);
         document.getElementById('stat-pending-payments').innerText = window.API.formatCurrency(data.pending_payments);
         document.getElementById('stat-deliveries-today').innerText = data.deliveries_today;
+        
+        // Populate new financial cards
+        const wd = document.getElementById('stat-worker-dues');
+        if (wd) wd.innerText = window.API.formatCurrency(data.worker_total_dues || 0);
+        
+        const ls = document.getElementById('stat-low-stock');
+        if (ls) ls.innerText = data.low_stock_count || 0;
+
+        const sv = document.getElementById('stat-stock-value');
+        if (sv) sv.innerText = window.API.formatCurrency(data.total_stock_value || 0);
 
         // 2. Update Order Pipeline Counts
         const counts = data.status_counts;

@@ -284,6 +284,40 @@ class WebBridge(QObject):
                     "recent_orders": recent_orders,
                     "deliveries": deliveries
                 }
+                
+                # Add worker dues and stock info
+                try:
+                    from app.models.worker import Worker, WorkEntry, WorkerAdvance
+                    from app.models.stock import StockItem
+                    from sqlalchemy import func
+                    from app.database.engine import get_session
+                    w_session = get_session()
+                    try:
+                        total_earned = w_session.query(func.sum(WorkEntry.total_amount)).filter(
+                            WorkEntry.status == "APPROVED",
+                            WorkEntry.is_settled == False
+                        ).scalar() or 0.0
+                        total_advanced = w_session.query(func.sum(WorkerAdvance.amount)).filter(
+                            WorkerAdvance.is_settled == False
+                        ).scalar() or 0.0
+                        data["worker_total_dues"] = total_earned - total_advanced
+                        
+                        low_stock = w_session.query(func.count(StockItem.id)).filter(
+                            StockItem.quantity <= StockItem.min_quantity
+                        ).scalar() or 0
+                        data["low_stock_count"] = low_stock
+                        
+                        all_stock = w_session.query(StockItem).all()
+                        total_stock_val = sum(item.quantity * getattr(item, 'unit_cost', 0.0) for item in all_stock)
+                        data["total_stock_value"] = total_stock_val
+                    finally:
+                        w_session.close()
+                except Exception as e:
+                    logger.error(f"Failed to get worker/stock dashboard data: {e}")
+                    data["worker_total_dues"] = 0
+                    data["low_stock_count"] = 0
+                    data["total_stock_value"] = 0
+                
                 response = {"status": "success", "data": data}
 
             # ────────────────────────────────────────────────────────────
@@ -857,6 +891,129 @@ class WebBridge(QObject):
                 else:
                     response = {"status": "success"}
 
+            elif action == "get_worker_payment_summary":
+                from app.database.engine import get_session
+                from app.models.worker import Worker, WorkEntry, WorkerAdvance
+                from sqlalchemy import func
+                session = get_session()
+                try:
+                    workers = session.query(Worker).filter(Worker.is_active == True).all()
+                    worker_list = []
+                    total_dues = 0.0
+                    total_advances = 0.0
+                    total_earned = 0.0
+                    
+                    for w in workers:
+                        earned = session.query(func.sum(WorkEntry.total_amount)).filter(
+                            WorkEntry.worker_id == w.id,
+                            WorkEntry.status == "APPROVED",
+                            WorkEntry.is_settled == False
+                        ).scalar() or 0.0
+                        
+                        advanced = session.query(func.sum(WorkerAdvance.amount)).filter(
+                            WorkerAdvance.worker_id == w.id,
+                            WorkerAdvance.is_settled == False
+                        ).scalar() or 0.0
+                        
+                        remaining = earned - advanced
+                        total_earned += earned
+                        total_advances += advanced
+                        total_dues += remaining
+                        
+                        # Get recent advances for history
+                        recent_advances = session.query(WorkerAdvance).filter(
+                            WorkerAdvance.worker_id == w.id,
+                            WorkerAdvance.is_settled == False
+                        ).order_by(WorkerAdvance.date.desc()).limit(5).all()
+                        
+                        advances_list = [{
+                            "id": a.id,
+                            "amount": a.amount,
+                            "date": a.date.isoformat() if a.date else "",
+                            "notes": a.notes or ""
+                        } for a in recent_advances]
+                        
+                        worker_list.append({
+                            "id": w.id,
+                            "name": w.name,
+                            "phone": w.phone or "",
+                            "worker_type": w.worker_type,
+                            "total_earned": earned,
+                            "total_advance": advanced,
+                            "remaining_due": remaining,
+                            "recent_advances": advances_list
+                        })
+                    
+                    response = {"status": "success", "data": {
+                        "workers": worker_list,
+                        "summary": {
+                            "total_earned": total_earned,
+                            "total_advances": total_advances,
+                            "total_dues": total_dues,
+                            "worker_count": len(worker_list)
+                        }
+                    }}
+                finally:
+                    session.close()
+
+            elif action == "get_stock_payment_summary":
+                from app.database.engine import get_session
+                from app.models.stock import StockItem, StockUsage
+                from app.models.worker import Worker
+                from sqlalchemy import func
+                session = get_session()
+                try:
+                    items = session.query(StockItem).order_by(StockItem.name).all()
+                    stock_list = []
+                    total_stock_value = 0.0
+                    low_stock_count = 0
+                    
+                    for item in items:
+                        stock_value = item.quantity * (item.unit_cost if hasattr(item, 'unit_cost') else 0.0)
+                        total_stock_value += stock_value
+                        
+                        if item.quantity <= item.min_quantity:
+                            low_stock_count += 1
+                        
+                        # Get recent usage
+                        recent_usage = session.query(
+                            StockUsage, Worker.name
+                        ).join(
+                            Worker, StockUsage.worker_id == Worker.id
+                        ).filter(
+                            StockUsage.stock_item_id == item.id
+                        ).order_by(StockUsage.date.desc()).limit(3).all()
+                        
+                        usage_list = [{
+                            "worker_name": u[1],
+                            "quantity": u[0].quantity,
+                            "date": u[0].date.isoformat() if u[0].date else ""
+                        } for u in recent_usage]
+                        
+                        stock_list.append({
+                            "id": item.id,
+                            "name": item.name,
+                            "category": item.category,
+                            "quantity": item.quantity,
+                            "unit": item.unit,
+                            "unit_cost": item.unit_cost if hasattr(item, 'unit_cost') else 0.0,
+                            "total_value": stock_value,
+                            "min_quantity": item.min_quantity,
+                            "is_low": item.quantity <= item.min_quantity,
+                            "recent_usage": usage_list
+                        })
+                    
+                    response = {"status": "success", "data": {
+                        "items": stock_list,
+                        "summary": {
+                            "total_value": total_stock_value,
+                            "total_items": len(stock_list),
+                            "low_stock_count": low_stock_count
+                        }
+                    }}
+                finally:
+                    session.close()
+
             # ────────────────────────────────────────────────────────────
             # DELIVERIES
             # ────────────────────────────────────────────────────────────
@@ -1172,13 +1329,13 @@ class WebBridge(QObject):
             elif action == "get_all_stock":
                 from app.services.stock_service import stock_service
                 items = stock_service.get_all_stock()
-                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity} for i in items]
+                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity, "unit_cost": getattr(i, 'unit_cost', 0.0)} for i in items]
                 response = {"status": "success", "data": data}
             
             elif action == "get_low_stock":
                 from app.services.stock_service import stock_service
                 items = stock_service.get_low_stock_items()
-                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity} for i in items]
+                data = [{"id": i.id, "name": i.name, "category": i.category, "quantity": i.quantity, "unit": i.unit, "min_quantity": i.min_quantity, "unit_cost": getattr(i, 'unit_cost', 0.0)} for i in items]
                 response = {"status": "success", "data": data}
 
             elif action == "add_stock_item":
@@ -1188,7 +1345,8 @@ class WebBridge(QObject):
                     category=payload.get("category"),
                     quantity=float(payload.get("quantity", 0)),
                     unit=payload.get("unit"),
-                    min_quantity=float(payload.get("min_quantity", 0))
+                    min_quantity=float(payload.get("min_quantity", 0)),
+                    unit_cost=float(payload.get("unit_cost", 0))
                 )
                 response = {"status": "success", "data": item}
                 
@@ -1199,7 +1357,8 @@ class WebBridge(QObject):
                     name=payload.get("name"),
                     category=payload.get("category"),
                     unit=payload.get("unit"),
-                    min_quantity=float(payload.get("min_quantity", 0))
+                    min_quantity=float(payload.get("min_quantity", 0)),
+                    unit_cost=float(payload.get("unit_cost", 0))
                 )
                 response = {"status": "success", "data": item}
                 

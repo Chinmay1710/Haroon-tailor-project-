@@ -22,7 +22,7 @@ class StockService:
         finally:
             session.close()
 
-    def add_stock_item(self, name: str, category: str, quantity: float, unit: str, min_quantity: float) -> dict:
+    def add_stock_item(self, name: str, category: str, quantity: float, unit: str, min_quantity: float, unit_cost: float = 0.0) -> dict:
         session = get_session()
         try:
             repo = StockRepository(session)
@@ -31,7 +31,8 @@ class StockService:
                 category=category,
                 quantity=quantity,
                 unit=unit,
-                min_quantity=min_quantity
+                min_quantity=min_quantity,
+                unit_cost=unit_cost
             )
             session.commit()
             logger.info(f"Added stock item: {name}")
@@ -43,11 +44,11 @@ class StockService:
         finally:
             session.close()
 
-    def update_stock_item(self, item_id: int, name: str, category: str, unit: str, min_quantity: float) -> dict:
+    def update_stock_item(self, item_id: int, name: str, category: str, unit: str, min_quantity: float, unit_cost: float = 0.0) -> dict:
         session = get_session()
         try:
             repo = StockRepository(session)
-            item = repo.update(item_id, name, category, unit, min_quantity)
+            item = repo.update(item_id, name, category, unit, min_quantity, unit_cost)
             if not item:
                 raise ValueError("Stock item not found")
             session.commit()

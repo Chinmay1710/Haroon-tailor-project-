@@ -1,11 +1,14 @@
 /**
  * payments.js - Data binding for Payments List
+ * Handles: Customer Transactions, Pending Balances, Worker Payments, Stock
  */
 
 let allPayments = [];
 let currentlyRendered = [];
 let currentTab = 'transactions';
 let allPendingOrders = [];
+let workerPaymentData = null;
+let stockPaymentData = null;
 let kpisVisible = false;
 
 window.toggleKPIs = function() {
@@ -14,7 +17,7 @@ window.toggleKPIs = function() {
 }
 
 function updateKpiDisplay() {
-    ['dash-total-collected', 'dash-pending-payments', 'dash-today-payments'].forEach(id => {
+    ['dash-total-collected', 'dash-pending-payments', 'dash-today-payments', 'dash-worker-dues', 'dash-stock-value'].forEach(id => {
         const el = document.getElementById(id);
         if (el && el.dataset.amount !== undefined) {
             el.textContent = kpisVisible ? window.API.formatCurrency(parseFloat(el.dataset.amount)) : '****';
@@ -41,12 +44,16 @@ document.addEventListener("DOMContentLoaded", function() {
             searchInput.addEventListener('input', applyFilters);
         }
         
+        // Tab click handlers
         const tabTransactions = document.getElementById('tab-transactions');
         const tabPending = document.getElementById('tab-pending');
-        if (tabTransactions && tabPending) {
-            tabTransactions.addEventListener('click', () => switchTab('transactions'));
-            tabPending.addEventListener('click', () => switchTab('pending'));
-        }
+        const tabWorkers = document.getElementById('tab-workers');
+        const tabStock = document.getElementById('tab-stock');
+        
+        if (tabTransactions) tabTransactions.addEventListener('click', () => switchTab('transactions'));
+        if (tabPending) tabPending.addEventListener('click', () => switchTab('pending'));
+        if (tabWorkers) tabWorkers.addEventListener('click', () => switchTab('workers'));
+        if (tabStock) tabStock.addEventListener('click', () => switchTab('stock'));
         
         const filterBtn = document.getElementById('filter-btn');
         const filterDropdown = document.getElementById('filter-dropdown');
@@ -86,6 +93,22 @@ async function loadPayments() {
             console.error("Failed to load pending balances for KPIs", e);
         }
         
+        // Pre-fetch worker payment data for KPI
+        try {
+            const wpData = await window.API.request('get_worker_payment_summary');
+            workerPaymentData = wpData;
+        } catch (e) {
+            console.error("Failed to load worker payment summary", e);
+        }
+        
+        // Pre-fetch stock payment data for KPI
+        try {
+            const spData = await window.API.request('get_stock_payment_summary');
+            stockPaymentData = spData;
+        } catch (e) {
+            console.error("Failed to load stock payment summary", e);
+        }
+        
         applyFilters();
     } catch (e) {
         console.error(e);
@@ -93,16 +116,21 @@ async function loadPayments() {
     }
 }
 
+function setTabActive(tabName) {
+    const tabs = ['transactions', 'pending', 'workers', 'stock'];
+    const activeClass = "font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1";
+    const inactiveClass = "font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors";
+    
+    tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (el) el.className = t === tabName ? activeClass : inactiveClass;
+    });
+}
+
 function switchTab(tab) {
     currentTab = tab;
-    document.getElementById('tab-transactions').className = tab === 'transactions' 
-        ? "font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1"
-        : "font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors";
+    setTabActive(tab);
     
-    document.getElementById('tab-pending').className = tab === 'pending'
-        ? "font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1"
-        : "font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors";
-        
     const controls = document.getElementById('payment-controls');
     const headerRow = document.getElementById('list-header');
     
@@ -124,6 +152,33 @@ function switchTab(tab) {
         } else {
             applyFilters();
         }
+    } else if (tab === 'workers') {
+        if(controls) controls.classList.add('hidden');
+        if(headerRow) {
+            headerRow.className = "hidden md:grid grid-cols-5 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider";
+            headerRow.innerHTML = `
+                <div>Worker</div>
+                <div>Total Earned</div>
+                <div>Advances Given</div>
+                <div>Remaining Due</div>
+                <div class="text-right">Action</div>
+            `;
+        }
+        loadWorkerPayments();
+    } else if (tab === 'stock') {
+        if(controls) controls.classList.add('hidden');
+        if(headerRow) {
+            headerRow.className = "hidden md:grid grid-cols-6 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider";
+            headerRow.innerHTML = `
+                <div>Item Name</div>
+                <div>Category</div>
+                <div>In Stock</div>
+                <div>Unit Cost</div>
+                <div>Total Value</div>
+                <div class="text-right">Status</div>
+            `;
+        }
+        loadStockPayments();
     } else {
         if(controls) controls.classList.remove('hidden');
         if(headerRow) {
@@ -150,6 +205,167 @@ async function loadPendingBalances() {
         window.API.toast("Failed to load pending balances", "error");
     }
 }
+
+// ─── Worker Payments ───────────────────────────────────────────────
+
+async function loadWorkerPayments() {
+    const container = document.getElementById('table-payments');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="p-4 text-center text-on-surface-variant">Loading worker payments...</div>';
+    
+    try {
+        const data = await window.API.request('get_worker_payment_summary');
+        workerPaymentData = data;
+        renderWorkerPayments(data.workers || []);
+        
+        // Update worker KPI
+        if (data.summary) {
+            const wd = document.getElementById('dash-worker-dues');
+            if (wd) wd.dataset.amount = data.summary.total_dues || 0;
+            const wc = document.getElementById('dash-worker-count');
+            if (wc) wc.innerText = `${data.summary.worker_count || 0} active workers`;
+            updateKpiDisplay();
+        }
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<div class="p-4 text-center text-error">Failed to load worker payments</div>';
+    }
+}
+
+function renderWorkerPayments(workers) {
+    const container = document.getElementById('table-payments');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (workers.length === 0) {
+        container.innerHTML = '<div class="p-4 text-center text-on-surface-variant w-full">No workers found</div>';
+        return;
+    }
+    
+    workers.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-white p-4 rounded-lg border border-surface-container-highest hover:shadow-md transition-shadow cursor-pointer';
+        div.onclick = () => window.API.request('navigate_to', {page: 'workers'});
+        
+        const dueClass = w.remaining_due > 0 ? 'text-[#f59e0b] font-bold' : 'text-on-surface-variant';
+        const typeLabel = w.worker_type === 'DAILY_SALARY' ? 'Daily' : 'Piece Rate';
+        
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#f59e0b]/10 flex items-center justify-center text-[#f59e0b] font-label-lg">
+                    ${w.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <p class="font-label-lg text-label-lg text-on-surface">${w.name}</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">${typeLabel}${w.phone ? ' • ' + w.phone : ''}</p>
+                </div>
+            </div>
+            <div class="font-label-lg text-label-lg text-on-surface">${window.API.formatCurrency(w.total_earned)}</div>
+            <div class="font-label-lg text-label-lg text-error">${window.API.formatCurrency(w.total_advance)}</div>
+            <div class="font-label-lg text-label-lg ${dueClass}">${window.API.formatCurrency(w.remaining_due)}</div>
+            <div class="text-right flex items-center justify-end gap-2">
+                <button onclick="event.stopPropagation(); window.API.request('navigate_to', {page: 'workers'});" class="px-3 py-1.5 bg-surface-container-highest text-on-surface rounded-lg hover:bg-surface-container-low transition-colors text-sm font-medium">
+                    <span class="material-symbols-outlined text-[16px] align-middle">visibility</span> Details
+                </button>
+                ${w.remaining_due > 0 ? `
+                <button onclick="event.stopPropagation(); settleWorkerFromPayments(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium">
+                    Settle
+                </button>
+                ` : ''}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+window.settleWorkerFromPayments = async function(workerId, workerName) {
+    if (!confirm(`Are you sure you want to settle all dues for ${workerName}? This will mark all current work entries and advances as settled.`)) {
+        return;
+    }
+    try {
+        await window.API.request('settle_worker_account', { worker_id: workerId });
+        window.API.toast(`${workerName}'s account settled successfully`, 'success');
+        loadWorkerPayments(); // Refresh
+    } catch (e) {
+        window.API.toast('Failed to settle worker account', 'error');
+    }
+}
+
+// ─── Stock Payments ────────────────────────────────────────────────
+
+async function loadStockPayments() {
+    const container = document.getElementById('table-payments');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="p-4 text-center text-on-surface-variant">Loading stock data...</div>';
+    
+    try {
+        const response = await window.API.request('get_stock_payment_summary');
+        stockPaymentData = response;
+        
+        const summary = response.summary || { total_value: 0, total_items: 0, low_stock_count: 0 };
+        
+        const sv = document.getElementById('dash-stock-value');
+        if (sv) {
+            sv.dataset.amount = summary.total_value;
+            updateKpiDisplay();
+        }
+        const sc = document.getElementById('dash-stock-count');
+        if (sc) {
+            sc.innerText = `${summary.total_items} items in inventory`;
+        }
+
+        renderStockPayments(response.items || []);
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<div class="p-4 text-center text-error">Failed to load stock data</div>';
+    }
+}
+
+function renderStockPayments(items) {
+    const container = document.getElementById('table-payments');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (items.length === 0) {
+        container.innerHTML = '<div class="p-4 text-center text-on-surface-variant w-full">No stock items found</div>';
+        return;
+    }
+    
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'grid grid-cols-1 md:grid-cols-6 gap-4 items-center bg-white p-4 rounded-lg border border-surface-container-highest hover:shadow-md transition-shadow';
+        
+        const lowClass = item.is_low ? 'bg-error/10 border-error/30' : '';
+        if (item.is_low) div.className += ' ' + lowClass;
+        
+        const statusBadge = item.is_low 
+            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error/10 text-error font-label-sm text-[12px]"><span class="material-symbols-outlined text-[14px]">warning</span> Low Stock</span>'
+            : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#10b981]/10 text-[#10b981] font-label-sm text-[12px]"><span class="material-symbols-outlined text-[14px]">check_circle</span> In Stock</span>';
+        
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+                </div>
+                <div>
+                    <p class="font-label-lg text-label-lg text-on-surface">${item.name}</p>
+                </div>
+            </div>
+            <div class="font-body-md text-body-md text-on-surface-variant">${item.category}</div>
+            <div class="font-label-lg text-label-lg text-on-surface">${item.quantity} ${item.unit}</div>
+            <div class="font-body-md text-body-md text-on-surface-variant">${item.unit_cost > 0 ? window.API.formatCurrency(item.unit_cost) : '—'}</div>
+            <div class="font-label-lg text-label-lg text-on-surface">${item.total_value > 0 ? window.API.formatCurrency(item.total_value) : '—'}</div>
+            <div class="text-right">${statusBadge}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ─── Existing Payments Logic ───────────────────────────────────────
 
 function renderPendingBalances(orders) {
     const container = document.getElementById('table-payments');
@@ -230,6 +446,12 @@ function applyFilters() {
 
     if (currentTab === 'pending') {
         renderPendingBalances(filteredPending);
+    } else if (currentTab === 'workers') {
+        // Workers tab uses its own loading, don't re-render here
+        return;
+    } else if (currentTab === 'stock') {
+        // Stock tab uses its own loading, don't re-render here
+        return;
     } else {
         renderPayments(filteredPayments);
         currentlyRendered = filteredPayments;
@@ -269,6 +491,22 @@ function applyFilters() {
     
     const tCount = document.getElementById('dash-today-transactions-count');
     if (tCount) tCount.innerText = `${todayCount} transactions today`;
+    
+    // Worker dues KPI
+    if (workerPaymentData && workerPaymentData.summary) {
+        const wd = document.getElementById('dash-worker-dues');
+        if (wd) wd.dataset.amount = workerPaymentData.summary.total_dues || 0;
+        const wc = document.getElementById('dash-worker-count');
+        if (wc) wc.innerText = `${workerPaymentData.summary.worker_count || 0} active workers`;
+    }
+    
+    // Stock value KPI
+    if (stockPaymentData && stockPaymentData.summary) {
+        const sv = document.getElementById('dash-stock-value');
+        if (sv) sv.dataset.amount = stockPaymentData.summary.total_value || 0;
+        const sc = document.getElementById('dash-stock-count');
+        if (sc) sc.innerText = `${stockPaymentData.summary.total_items || 0} items in inventory`;
+    }
     
     updateKpiDisplay();
 }

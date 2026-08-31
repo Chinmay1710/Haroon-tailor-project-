@@ -377,7 +377,7 @@ function renderMeasurementFields(type, values) {
                 <label class="block font-label-sm text-on-surface-variant mb-1 truncate" title="${field}">${field}</label>
                 <div class="relative">
                     <input type="text" id="${safeId}" data-field="${field}" value="${val}" class="meas-input w-full p-2.5 bg-surface-container-lowest border border-outline-variant rounded focus:border-primary outline-none font-body-lg">
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-sm opacity-50">"</span>
+
                 </div>
             </div>
         `;
