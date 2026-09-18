@@ -92,6 +92,15 @@ class WorkerService:
             session.refresh(g_rate)
             return {"id": g_rate.id, "garment_type": g_rate.garment_type, "rate": g_rate.rate}
 
+    def delete_garment_rate(self, garment_type: str) -> bool:
+        with get_session() as session:
+            g_rate = session.query(GarmentRate).filter(GarmentRate.garment_type == garment_type).first()
+            if g_rate:
+                session.delete(g_rate)
+                session.commit()
+                return True
+            return False
+
     # --- Work Entries ---
 
     def submit_work_entry(self, worker_id: int, garment_type: Optional[str], quantity: int, bill_number: Optional[str], extra_work_description: Optional[str], extra_amount: float, auto_approve: bool = False, is_present: bool = False) -> Dict[str, Any]:
@@ -310,7 +319,7 @@ class WorkerService:
 
     def get_stock_usage_history(self) -> List[Dict[str, Any]]:
         with get_session() as session:
-            usages = session.query(StockUsage, Worker.name, StockItem.name, StockItem.unit).join(
+            usages = session.query(StockUsage, Worker.name, StockItem.name, StockItem.unit).outerjoin(
                 Worker, StockUsage.worker_id == Worker.id
             ).join(
                 StockItem, StockUsage.stock_item_id == StockItem.id
@@ -319,7 +328,7 @@ class WorkerService:
             return [
                 {
                     "id": usage[0].id,
-                    "worker_name": usage[1],
+                    "worker_name": usage[1] if usage[1] else "System",
                     "item_name": usage[2],
                     "quantity": usage[0].quantity,
                     "unit": usage[3],

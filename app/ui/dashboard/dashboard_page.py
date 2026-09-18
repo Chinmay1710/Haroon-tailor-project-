@@ -39,7 +39,7 @@ class DashboardPage(QWidget):
         scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
 
         content = QWidget()
-        content.setStyleSheet("background: transparent;")
+        content.setStyleSheet("")
         self.main_layout = QVBoxLayout(content)
         self.main_layout.setContentsMargins(CONTAINER_PADDING, CONTAINER_PADDING,
                                              CONTAINER_PADDING, CONTAINER_PADDING)

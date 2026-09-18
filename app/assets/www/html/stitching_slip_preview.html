@@ -1,118 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stitching Slip Print Preview</title>
-    <link href="../css/fonts.css" rel="stylesheet"/>
-    
-    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-    <style>
-        /* 58mm POS receipt styling (Thermer style) */
-        body {
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            color: #000;
-            margin: 0;
-            padding: 20px;
-        }
-        .pos-slip {
-            width: 58mm; /* Standard 58mm paper size */
-            max-width: 58mm;
-            background: white;
-            padding: 2mm;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            font-size: 15px; /* Larger font for readability */
-            line-height: 1.3;
-            box-sizing: border-box;
-            color: black;
-            font-weight: 500;
-        }
-        @media print {
-            body { background: white; margin: 0; padding: 0; display: block; }
-            .pos-slip { width: 100%; max-width: 100%; box-shadow: none; margin: 0; padding: 0; }
-            .no-print { display: none !important; }
-            @page { margin: 0; size: 58mm auto; }
-        }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .font-bold { font-weight: bold; }
-        .text-lg { font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
-        .dashed-line { border-top: 2px dashed #000; margin: 8px 0; }
-        .flex-between { display: flex; justify-content: space-between; align-items: flex-start; }
-        .mb-2 { margin-bottom: 8px; }
-        .mt-2 { margin-top: 8px; }
-    </style>
-  <link rel="stylesheet" href="../css/compiled.css">
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Stitching Slip Print Preview</title>
+ <link href="../css/fonts.css" rel="stylesheet"/>
+ 
+ <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+ <style>
+ /* 58mm POS receipt styling (Thermer style) */
+ body {
+ background-color: #f3f4f6;
+ display: flex;
+ justify-content: center;
+ font-family: 'Arial', 'Helvetica', sans-serif;
+ color: #000;
+ margin: 0;
+ padding: 20px;
+ }
+ .pos-slip {
+ width: 58mm; /* Standard 58mm paper size */
+ max-width: 58mm;
+ background: white;
+ padding: 2mm;
+ box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+ font-size: 15px; /* Larger font for readability */
+ line-height: 1.3;
+ box-sizing: border-box;
+ color: black;
+ font-weight: 500;
+ }
+ @media print {
+ body { background: white; margin: 0; padding: 0; display: block; }
+ .pos-slip { width: 100%; max-width: 100%; box-shadow: none; margin: 0; padding: 0; }
+ .no-print { display: none !important; }
+ @page { margin: 0; size: 58mm auto; }
+ }
+ .text-center { text-align: center; }
+ .text-right { text-align: right; }
+ .font-bold { font-weight: bold; }
+ .text-lg { font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
+ .dashed-line { border-top: 2px dashed #000; margin: 8px 0; }
+ .flex-between { display: flex; justify-content: space-between; align-items: flex-start; }
+ .mb-2 { margin-bottom: 8px; }
+ .mt-2 { margin-top: 8px; }
+ </style>
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body>
-    <div class="fixed top-4 right-4 no-print flex gap-2">
-        <button onclick="window.history.back()" class="px-4 py-2 bg-gray-200 rounded text-sm font-sans flex items-center gap-1">
-            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Back
-        </button>
-        <button onclick="window.savePdf()" class="px-4 py-2 bg-green-600 text-white rounded text-sm font-sans flex items-center gap-1">
-            <span class="material-symbols-outlined" style="font-size:16px;">download</span> Save PDF
-        </button>
-        <button onclick="window.printSlip()" class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-sans flex items-center gap-1">
-            <span class="material-symbols-outlined" style="font-size:16px;">print</span> Print
-        </button>
-    </div>
+ <div class="fixed top-4 right-4 no-print flex gap-2">
+ <button onclick="window.history.back()" class="px-4 py-2 bg-gray-200 rounded text-sm font-sans flex items-center gap-1">
+ <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Back
+ </button>
+ <button onclick="window.savePdf()" class="px-4 py-2 bg-green-600 text-white rounded text-sm font-sans flex items-center gap-1">
+ <span class="material-symbols-outlined" style="font-size:16px;">download</span> Save PDF
+ </button>
+ <button onclick="window.printSlip()" class="px-4 py-2 bg-blue-600 text-white rounded text-sm font-sans flex items-center gap-1">
+ <span class="material-symbols-outlined" style="font-size:16px;">print</span> Print
+ </button>
+ </div>
 
-    <main class="pos-slip print-canvas">
-        <div class="text-center mb-2 mt-2">
-            <div class="font-bold text-lg">STITCHING SLIP</div>
-            <div><span class="global-shop-name">Artisan Stitch</span></div>
-        </div>
-        
-        <div class="dashed-line"></div>
-        
-        <div class="flex-between font-bold" style="font-size: 14px;">
-            <span>Order No:</span>
-            <span id="ss-order-number">...</span>
-        </div>
-        <div class="flex-between">
-            <span>Due:</span>
-            <span id="ss-due-date">...</span>
-        </div>
-        
-        <div class="dashed-line"></div>
-        
-        <div class="mb-2">
-            <div>Customer: <span id="ss-customer-name" class="font-bold">...</span></div>
-            <!-- Intentionally no mobile number as requested -->
-        </div>
+ <main class="pos-slip print-canvas">
+ <div class="text-center mb-2 mt-2">
+ <div class="font-bold text-lg">STITCHING SLIP</div>
+ <div><span class="global-shop-name">Artisan Stitch</span></div>
+ </div>
+ 
+ <div class="dashed-line"></div>
+ 
+ <div class="flex-between font-bold" style="font-size: 14px;">
+ <span>Bill No:</span>
+ <span id="ss-order-number">...</span>
+ </div>
+ <div class="flex-between">
+ <span>Due:</span>
+ <span id="ss-due-date">...</span>
+ </div>
+ 
+ <div class="dashed-line"></div>
+ 
+ <div class="mb-2">
+ <div>Customer: <span id="ss-customer-name" class="font-bold">...</span></div>
+ <!-- Intentionally no mobile number as requested -->
+ </div>
 
-        <div class="dashed-line"></div>
-        
-        <div class="font-bold mb-2">Garments:</div>
-        <div id="ss-garment-type" style="margin-bottom: 5px;">Loading...</div>
+ <div class="dashed-line"></div>
+ 
+ <div class="font-bold mb-2">Garments:</div>
+ <div id="ss-garment-type" style="margin-bottom: 5px;">Loading...</div>
 
-        <div class="dashed-line"></div>
-        <div class="font-bold text-center mb-2">MEASUREMENTS</div>
-        
-        <div id="ss-measurements-container">
-            <!-- Measurements injected by JS -->
-        </div>
+ <div class="dashed-line"></div>
+ <div class="font-bold text-center mb-2">MEASUREMENTS</div>
+ 
+ <div id="ss-measurements-container">
+ <!-- Measurements injected by JS -->
+ </div>
 
-        <div class="dashed-line"></div>
-        
-        <div class="flex-between mt-2" style="font-size: 10px;">
-            <span>Cut By: _____</span>
-            <span>Sewn By: _____</span>
-        </div>
-        
-        <div class="text-center mt-2 flex flex-col items-center">
-            <div id="ss-qrcode" style="margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;"></div>
-            <div style="font-size: 10px;">Scan to Update Status</div>
-            <div id="ss-generated-date" style="font-size: 9px; margin-top: 5px;">Generated: ...</div>
-        </div>
-    </main>
+ <div class="dashed-line"></div>
+ 
+ <div class="flex-between mt-2" style="font-size: 10px;">
+ <span>Cut By: _____</span>
+ <span>Sewn By: _____</span>
+ </div>
+ 
+ <div class="text-center mt-2 flex flex-col items-center">
+ <div id="ss-generated-date" style="font-size: 9px; margin-top: 5px;">Generated: ...</div>
+ </div>
+ </main>
 
-    <script src="../js/qrcode.min.js"></script>
-    <script src="../js/api.js?v=1787471943"></script>
-    <script src="../js/app.js?v=1787471943"></script>
-    <script src="../js/stitching_slip_preview.js?v=1787471943"></script>
+ <script src="../js/api.js?v=1787471943"></script>
+ <script src="../js/app.js?v=1787471943"></script>
+ <script src="../js/stitching_slip_preview.js?v=1787471943"></script>
 </body>
 </html>

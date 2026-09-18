@@ -9,24 +9,24 @@
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
 <style>
-        .metric-card {
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.08);
-        }
-        .btn-press:active {
-            transform: scale(0.98);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        /* Simple bar chart styles */
-        .chart-bar-primary { background: #091426; border-radius: 4px 4px 0 0; }
-        .chart-bar-secondary { background: #bcc7de; border-radius: 4px 4px 0 0; }
-    </style>
+ .metric-card {
+ box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+ transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
+ .metric-card:hover {
+ transform: translateY(-2px);
+ box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.08);
+ }
+ .btn-press:active {
+ transform: scale(0.98);
+ box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+ }
+ /* Simple bar chart styles */
+ .chart-bar-primary { background: #091426; border-radius: 4px 4px 0 0; }
+ .chart-bar-secondary { background: #bcc7de; border-radius: 4px 4px 0 0; }
+ </style>
 <link href="../css/fonts.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/compiled.css">
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body class="bg-surface font-body-lg text-on-surface antialiased min-h-screen">
 <!-- SideNavBar -->
@@ -43,86 +43,117 @@
 </div>
 </div>
 <nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
-  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
-    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
-    </div>
-    <div>
-      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
-      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
-    </div>
-  </div>
-  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
-    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
-    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
-  </div>
-  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
-      <span data-i18n="sidebar.dashboard">Dashboard</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
-      <span data-i18n="sidebar.customers">Customers</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
-      <span data-i18n="sidebar.orders">Orders</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
-      <span data-i18n="sidebar.payments">Payments</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
-      <span data-i18n="sidebar.deliveries">Deliveries</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
-      <span data-i18n="sidebar.expenses">Expenses</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
-      <span data-i18n="sidebar.workers">Workers</span>
-    </a>
-        <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
-      <span data-i18n="sidebar.stock">Stock</span>
-    </a>
+ <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+ <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+ <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
+ </div>
+ <div>
+ <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+ <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+ </div>
+ </div>
+ <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+ <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+ <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
+ </div>
+ <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
+ <span data-i18n="sidebar.dashboard">Dashboard</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">person</span>
+ <span data-i18n="sidebar.customers">Customers</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
+ <span data-i18n="sidebar.orders">Orders</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
+ <span data-i18n="sidebar.payments">Payments</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
+ <span data-i18n="sidebar.deliveries">Deliveries</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
+ <span data-i18n="sidebar.expenses">Expenses</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
+ <span data-i18n="sidebar.workers">Workers</span>
+ </a>
+ <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
+ <span data-i18n="sidebar.stock">Stock</span>
+ </a>
 <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
-      <span data-i18n="sidebar.settings">Settings</span>
-    </a>
-  </div>
-  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
-      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
-      <span data-i18n="sidebar.help">Help</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
-      <span data-i18n="sidebar.offline">Offline Mode</span>
-    </a>
-  </div>
+ <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
+ <span data-i18n="sidebar.settings">Settings</span>
+ </a>
+ 
+ <!-- INJECTED WORKER LINK -->
+ <div style="margin-top: 16px; padding: 12px; background: rgba(30,41,59,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+ <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase;">Worker Link</span>
+ <div style="display:flex; align-items:center; justify-content:space-between;">
+ <span class="sidebar-worker-link" style="color: #6ee7b7; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; cursor: text; user-select: all;">Loading...</span>
+ </div>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ setTimeout(() => {
+ if (window.API) {
+ window.API.request('get_worker_portal_url').then(res => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => {
+ if (res && res.status === 'success') {
+ el.textContent = res.data.url.replace('https://', '').replace('http://', '');
+ } else {
+ el.textContent = 'Not Active';
+ }
+ });
+ }).catch(e => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => el.textContent = 'Error');
+ });
+ }
+ }, 500);
+ });
+ </script>
+ </div>
+ <!-- END INJECTED WORKER LINK -->
+
+ </div>
+ <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+ <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">help</span>
+ <span data-i18n="sidebar.help">Help</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
+ <span data-i18n="sidebar.offline">Offline Mode</span>
+ </a>
+ </div>
 </nav>
 <div class="mt-auto px-4 py-stack_md border-t border-on-primary/10">
 <nav class="flex flex-col gap-1">
-<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="backup_restore">
+<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="backup_restore">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">backup</span data-i18n="sidebar.backup_restore">
-                    Backup &amp; Restore
-                </a>
-<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="help">
+ Backup &amp; Restore
+ </a>
+<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="help">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">Help</span data-i18n="sidebar.help">
-                    Help
-                </a>
-<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors duration-200 flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="offline_mode">
+ Help
+ </a>
+<a class="text-on-primary/70 font-body-md hover:text-on-primary hover:bg-primary-container/20 transition-colors flex items-center gap-3 px-4 py-2 rounded-lg" href="#" data-nav="offline_mode">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">cloud_off</span data-i18n="sidebar.offline_mode">
-                    Offline Mode
-                </a>
+ Offline Mode
+ </a>
 </nav>
 </div>
 </aside>
@@ -131,7 +162,7 @@
 <div class="flex items-center gap-4 flex-1">
 <div class="relative w-96 hidden md:block">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search reports, customers..." type="text"/>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary " placeholder="Search reports, customers..." type="text"/>
 </div>
 <h2 class="font-headline-md text-headline-md text-primary md:hidden">Tailor Manager</h2>
 </div>
@@ -142,10 +173,10 @@
 </button>
 </div>
 <div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
-<button class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-sm hover:shadow-md transition-all btn-press" onclick="window.API.navigate('new_order')">
+<button class="bg-primary text-on-primary font-label-lg text-label-lg px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-sm hover:shadow-md btn-press" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                New Order
-            </button>
+ New Order
+ </button>
 </div>
 </header>
 <!-- Main Content -->
@@ -164,7 +195,7 @@
 <button class="px-4 py-1.5 rounded-md bg-surface-container-lowest text-on-surface shadow-sm transition-colors">Month</button>
 <button class="px-4 py-1.5 rounded-md flex items-center gap-1 hover:bg-surface-container-lowest hover:text-on-surface transition-colors">
 <span class="material-symbols-outlined text-[18px]">tune</span> Custom
-                    </button>
+ </button>
 </div>
 </div>
 </div>
@@ -194,8 +225,8 @@
 <div class="flex items-center justify-between mb-4 text-on-surface-variant">
 <h3 class="font-label-lg text-label-lg flex items-center gap-2">
 <span class="material-symbols-outlined text-[20px]">savings</span>
-                            Estimated Profit
-                        </h3>
+ Estimated Profit
+ </h3>
 </div>
 <div class="font-headline-lg text-headline-lg text-on-surface">$6,230.00</div>
 </div>
@@ -210,8 +241,8 @@
 <div class="flex items-center justify-between mb-4 text-on-surface-variant">
 <h3 class="font-label-lg text-label-lg flex items-center gap-2">
 <span class="material-symbols-outlined text-[20px]">receipt_long</span>
-                            Total Expenses
-                        </h3>
+ Total Expenses
+ </h3>
 </div>
 <div class="font-headline-lg text-headline-lg text-on-surface">$12,220.00</div>
 </div>
@@ -246,10 +277,10 @@
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 font-label-sm text-label-sm">
 <div class="w-3 h-3 rounded-full bg-primary"></div> Sales
-                    </div>
+ </div>
 <div class="flex items-center gap-2 font-label-sm text-label-sm">
 <div class="w-3 h-3 rounded-full bg-primary-fixed-dim"></div data-i18n="sidebar.expenses"> Expenses
-                    </div>
+ </div>
 </div>
 </div>
 <!-- CSS Bar Chart Representation -->
@@ -257,48 +288,48 @@
 <!-- Jan -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[40%] transition-all group-hover:opacity-80 relative" title="Sales: $4,000"></div>
-<div class="w-1/2 chart-bar-secondary h-[25%] transition-all group-hover:opacity-80" title="Expenses: $2,500"></div>
+<div class="w-1/2 chart-bar-primary h-[40%] group-hover:opacity-80 relative" title="Sales: $4,000"></div>
+<div class="w-1/2 chart-bar-secondary h-[25%] group-hover:opacity-80" title="Expenses: $2,500"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Jan</span>
 </div>
 <!-- Feb -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[50%] transition-all group-hover:opacity-80" title="Sales: $5,000"></div>
-<div class="w-1/2 chart-bar-secondary h-[30%] transition-all group-hover:opacity-80" title="Expenses: $3,000"></div>
+<div class="w-1/2 chart-bar-primary h-[50%] group-hover:opacity-80" title="Sales: $5,000"></div>
+<div class="w-1/2 chart-bar-secondary h-[30%] group-hover:opacity-80" title="Expenses: $3,000"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Feb</span>
 </div>
 <!-- Mar -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[45%] transition-all group-hover:opacity-80"></div>
-<div class="w-1/2 chart-bar-secondary h-[28%] transition-all group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-primary h-[45%] group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-secondary h-[28%] group-hover:opacity-80"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Mar</span>
 </div>
 <!-- Apr -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[60%] transition-all group-hover:opacity-80"></div>
-<div class="w-1/2 chart-bar-secondary h-[35%] transition-all group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-primary h-[60%] group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-secondary h-[35%] group-hover:opacity-80"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Apr</span>
 </div>
 <!-- May -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[75%] transition-all group-hover:opacity-80"></div>
-<div class="w-1/2 chart-bar-secondary h-[45%] transition-all group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-primary h-[75%] group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-secondary h-[45%] group-hover:opacity-80"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">May</span>
 </div>
 <!-- Jun -->
 <div class="flex-1 flex flex-col items-center gap-1 group">
 <div class="w-full flex items-end justify-center gap-1 h-full px-1">
-<div class="w-1/2 chart-bar-primary h-[85%] transition-all group-hover:opacity-80"></div>
-<div class="w-1/2 chart-bar-secondary h-[50%] transition-all group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-primary h-[85%] group-hover:opacity-80"></div>
+<div class="w-1/2 chart-bar-secondary h-[50%] group-hover:opacity-80"></div>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Jun</span>
 </div>
@@ -308,12 +339,12 @@
 <div class="flex justify-end gap-4 mt-4">
 <button class="bg-surface-container-lowest border border-outline-variant text-on-surface py-3 px-6 rounded-lg font-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors btn-press shadow-sm">
 <span class="material-symbols-outlined">print</span>
-                Print Report
-            </button>
+ Print Report
+ </button>
 <button class="bg-primary text-on-primary py-3 px-6 rounded-lg font-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors btn-press shadow-sm">
 <span class="material-symbols-outlined">picture_as_pdf</span>
-                Export PDF
-            </button>
+ Export PDF
+ </button>
 </div>
 </main>
 <script src="../js/i18n.js?v=1787471943"></script>

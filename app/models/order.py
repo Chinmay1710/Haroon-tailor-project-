@@ -2,7 +2,7 @@ from __future__ import annotations
 """Order models — orders, order items, and measurement snapshots."""
 
 from datetime import datetime, date, timezone
-from sqlalchemy import Column, Integer, String, Text, Float, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Float, Date, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from app.database.engine import Base
@@ -66,6 +66,7 @@ class OrderItem(Base):
     price = Column(Float, default=0.0, nullable=False)
     notes = Column(Text)
     image_path = Column(String(255), nullable=True)
+    is_delivered = Column(Boolean, default=False, nullable=False)
 
     # Relationships
     order = relationship("Order", back_populates="items")

@@ -24,7 +24,7 @@ class SettingsPage(QWidget):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         content = QWidget()
-        content.setStyleSheet("background: transparent;")
+        content.setStyleSheet("")
         layout = QVBoxLayout(content)
         layout.setContentsMargins(CONTAINER_PADDING, CONTAINER_PADDING, CONTAINER_PADDING, CONTAINER_PADDING)
         layout.setSpacing(STACK_LG)

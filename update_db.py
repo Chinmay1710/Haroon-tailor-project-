@@ -1,29 +1,12 @@
 import sqlite3
 import os
-from app.config import DATABASE_PATH
 
-db_path = DATABASE_PATH
-print("DB Path:", db_path)
+db_path = os.path.join(os.environ.get('APPDATA'), 'TailorShopManager', 'data', 'tailor_shop.db')
+print(f"Updating database at {db_path}")
 
-def upgrade():
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    try:
-        cursor.execute("ALTER TABLE shop_settings ADD COLUMN twilio_account_sid VARCHAR(255) DEFAULT ''")
-    except Exception as e:
-        print("twilio_account_sid:", e)
-    try:
-        cursor.execute("ALTER TABLE shop_settings ADD COLUMN twilio_auth_token VARCHAR(255) DEFAULT ''")
-    except Exception as e:
-        print("twilio_auth_token:", e)
-    try:
-        cursor.execute("ALTER TABLE shop_settings ADD COLUMN twilio_sender_number VARCHAR(20) DEFAULT ''")
-    except Exception as e:
-        print("twilio_sender_number:", e)
-    
-    conn.commit()
-    print("Done")
-    conn.close()
-
-if __name__ == "__main__":
-    upgrade()
+db = sqlite3.connect(db_path)
+cursor = db.cursor()
+cursor.execute("UPDATE orders SET order_number = REPLACE(order_number, 'ORD-', 'Bill-') WHERE order_number LIKE 'ORD-%'")
+print(f"Rows updated: {cursor.rowcount}")
+db.commit()
+db.close()

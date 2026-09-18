@@ -8,81 +8,112 @@
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+ .material-symbols-outlined {
+ font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+ }
+ </style>
 <link href="../css/fonts.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/compiled.css">
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex">
 <!-- SideNavBar -->
 <nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
-  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
-    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
-    </div>
-    <div>
-      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
-      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
-    </div>
-  </div>
-  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
-    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
-    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
-  </div>
-  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
-      <span data-i18n="sidebar.dashboard">Dashboard</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
-      <span data-i18n="sidebar.customers">Customers</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
-      <span data-i18n="sidebar.orders">Orders</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
-      <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">payments</span>
-      <span data-i18n="sidebar.payments">Payments</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
-      <span data-i18n="sidebar.deliveries">Deliveries</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
-      <span data-i18n="sidebar.expenses">Expenses</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
-      <span data-i18n="sidebar.workers">Workers</span>
-    </a>
-        <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
-      <span data-i18n="sidebar.stock">Stock</span>
-    </a>
+ <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+ <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+ <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
+ </div>
+ <div>
+ <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+ <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+ </div>
+ </div>
+ <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+ <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+ <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
+ </div>
+ <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
+ <span data-i18n="sidebar.dashboard">Dashboard</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">person</span>
+ <span data-i18n="sidebar.customers">Customers</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
+ <span data-i18n="sidebar.orders">Orders</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
+ <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">payments</span>
+ <span data-i18n="sidebar.payments">Payments</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
+ <span data-i18n="sidebar.deliveries">Deliveries</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
+ <span data-i18n="sidebar.expenses">Expenses</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
+ <span data-i18n="sidebar.workers">Workers</span>
+ </a>
+ <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
+ <span data-i18n="sidebar.stock">Stock</span>
+ </a>
 <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
-      <span data-i18n="sidebar.settings">Settings</span>
-    </a>
-  </div>
-  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
-      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
-      <span data-i18n="sidebar.help">Help</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
-      <span data-i18n="sidebar.offline">Offline Mode</span>
-    </a>
-  </div>
+ <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
+ <span data-i18n="sidebar.settings">Settings</span>
+ </a>
+ 
+ <!-- INJECTED WORKER LINK -->
+ <div style="margin-top: 16px; padding: 12px; background: rgba(30,41,59,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+ <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase;">Worker Link</span>
+ <div style="display:flex; align-items:center; justify-content:space-between;">
+ <span class="sidebar-worker-link" style="color: #6ee7b7; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; cursor: text; user-select: all;">Loading...</span>
+ </div>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ setTimeout(() => {
+ if (window.API) {
+ window.API.request('get_worker_portal_url').then(res => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => {
+ if (res && res.status === 'success') {
+ el.textContent = res.data.url.replace('https://', '').replace('http://', '');
+ } else {
+ el.textContent = 'Not Active';
+ }
+ });
+ }).catch(e => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => el.textContent = 'Error');
+ });
+ }
+ }, 500);
+ });
+ </script>
+ </div>
+ <!-- END INJECTED WORKER LINK -->
+
+ </div>
+ <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+ <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">help</span>
+ <span data-i18n="sidebar.help">Help</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
+ <span data-i18n="sidebar.offline">Offline Mode</span>
+ </a>
+ </div>
 </nav>
 <!-- Main Content Wrapper -->
 <div class="flex-1 md:ml-[280px] flex flex-col min-h-screen">
@@ -100,8 +131,8 @@
 </button>
 <button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                    New Order
-                </button>
+ New Order
+ </button>
 </div>
 </header>
 <!-- Main Canvas -->
@@ -119,7 +150,7 @@
 <!-- Customer/Order Selection -->
 <div class="space-y-stack_sm">
 <label class="block font-label-lg text-label-lg text-on-surface">Order Reference</label>
-<select class="w-full px-4 py-3 mb-2 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md hidden" id="ap-order-select">
+<select class="w-full px-4 py-3 mb-2 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md hidden" id="ap-order-select">
 <option value="">Select an active order...</option>
 </select>
 <!-- Contextual Suggestion Box -->
@@ -142,7 +173,7 @@
 <label class="block font-label-lg text-label-lg text-on-surface">Payment Amount</label>
 <div class="relative">
 <span class="absolute left-4 top-1/2 -translate-y-1/2 font-headline-md text-headline-md text-on-surface-variant">₹</span>
-<input class="w-full pl-8 pr-4 py-3 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-headline-md text-headline-md h-[56px]" id="ap-amount" min="0" placeholder="0.00" step="0.01" type="number"/>
+<input class="w-full pl-8 pr-4 py-3 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 font-headline-md text-headline-md h-[56px]" id="ap-amount" min="0" placeholder="0.00" step="0.01" type="number"/>
 </div>
 </div>
 <!-- Date -->
@@ -150,7 +181,7 @@
 <label class="block font-label-lg text-label-lg text-on-surface">Date</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">calendar_month</span>
-<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md h-[56px]" type="date" value="2023-10-27"/>
+<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md h-[56px]" type="date" value="2023-10-27"/>
 </div>
 </div>
 </div>
@@ -161,28 +192,28 @@
 <!-- Active state example -->
 <label class="cursor-pointer">
 <input checked="" class="peer sr-only" name="payment_method" type="radio" value="Card"/>
-<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 transition-all h-full flex flex-col items-center justify-center gap-2">
+<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 h-full flex flex-col items-center justify-center gap-2">
 <span class="material-symbols-outlined text-[28px]" data-weight="fill">credit_card</span>
 <span class="font-label-sm text-label-sm">Card</span>
 </div>
 </label>
 <label class="cursor-pointer">
 <input class="peer sr-only" name="payment_method" type="radio" value="Cash"/>
-<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 transition-all h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
+<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
 <span class="material-symbols-outlined text-[28px]">Payments</span>
 <span class="font-label-sm text-label-sm">Cash</span>
 </div>
 </label>
 <label class="cursor-pointer">
 <input class="peer sr-only" name="payment_method" type="radio" value="UPI"/>
-<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 transition-all h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
+<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
 <span class="material-symbols-outlined text-[28px]">qr_code_scanner</span>
 <span class="font-label-sm text-label-sm">UPI</span>
 </div>
 </label>
 <label class="cursor-pointer">
 <input class="peer sr-only" name="payment_method" type="radio" value="Other"/>
-<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 transition-all h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
+<div class="border border-[#CBD5E1] rounded-lg p-4 text-center peer-checked:border-primary peer-checked:bg-surface-container-low peer-checked:text-primary hover:bg-surface-container-low/50 h-full flex flex-col items-center justify-center gap-2 text-on-surface-variant">
 <span class="material-symbols-outlined text-[28px]">more_horiz</span>
 <span class="font-label-sm text-label-sm">Other</span>
 </div>
@@ -192,37 +223,37 @@
 <!-- Note -->
 <div class="space-y-stack_sm">
 <label class="block font-label-lg text-label-lg text-on-surface">Note (Optional)</label>
-<textarea id="ap-note" class="w-full p-4 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md min-h-[100px] resize-y" placeholder="Add any details about this transaction..."></textarea>
+<textarea id="ap-note" class="w-full p-4 rounded-lg border border-[#CBD5E1] bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 font-body-md text-body-md min-h-[100px] resize-y" placeholder="Add any details about this transaction..."></textarea>
 </div>
 
 <!-- Send WhatsApp Checkbox -->
 <div class="flex items-center justify-end pt-2">
-    <label class="flex items-center gap-3 cursor-pointer">
-        <input type="checkbox" id="ap-send-whatsapp" class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary">
-        <span class="font-label-lg text-on-surface">Send WhatsApp Receipt</span>
-    </label>
+ <label class="flex items-center gap-3 cursor-pointer">
+ <input type="checkbox" id="ap-send-whatsapp" class="w-5 h-5 text-primary border-outline-variant rounded focus:ring-primary">
+ <span class="font-label-lg text-on-surface">Send WhatsApp Receipt</span>
+ </label>
 </div>
 <!-- Submit Button -->
 <div class="pt-4 flex gap-4">
-<button class="flex-1 h-[64px] bg-surface-container-highest text-on-surface rounded-xl font-label-lg flex items-center justify-center gap-2 hover:bg-surface-container-high transition-all" onclick="window.API.navigate('orders_list')" type="button">
-    Cancel
+<button class="flex-1 h-[64px] bg-surface-container-highest text-on-surface rounded-xl font-label-lg flex items-center justify-center gap-2 hover:bg-surface-container-high " onclick="window.API.navigate('orders_list')" type="button">
+ Cancel
 </button>
-<button class="flex-1 h-[64px] bg-primary text-on-primary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-3 shadow-[0px_10px_30px_rgba(0,0,0,0.1)] hover:bg-primary/90 hover:shadow-sm active:scale-[0.98] transition-all" id="ap-submit-btn" type="button">
+<button class="flex-1 h-[64px] bg-primary text-on-primary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-3 shadow-[0px_10px_30px_rgba(0,0,0,0.1)] hover:bg-primary/90 hover:shadow-sm active:scale-[0.98] " id="ap-submit-btn" type="button">
 <span class="material-symbols-outlined" data-weight="fill">check_circle</span>
-                                Record Payment
-                            </button>
+ Record Payment
+ </button>
 </div>
 </form>
 </div>
 <!-- Order Context & Confirmation Preview -->
 <div class="lg:col-span-1 space-y-stack_md">
 <!-- Glassmorphism Preview Card -->
-<div class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-stack_md border border-outline-variant/30 shadow-sm relative overflow-hidden">
+<div class="bg-surface-container-low/80 rounded-xl p-stack_md border border-outline-variant/30 shadow-sm relative overflow-hidden">
 <div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/30 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 <h3 class="font-label-lg text-label-lg text-on-surface mb-4 flex items-center gap-2">
 <span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
-                            Order Summary
-                        </h3>
+ Order Summary
+ </h3>
 <div class="space-y-3 font-body-md text-body-md">
 <div class="flex justify-between text-on-surface-variant">
 <span>Order Total</span>
@@ -247,13 +278,13 @@
 </div>
 <div>
 <h4 class="font-label-lg text-label-lg text-[#166534]">Payment Recorded</h4>
-<p class="font-body-md text-sm text-[#15803d] mt-1">Successfully added $450.00 to ORD-2049.</p>
+<p class="font-body-md text-sm text-[#15803d] mt-1">Successfully added $450.00 to Bill-2049.</p>
 <div class="mt-4 bg-white/60 rounded p-3">
 <p class="font-label-sm text-label-sm text-[#166534] uppercase tracking-wider mb-1">Updated Balance</p>
 <p class="font-headline-md text-headline-md text-[#166534]">$0.00</p>
 <div class="mt-2 inline-block px-2 py-1 bg-[#dcfce7] text-[#166534] rounded-full font-label-sm text-[11px]">
-                                        Fully Paid
-                                    </div>
+ Fully Paid
+ </div>
 </div>
 </div>
 </div>

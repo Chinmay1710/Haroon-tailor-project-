@@ -106,6 +106,9 @@ class PaymentDialog(QDialog):
     def _load_orders(self):
         try:
             orders = self.order_service.get_all_orders()
+            if isinstance(orders, tuple):
+                orders = orders[0]
+            
             for o in orders:
                 if o.status != "CANCELLED" and o.remaining_amount > 0:
                     self.order_combo.addItem(

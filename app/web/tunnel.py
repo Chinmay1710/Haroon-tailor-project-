@@ -25,6 +25,24 @@ class NgrokTunnel:
             
             import sys
             
+            # Check for externally configured static domain (ngrok_config.json)
+            try:
+                ngrok_config_file = "ngrok_config.json"
+                if not getattr(sys, 'frozen', False):
+                    ngrok_config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ngrok_config.json")
+                
+                if os.path.exists(ngrok_config_file):
+                    with open(ngrok_config_file, 'r') as f:
+                        config = json.load(f)
+                        domain = config.get("domain")
+                        if domain:
+                            logger.info(f"Using externally configured domain: {domain}")
+                            self.public_url = domain
+                            GLOBAL_TUNNEL_URL = self.public_url
+                            return self.public_url
+            except Exception as e:
+                logger.error(f"Error reading ngrok_config.json: {e}")
+
             # Resolve executable path correctly when frozen by PyInstaller
             if getattr(sys, 'frozen', False):
                 exe_path = os.path.join(sys._MEIPASS, "cloudflared.exe")
@@ -44,20 +62,22 @@ class NgrokTunnel:
                         token = cf_config.get("token")
                         domain = cf_config.get("domain")
                         
-                        if token and domain:
+                        if domain:
                             if not domain.startswith("http"):
                                 domain = "https://" + domain
                                 
-                            logger.info(f"Starting Permanent Cloudflare Zero Trust tunnel: {domain}")
                             self.public_url = domain
                             GLOBAL_TUNNEL_URL = self.public_url
                             
-                            self.lt_process = subprocess.Popen(
-                                [exe_path, "tunnel", "run", "--token", token],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT,
-                                text=True
-                            )
+                            if token:
+                                logger.info(f"Starting Permanent Cloudflare Zero Trust tunnel: {domain}")
+                                self.lt_process = subprocess.Popen(
+                                    [exe_path, "tunnel", "run", "--token", token],
+                                    stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.DEVNULL
+                                )
+                            else:
+                                logger.info(f"Using externally run Cloudflare domain: {domain}")
                             return self.public_url
                 except Exception as e:
                     logger.error(f"Error reading cloudflare_config.json: {e}")

@@ -8,76 +8,107 @@
 <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
 <link href="../css/fonts.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/compiled.css">
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body class="bg-background text-on-surface antialiased">
 <!-- SideNavBar -->
 <nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
-  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
-    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
-    </div>
-    <div>
-      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
-      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
-    </div>
-  </div>
-  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
-    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
-    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
-  </div>
-  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
-      <span data-i18n="sidebar.dashboard">Dashboard</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
-      <span data-i18n="sidebar.customers">Customers</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
-      <span data-i18n="sidebar.orders">Orders</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
-      <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">payments</span>
-      <span data-i18n="sidebar.payments">Payments</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
-      <span data-i18n="sidebar.deliveries">Deliveries</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
-      <span data-i18n="sidebar.expenses">Expenses</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
-      <span data-i18n="sidebar.workers">Workers</span>
-    </a>
-        <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
-      <span data-i18n="sidebar.stock">Stock</span>
-    </a>
+ <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+ <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+ <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
+ </div>
+ <div>
+ <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+ <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+ </div>
+ </div>
+ <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+ <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+ <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
+ </div>
+ <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
+ <span data-i18n="sidebar.dashboard">Dashboard</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">person</span>
+ <span data-i18n="sidebar.customers">Customers</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
+ <span data-i18n="sidebar.orders">Orders</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
+ <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">payments</span>
+ <span data-i18n="sidebar.payments">Payments</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
+ <span data-i18n="sidebar.deliveries">Deliveries</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
+ <span data-i18n="sidebar.expenses">Expenses</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">engineering</span>
+ <span data-i18n="sidebar.workers">Workers</span>
+ </a>
+ <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
+ <span data-i18n="sidebar.stock">Stock</span>
+ </a>
 <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
-      <span data-i18n="sidebar.settings">Settings</span>
-    </a>
-  </div>
-  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
-      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
-      <span data-i18n="sidebar.help">Help</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
-      <span data-i18n="sidebar.offline">Offline Mode</span>
-    </a>
-  </div>
+ <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
+ <span data-i18n="sidebar.settings">Settings</span>
+ </a>
+ 
+ <!-- INJECTED WORKER LINK -->
+ <div style="margin-top: 16px; padding: 12px; background: rgba(30,41,59,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+ <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase;">Worker Link</span>
+ <div style="display:flex; align-items:center; justify-content:space-between;">
+ <span class="sidebar-worker-link" style="color: #6ee7b7; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; cursor: text; user-select: all;">Loading...</span>
+ </div>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ setTimeout(() => {
+ if (window.API) {
+ window.API.request('get_worker_portal_url').then(res => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => {
+ if (res && res.status === 'success') {
+ el.textContent = res.data.url.replace('https://', '').replace('http://', '');
+ } else {
+ el.textContent = 'Not Active';
+ }
+ });
+ }).catch(e => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => el.textContent = 'Error');
+ });
+ }
+ }, 500);
+ });
+ </script>
+ </div>
+ <!-- END INJECTED WORKER LINK -->
+
+ </div>
+ <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+ <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">help</span>
+ <span data-i18n="sidebar.help">Help</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
+ <span data-i18n="sidebar.offline">Offline Mode</span>
+ </a>
+ </div>
 </nav>
 <!-- TopAppBar -->
 <header class="fixed top-0 right-0 left-[280px] h-[72px] flex justify-between items-center px-gutter z-30 bg-surface shadow-sm docked top-0 full-width h-[72px]">
@@ -94,8 +125,8 @@
 </button>
 <button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined">add</span>
-                New Order
-            </button>
+ New Order
+ </button>
 <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant ml-2">
 <img alt='\"Shop' class="w-full h-full object-cover" data-alt="A small circular avatar placeholder image showing a generic user silhouette or shop logo, minimalist design, light theme compatible." profile\"="" src='\"../img/profile.png\"/'/>
 </div>
@@ -110,15 +141,15 @@
 </div>
 <button class="bg-primary text-on-primary px-5 py-3 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary-container transition-colors shadow-md" onclick="window.API.navigate('add_payment')">
 <span class="material-symbols-outlined">add</span>
-                Add Payment
-            </button>
+ Add Payment
+ </button>
 </div>
 <!-- Summary Metrics -->
 <div class="flex justify-between items-center mb-4">
-    <h3 class="font-headline-md text-headline-md text-on-surface">Summary</h3>
-    <button id="kpi-toggle-btn" onclick="toggleKPIs()" class="flex items-center gap-1 text-primary hover:text-primary/80 font-label-md transition-colors px-3 py-1 rounded-full bg-primary/10">
-        <span class="material-symbols-outlined text-[18px]">visibility</span> Show Amounts
-    </button>
+ <h3 class="font-headline-md text-headline-md text-on-surface">Summary</h3>
+ <button id="kpi-toggle-btn" onclick="toggleKPIs()" class="flex items-center gap-1 text-primary hover:text-primary/80 font-label-md transition-colors px-3 py-1 rounded-full bg-primary/10">
+ <span class="material-symbols-outlined text-[18px]">visibility</span> Show Amounts
+ </button>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-stack_lg">
 <!-- Card 1: Total Collected -->
@@ -133,7 +164,7 @@
 <h3 class="font-display text-display text-on-surface" id="dash-total-collected" data-amount="0">****</h3>
 <p class="font-body-sm text-sm text-green-700 mt-1 flex items-center gap-1 hidden">
 <span class="material-symbols-outlined text-[16px]">trending_up</span> +8% this month
-        </p>
+ </p>
 </div>
 </div>
 <!-- Card 2: Pending Payments -->
@@ -193,42 +224,42 @@
 <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest overflow-hidden">
 <div class="px-6 py-4 border-b border-surface-container-highest flex justify-between items-center bg-surface/50">
 <div class="flex gap-4 flex-wrap">
-    <button id="tab-transactions" class="font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1">Recent Transactions</button>
-    <button id="tab-pending" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Pending Balances</button>
-    <button id="tab-workers" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Worker Payments</button>
-    <button id="tab-stock" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Stock</button>
+ <button id="tab-transactions" class="font-headline-md text-[18px] font-semibold text-primary border-b-2 border-primary pb-1">Recent Transactions</button>
+ <button id="tab-pending" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Pending Balances</button>
+ <button id="tab-workers" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Worker Payments</button>
+ <button id="tab-stock" class="font-headline-md text-[18px] font-semibold text-on-surface-variant hover:text-on-surface border-b-2 border-transparent pb-1 transition-colors">Stock</button>
 </div>
 <div class="flex gap-2 relative" id="payment-controls">
-    <div class="relative inline-block">
-        <button id="filter-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
-        </button>
-        <!-- Filter Dropdown -->
-        <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-surface-container-highest rounded-xl shadow-xl z-10 text-left">
-            <div class="p-4">
-                <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Time Range</label>
-                <select id="filter-time" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 mb-4 text-sm text-on-surface outline-none focus:border-primary transition-colors">
-                    <option value="today">Today</option>
-                    <option value="7days">Last 7 Days</option>
-                    <option value="30days">Last 30 Days</option>
-                    <option value="all">All Time</option>
-                </select>
-                
-                <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Payment Method</label>
-                <select id="filter-method" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface outline-none focus:border-primary transition-colors">
-                    <option value="all">All Methods</option>
-                    <option value="CASH">Cash</option>
-                    <option value="UPI">UPI</option>
-                    <option value="CARD">Card</option>
-                    <option value="BANK">Bank Transfer</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    
-    <button id="export-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">download</span> Export
-    </button>
+ <div class="relative inline-block">
+ <button id="filter-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+ <span class="material-symbols-outlined text-[18px]">filter_list</span> Filter
+ </button>
+ <!-- Filter Dropdown -->
+ <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-surface-container-highest rounded-xl shadow-xl z-10 text-left">
+ <div class="p-4">
+ <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Time Range</label>
+ <select id="filter-time" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 mb-4 text-sm text-on-surface outline-none focus:border-primary transition-colors">
+ <option value="today">Today</option>
+ <option value="7days">Last 7 Days</option>
+ <option value="30days">Last 30 Days</option>
+ <option value="all">All Time</option>
+ </select>
+ 
+ <label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">Payment Method</label>
+ <select id="filter-method" class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface outline-none focus:border-primary transition-colors">
+ <option value="all">All Methods</option>
+ <option value="CASH">Cash</option>
+ <option value="UPI">UPI</option>
+ <option value="CARD">Card</option>
+ <option value="BANK">Bank Transfer</option>
+ </select>
+ </div>
+ </div>
+ </div>
+ 
+ <button id="export-btn" class="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors flex items-center gap-2">
+ <span class="material-symbols-outlined text-[18px]">download</span> Export
+ </button>
 </div>
 </div>
 <!-- List Cards (Alternative to dense table) -->
@@ -236,7 +267,7 @@
 <!-- Header Row (Visual only) -->
 <div id="list-header" class="hidden md:grid grid-cols-6 gap-4 px-4 py-2 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
 <div>Date</div>
-<div>Order No.</div>
+<div>Bill No.</div>
 <div>Customer</div>
 <div>Amount</div>
 <div>Method</div>

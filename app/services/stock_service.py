@@ -36,6 +36,14 @@ class StockService:
             )
             session.commit()
             logger.info(f"Added stock item: {name}")
+            
+            # Log initial stock addition
+            if quantity > 0:
+                from app.models.stock import StockUsage
+                usage = StockUsage(worker_id=0, stock_item_id=item.id, quantity=quantity)
+                session.add(usage)
+                session.commit()
+                
             return {"id": item.id, "name": item.name, "quantity": item.quantity}
         except Exception as e:
             session.rollback()
@@ -76,13 +84,17 @@ class StockService:
                     raise ValueError(f"Insufficient stock. Available: {item.quantity}, Requested: {amount}")
                 item.quantity -= amount
                 
-                # Log usage if worker is provided
-                if worker_id is not None:
-                    from app.models.stock import StockUsage
-                    usage = StockUsage(worker_id=worker_id, stock_item_id=item_id, quantity=amount)
-                    session.add(usage)
+                # Log usage (negative for consumption)
+                from app.models.stock import StockUsage
+                usage = StockUsage(worker_id=worker_id if worker_id is not None else 0, stock_item_id=item_id, quantity=-amount)
+                session.add(usage)
             elif operation == "add":
                 item.quantity += amount
+                
+                # Log addition (positive for addition)
+                from app.models.stock import StockUsage
+                usage = StockUsage(worker_id=worker_id if worker_id is not None else 0, stock_item_id=item_id, quantity=amount)
+                session.add(usage)
             else:
                 raise ValueError("Invalid operation. Must be 'add' or 'consume'")
                 

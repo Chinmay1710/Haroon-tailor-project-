@@ -35,13 +35,13 @@ logger = get_logger(__name__)
 # Thermal printer configuration
 # ---------------------------------------------------------------------------
 
-THERMAL_PRINTER_NAME = "POS58 Printer"
+THERMAL_PRINTER_NAME = "POS80 Printer"
 
-# 58mm paper.
+# 80mm paper.
 # A height of 250mm gives enough room for a normal tailor receipt while
 # allowing the Windows thermal printer driver to handle the roll.
-THERMAL_PAPER_WIDTH_MM = 58.0
-THERMAL_PAPER_HEIGHT_MM = 180.0
+THERMAL_PAPER_WIDTH_MM = 80.0
+THERMAL_PAPER_HEIGHT_MM = 250.0
 
 # Small thermal-printer margins.
 THERMAL_MARGIN_MM = 3.0
@@ -83,31 +83,32 @@ def _configure_thermal_printer(printer: QPrinter) -> None:
 
 
 def _make_fonts(scale: float = 1.0):
-    """Create compact, readable fonts suitable for a 58mm thermal receipt."""
+    """Create compact, readable fonts suitable for an 80mm thermal receipt."""
 
-    title_font = QFont("Courier New")
-    title_font.setPointSizeF(9.0 / scale)
-    title_font.setWeight(QFont.Weight.Black)
+    title_font = QFont("Arial")
+    title_font.setPointSizeF(12.0 / scale)
+    title_font.setWeight(QFont.Weight.Normal)
     
-    shop_detail_font = QFont("Courier New")
-    shop_detail_font.setPointSizeF(7.0 / scale)
+    shop_detail_font = QFont("Arial")
+    shop_detail_font.setPointSizeF(11.0 / scale)
+    shop_detail_font.setWeight(QFont.Weight.Normal)
     
-    receipt_title_font = QFont("Courier New")
-    receipt_title_font.setPointSizeF(8.0 / scale)
-    receipt_title_font.setWeight(QFont.Weight.Black)
+    receipt_title_font = QFont("Arial")
+    receipt_title_font.setPointSizeF(10.0 / scale)
+    receipt_title_font.setWeight(QFont.Weight.Normal)
     
-    normal_font = QFont("Courier New")
-    normal_font.setPointSizeF(7.0 / scale)
+    normal_font = QFont("Arial")
+    normal_font.setPointSizeF(9.0 / scale)
     
-    value_font = QFont("Courier New")
-    value_font.setPointSizeF(7.0 / scale)
+    value_font = QFont("Arial")
+    value_font.setPointSizeF(9.0 / scale)
     
-    bold_font = QFont("Courier New")
-    bold_font.setPointSizeF(7.0 / scale)
-    bold_font.setWeight(QFont.Weight.Black)
+    bold_font = QFont("Arial")
+    bold_font.setPointSizeF(9.0 / scale)
+    bold_font.setWeight(QFont.Weight.Normal)
     
-    small_font = QFont("Courier New")
-    small_font.setPointSizeF(6.0 / scale)
+    small_font = QFont("Arial")
+    small_font.setPointSizeF(8.0 / scale)
 
     return (
         title_font,
@@ -233,7 +234,7 @@ def _draw_thermal_receipt(
     device_rect = printer.paperRect(QPrinter.Unit.DevicePixel)
     point_rect = printer.paperRect(QPrinter.Unit.Point)
     
-    scale = 384.0 / max(1.0, point_rect.width())
+    scale = 576.0 / max(1.0, point_rect.width())
     painter.scale(scale, scale)
 
     width = point_rect.width()
@@ -293,18 +294,18 @@ def _draw_thermal_receipt(
     painter.setFont(shop_detail_font)
     if shop_address:
         painter.drawText(
-            QRectF(margin, y, content_width, 14),
+            QRectF(margin, y, content_width, 20),
             Qt.AlignmentFlag.AlignCenter,
             shop_address
         )
-        y += 14
+        y += 20
     if shop_phone:
         painter.drawText(
-            QRectF(margin, y, content_width, 14),
+            QRectF(margin, y, content_width, 20),
             Qt.AlignmentFlag.AlignCenter,
             f"Ph: {shop_phone}"
         )
-        y += 14
+        y += 20
 
     draw_dashed_line()
 
@@ -319,8 +320,10 @@ def _draw_thermal_receipt(
 
     # 4. Order Details
     from app.utils.formatters import format_date_display, format_currency
-    draw_row("Order No:", order.order_number, right_bold=True)
+    from datetime import datetime
+    draw_row("Bill No:", order.order_number, right_bold=True)
     draw_row("Date:", format_date_display(order.order_date))
+    draw_row("Time:", datetime.now().strftime("%I:%M %p"))
     draw_row("Delivery:", format_date_display(order.delivery_date))
 
     draw_dashed_line()
@@ -349,8 +352,10 @@ def _draw_thermal_receipt(
         painter.drawText(QRectF(margin + content_width * 0.4, y, content_width * 0.2, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, str(item.quantity))
         painter.drawText(QRectF(margin + content_width * 0.6, y, content_width * 0.4, 18), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, format_currency(item.price * item.quantity, currency))
         y += 18
-
+        
     draw_dashed_line()
+
+    # Removed Instructions / Notes from receipt
 
     # 8. Totals
     draw_row("TOTAL:", format_currency(order.total_amount, currency), font_left=bold_font, right_bold=True)
@@ -378,22 +383,6 @@ def _draw_thermal_receipt(
     )
     y += 18
 
-    # Extra space before signature
-    y += 20
-    
-    # Signature line
-    painter.drawText(
-        QRectF(margin, y, content_width, 18),
-        Qt.AlignmentFlag.AlignCenter,
-        "________________________"
-    )
-    y += 15
-    painter.drawText(
-        QRectF(margin, y, content_width, 18),
-        Qt.AlignmentFlag.AlignCenter,
-        "Customer Signature"
-    )
-    y += 18
 
     # Fix for printer stopping early: feed paper by drawing blank space at the bottom
     y += 80
@@ -648,7 +637,7 @@ def generate_receipt_pdf(
         title_font = QFont(
             "Public Sans",
             18,
-            QFont.Weight.Bold,
+            QFont.Weight.Normal,
         )
 
         normal_font = QFont(
@@ -664,7 +653,7 @@ def generate_receipt_pdf(
         header_font = QFont(
             "Public Sans",
             12,
-            QFont.Weight.Bold,
+            QFont.Weight.Normal,
         )
 
         value_font = QFont(
@@ -987,43 +976,7 @@ def generate_receipt_pdf(
 
         y += 20
 
-        # ---------------------------------------------------------------
-        # Special instructions
-        # ---------------------------------------------------------------
-
-        if order.special_instructions:
-            painter.setFont(header_font)
-            painter.setPen(QColor("#091426"))
-
-            painter.drawText(
-                QRectF(
-                    margin,
-                    y,
-                    content_width,
-                    20,
-                ),
-                Qt.AlignmentFlag.AlignLeft,
-                "Special Instructions",
-            )
-
-            y += 22
-
-            painter.setFont(normal_font)
-            painter.setPen(QColor("#666666"))
-
-            painter.drawText(
-                QRectF(
-                    margin,
-                    y,
-                    content_width,
-                    60,
-                ),
-                Qt.AlignmentFlag.AlignLeft
-                | Qt.AlignmentFlag.TextWordWrap,
-                order.special_instructions,
-            )
-
-            y += 50
+        # Removed Special instructions from receipt
 
         # ---------------------------------------------------------------
         # Footer

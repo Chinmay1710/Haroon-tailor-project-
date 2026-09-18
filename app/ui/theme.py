@@ -74,6 +74,7 @@ STATUS_COLORS = {
     "NEW": ("#64748b", "#f1f5f9"),
     "CUTTING_COMPLETE": ("#3b82f6", "#eff6ff"),
     "STITCHING_COMPLETE": ("#10b981", "#ecfdf5"),
+    "PARTIALLY_DELIVERED": ("#eab308", "#fefce8"),
     "DELIVERED": ("#6366f1", "#eef2ff"),
     "CANCELLED": ("#9ca3af", "#f9fafb"),
     "OVERDUE": ("#ef4444", "#fef2f2"),
@@ -142,7 +143,7 @@ def get_global_stylesheet() -> str:
             background-color: transparent;
         }}
         QScrollArea > QWidget > QWidget {{
-            background-color: transparent;
+            background-color: {COLORS['surface']};
         }}
         QScrollBar:vertical {{
             background: {COLORS['surface_container_low']};

@@ -23,12 +23,17 @@ class CustomerRepository:
             Customer.id == customer_id, Customer.is_active == True  # noqa: E712
         ).first()
 
-    def get_all(self) -> list[Customer]:
+    def get_all(self, limit: int = None, offset: int = 0) -> list[Customer]:
         return self.session.query(Customer).filter(
             Customer.is_active == True  # noqa: E712
-        ).order_by(Customer.name).all()
+        ).order_by(Customer.name).limit(limit).offset(offset).all()
 
-    def search(self, query: str) -> list[Customer]:
+    def count_all(self) -> int:
+        return self.session.query(Customer).filter(
+            Customer.is_active == True  # noqa: E712
+        ).count()
+
+    def search(self, query: str, limit: int = None, offset: int = 0) -> list[Customer]:
         q = f"%{query}%"
         return self.session.query(Customer).filter(
             Customer.is_active == True,  # noqa: E712
@@ -37,7 +42,18 @@ class CustomerRepository:
                 Customer.mobile.ilike(q),
                 Customer.id.cast(String).ilike(q),
             )
-        ).order_by(Customer.name).all()
+        ).order_by(Customer.name).limit(limit).offset(offset).all()
+
+    def count_search(self, query: str) -> int:
+        q = f"%{query}%"
+        return self.session.query(Customer).filter(
+            Customer.is_active == True,  # noqa: E712
+            or_(
+                Customer.name.ilike(q),
+                Customer.mobile.ilike(q),
+                Customer.id.cast(String).ilike(q),
+            )
+        ).count()
 
     def update(self, customer_id: int, **kwargs) -> Customer | None:
         customer = self.get_by_id(customer_id)

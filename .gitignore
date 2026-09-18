@@ -48,3 +48,6 @@ code.zip
 website/
 node_server/
 cloudflare_config.json
+
+node.exe
+*.zip

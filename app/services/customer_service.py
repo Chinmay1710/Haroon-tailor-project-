@@ -64,16 +64,28 @@ class CustomerService:
         finally:
             session.close()
 
-    def get_all_customers(self) -> list[Customer]:
+    def get_all_customers(self, limit: int = None, offset: int = 0):
         session = get_session()
         try:
-            return CustomerRepository(session).get_all()
+            repo = CustomerRepository(session)
+            if limit is not None:
+                customers = repo.get_all(limit=limit, offset=offset)
+                total = repo.count_all()
+                return customers, total
+            else:
+                return repo.get_all(limit=None, offset=None)
         finally:
             session.close()
 
-    def search_customers(self, query: str) -> list[Customer]:
+    def search_customers(self, query: str, limit: int = None, offset: int = 0):
         session = get_session()
         try:
-            return CustomerRepository(session).search(query)
+            repo = CustomerRepository(session)
+            if limit is not None:
+                customers = repo.search(query, limit=limit, offset=offset)
+                total = repo.count_search(query)
+                return customers, total
+            else:
+                return repo.search(query, limit=None, offset=None)
         finally:
             session.close()

@@ -6,6 +6,7 @@ from sqlalchemy import or_, func
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.order import Order, OrderItem, OrderMeasurement
+from app.models.customer import Customer
 from app.config import ORDER_NUMBER_PREFIX, ORDER_NUMBER_FORMAT
 
 
@@ -90,16 +91,22 @@ class OrderRepository:
             joinedload(Order.payments),
         ).filter(Order.order_number == order_number).first()
 
-    def get_all(self, status: str = None) -> list[Order]:
+    def get_all(self, status: str = None, limit: int = None, offset: int = 0) -> list[Order]:
         query = self.session.query(Order).options(
             joinedload(Order.customer),
             joinedload(Order.items),
         )
         if status:
             query = query.filter(Order.status == status)
-        return query.order_by(Order.created_at.desc()).all()
+        return query.order_by(Order.created_at.desc()).limit(limit).offset(offset).all()
 
-    def get_overdue(self) -> list[Order]:
+    def count_all(self, status: str = None) -> int:
+        query = self.session.query(Order)
+        if status:
+            query = query.filter(Order.status == status)
+        return query.count()
+
+    def get_overdue(self, limit: int = None, offset: int = 0) -> list[Order]:
         today = date.today()
         return self.session.query(Order).options(
             joinedload(Order.customer),
@@ -107,7 +114,14 @@ class OrderRepository:
         ).filter(
             Order.delivery_date < today,
             Order.status.notin_(["DELIVERED", "CANCELLED"]),
-        ).order_by(Order.delivery_date).all()
+        ).order_by(Order.delivery_date).limit(limit).offset(offset).all()
+
+    def count_overdue(self) -> int:
+        today = date.today()
+        return self.session.query(Order).filter(
+            Order.delivery_date < today,
+            Order.status.notin_(["DELIVERED", "CANCELLED"]),
+        ).count()
 
     def get_by_delivery_date(self, target_date: date) -> list[Order]:
         return self.session.query(Order).options(
@@ -150,17 +164,26 @@ class OrderRepository:
             Order.customer_id == customer_id
         ).order_by(Order.created_at.desc()).all()
 
-    def search(self, query: str) -> list[Order]:
+    def search(self, query: str, limit: int = None, offset: int = 0) -> list[Order]:
         q = f"%{query}%"
         return self.session.query(Order).options(
             joinedload(Order.customer),
             joinedload(Order.items),
-        ).filter(
+        ).outerjoin(Order.customer).filter(
             or_(
                 Order.order_number.ilike(q),
-                Order.customer.has(name=query),
+                Customer.name.ilike(q),
             )
-        ).order_by(Order.created_at.desc()).all()
+        ).order_by(Order.created_at.desc()).limit(limit).offset(offset).all()
+
+    def count_search(self, query: str) -> int:
+        q = f"%{query}%"
+        return self.session.query(Order).outerjoin(Order.customer).filter(
+            or_(
+                Order.order_number.ilike(q),
+                Customer.name.ilike(q),
+            )
+        ).count()
 
     def update_status(self, order_id: int, status: str) -> Order | None:
         order = self.session.query(Order).filter(Order.id == order_id).first()

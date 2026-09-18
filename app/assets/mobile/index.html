@@ -121,26 +121,6 @@
                             <input type="number" id="extra-amount" min="0" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
                         </div>
 
-                        <!-- Stock Used -->
-                        <div class="h-px bg-slate-100 my-4"></div>
-                        <div class="bg-indigo-50 text-indigo-800 p-3 rounded-xl text-sm mb-4">
-                            <p class="font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">inventory_2</span> Stock Consumed</p>
-                            <p class="opacity-90">Optional: Log the materials you used for this work.</p>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="flex-[2]">
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Item Used</label>
-                                <select id="stock-item-id" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
-                                    <option value="">None</option>
-                                    <!-- Populated dynamically -->
-                                </select>
-                            </div>
-                            <div class="flex-1">
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Qty</label>
-                                <input type="number" id="stock-quantity" min="0" step="0.1" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
-                            </div>
-                        </div>
-
                         <!-- Messages & Submit -->
                         <div class="pb-16">
                             <p id="submit-msg" class="text-sm text-center font-medium mb-3 hidden"></p>
@@ -240,11 +220,23 @@
 
                     
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Customer Details</label>
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Customer Details</label>
+                            <button type="button" onclick="clearSelectedCustomer()" id="btn-clear-cust" class="hidden text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-1 rounded-lg">Clear Selection</button>
+                        </div>
+                        
+                        <div class="relative mb-4">
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">search</span>
+                                <input type="text" id="admin-cust-search" placeholder="Search Old Customer by Name or Phone..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white outline-none" oninput="searchMobileCustomers(this.value)">
+                            </div>
+                            <div id="admin-cust-dropdown" class="absolute z-50 w-full bg-white border border-slate-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto"></div>
+                        </div>
+
                         <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
-                            <input type="text" id="admin-cust-name" placeholder="Full Name *" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
-                            <input type="tel" id="admin-cust-phone" placeholder="10-digit Mobile Number" maxlength="10" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <input type="text" id="admin-cust-address" placeholder="Address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none">
+                            <input type="text" id="admin-cust-name" placeholder="Full Name *" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none disabled:bg-slate-100 disabled:text-slate-500">
+                            <input type="tel" id="admin-cust-phone" placeholder="10-digit Mobile Number" maxlength="10" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none disabled:bg-slate-100 disabled:text-slate-500" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="text" id="admin-cust-address" placeholder="Address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-white outline-none disabled:bg-slate-100 disabled:text-slate-500">
                         </div>
                     </div>
 
@@ -286,24 +278,16 @@
                             <div id="admin-measurements-grid" class="grid grid-cols-2 gap-3 mb-2">
                                 <!-- Dynamic measurements will be injected here -->
                             </div>
-                            <textarea id="admin-measurements-custom" rows="2" placeholder="Additional custom measurements..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none resize-none"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Reference Photos</label>
-                            <div class="flex flex-wrap gap-2 mb-2" id="admin-photo-preview">
-                                <!-- Photo previews injected here -->
+                            <div class="flex justify-end">
+                                <button type="button" onclick="addCustomMeasurementMobile()" class="text-blue-600 hover:text-blue-700 font-medium text-xs flex items-center gap-1 bg-blue-50 px-2 py-1.5 rounded-lg border border-blue-100 transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">add</span> Add Measurement
+                                </button>
                             </div>
-                            <label class="w-full border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center text-slate-500 hover:border-slate-400 hover:bg-slate-50 cursor-pointer transition-colors">
-                                <span class="material-symbols-outlined mb-1 text-2xl">add_a_photo</span>
-                                <span class="text-sm font-medium">Take Photo / Upload</span>
-                                <input type="file" id="admin-photo-input" accept="image/*" capture="environment" multiple class="hidden" onchange="handleMobilePhotoSelect(event)">
-                            </label>
                         </div>
 
                         <div>
                             <div class="flex justify-between items-end mb-1">
-                                <label class="block text-sm font-medium text-slate-700">Special Instructions</label>
+                                <label class="block text-sm font-medium text-slate-700">Item Instructions</label>
                                 <button type="button" onclick="startSpeechRecognition('admin-instructions')" class="text-blue-600 hover:text-blue-700 flex items-center gap-1 text-xs font-semibold px-2 py-1 bg-blue-50 rounded-lg transition-colors">
                                     <span class="material-symbols-outlined text-[16px]">mic</span> Dictate
                                 </button>
@@ -313,28 +297,48 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Attach Photo(s)</label>
-                            <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center">
-                                <input type="file" id="admin-photo-camera" accept="image/*" capture="environment" class="hidden" onchange="handleMobilePhotoSelect(event)">
-                                <input type="file" id="admin-photo-upload" accept="image/*" multiple class="hidden" onchange="handleMobilePhotoSelect(event)">
-                                <div class="flex gap-2 justify-center">
-                                    <button type="button" onclick="document.getElementById('admin-photo-camera').click()" class="bg-white border border-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm flex-1">
-                                        <span class="material-symbols-outlined text-xl">photo_camera</span> Click Photo
-                                    </button>
-                                    <button type="button" onclick="document.getElementById('admin-photo-upload').click()" class="bg-white border border-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm flex-1">
-                                        <span class="material-symbols-outlined text-xl">upload_file</span> Upload Picture
-                                    </button>
-                                </div>
-                                <div id="admin-photo-preview" class="flex flex-wrap gap-2 mt-3 empty:hidden justify-center"></div>
+                            <label class="w-full border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center text-slate-500 hover:border-slate-400 hover:bg-slate-50 cursor-pointer transition-colors">
+                                <span class="material-symbols-outlined mb-1 text-2xl">add_a_photo</span>
+                                <span class="text-sm font-medium">Attach Photo(s)</span>
+                                <input type="file" id="admin-photo-input" accept="image/*" capture="environment" multiple class="hidden" onchange="handleMobilePhotoSelect(event)">
+                            </label>
+                            <div id="admin-photo-preview" class="flex flex-wrap gap-2 mt-3 empty:hidden justify-center"></div>
+                        </div>
+
+                        <button type="button" onclick="addAdminOrderItem()" class="w-full border border-dashed border-slate-400 text-slate-700 font-semibold py-3 rounded-xl hover:bg-slate-50 transition-all mb-4 mt-2 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">add</span> Add Item
+                        </button>
+                        
+                        <div class="h-px bg-slate-200 my-4"></div>
+
+                        <div id="admin-items-list" class="space-y-3 mb-6 empty:hidden"></div>
+
+                        <!-- Order Level Details -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Delivery Date</label>
+                                <input type="date" id="admin-delivery-date" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none text-sm font-semibold text-slate-700">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Advance Received (₹)</label>
+                                <input type="number" id="admin-advance" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none text-sm font-semibold text-slate-700">
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Advance Received (₹)</label>
-                            <input type="number" id="admin-advance" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 focus:ring-2 bg-slate-50 outline-none">
+                        <!-- Grand Total -->
+                        <div class="flex justify-between items-center bg-slate-100 p-4 rounded-xl mb-4 hidden" id="admin-total-container">
+                            <span class="text-slate-600 font-semibold">Grand Total</span>
+                            <span class="text-xl font-bold text-slate-900">₹<span id="admin-grand-total">0</span></span>
                         </div>
 
-                        <button onclick="submitAdminOrder()" id="admin-submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 transition-all mt-4 flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined">add_circle</span> Save Customer & Order
+                        <!-- WhatsApp Option -->
+                        <div class="flex items-center gap-2 mb-4">
+                            <input type="checkbox" id="admin-send-whatsapp" class="w-5 h-5 rounded border-slate-300 text-slate-900 focus:ring-slate-900" checked>
+                            <label for="admin-send-whatsapp" class="text-sm font-medium text-slate-700">Send WhatsApp Message to Customer</label>
+                        </div>
+
+                        <button onclick="submitAdminOrder()" id="admin-submit-btn" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl hover:bg-slate-800 transition-all mt-4 flex items-center justify-center gap-2 shadow-lg">
+                            <span class="material-symbols-outlined">add_circle</span> Submit Order
                         </button>
                         <p id="admin-submit-msg" class="text-sm text-center font-medium mt-2 hidden"></p>
                     </div>
@@ -444,7 +448,6 @@
         // Initialization
         window.onload = () => {
             fetchGarmentRates();
-            fetchStockItems();
             
             // Check local storage for session
             const savedWorker = localStorage.getItem('worker_session');
@@ -477,21 +480,6 @@
             }
         }
 
-        async function fetchStockItems() {
-            try {
-                const res = await fetch('/api/stock-items');
-                const data = await res.json();
-                stockItems = data.items;
-                
-                const select = document.getElementById('stock-item-id');
-                select.innerHTML = '<option value="">None</option>';
-                stockItems.forEach(i => {
-                    select.innerHTML += `<option value="${i.id}">${i.name} (Available: ${i.quantity} ${i.unit})</option>`;
-                });
-            } catch(e) {
-                console.error("Failed to load stock items", e);
-            }
-        }
 
         async function login() {
             const name = document.getElementById('login-name').value.trim();
@@ -564,7 +552,7 @@
                 if (bottomNav) bottomNav.classList.add('hidden');
                 if (mainContent) {
                     mainContent.classList.remove('pb-32');
-                    mainContent.classList.add('pb-6');
+                    mainContent.classList.add('pb-24'); // Fixed scroll padding for admin
                 }
             } else {
                 if (bottomNav) bottomNav.classList.remove('hidden');
@@ -627,8 +615,6 @@
                 bill_number: document.getElementById('bill-number').value || null,
                 extra_work_description: document.getElementById('extra-desc').value || null,
                 extra_amount: parseFloat(document.getElementById('extra-amount').value) || 0.0,
-                stock_item_id: parseInt(document.getElementById('stock-item-id').value) || null,
-                stock_quantity: parseFloat(document.getElementById('stock-quantity').value) || 0.0,
                 is_present: isDaily ? document.getElementById('is-present').checked : false
             };
 
@@ -648,12 +634,9 @@
                     // Keep type intact for piece rate
                     document.getElementById('quantity').value = "1";
                     document.getElementById('extra-amount').value = "0";
-                    document.getElementById('stock-item-id').value = "";
-                    document.getElementById('stock-quantity').value = "0";
                     document.getElementById('is-present').checked = false;
                     
                     loadLedger();
-                    fetchStockItems();
                     
                     // Switch to the Earnings (ledger) tab
                     switchTab('ledger');
@@ -923,104 +906,354 @@
             "Pant": ["Length", "Waist", "Hip", "Thigh", "Knee", "Bottom", "Rise"],
             "Kurta": ["Length", "Shoulder", "Chest", "Waist", "Hip", "Sleeve Length", "Collar", "Side Slit"],
             "Blouse": ["Length", "Shoulder", "Bust", "Waist", "Sleeve", "Armhole", "Neck Front", "Neck Back"],
-            "Suit": ["Jacket Length", "Shoulder", "Chest", "Waist", "Sleeve", "Pant Length", "Pant Waist", "Pant Hip"]
+            "Suit": ["Jacket Length", "Shoulder", "Chest", "Waist", "Sleeve", "Pant Length", "Pant Waist", "Pant Hip"],
+            "Custom": ["Measurement 1", "Measurement 2", "Measurement 3"]
         };
+
+        let selectedCustomerId = null;
+        let currentCustomerMeasurements = [];
+
+        async function searchMobileCustomers(q) {
+            const dropdown = document.getElementById('admin-cust-dropdown');
+            if (q.trim().length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            try {
+                const res = await fetch(`/api/customers?q=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                if (data.customers.length > 0) {
+                    dropdown.innerHTML = data.customers.map(c => `
+                        <div class="px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0" onclick="selectMobileCustomer(${c.id}, '${c.name.replace(/'/g, "\\'")}', '${c.mobile || ''}', '')">
+                            <p class="font-semibold text-slate-800">${c.name}</p>
+                            <p class="text-xs text-slate-500">${c.mobile || 'No Mobile'}</p>
+                        </div>
+                    `).join('');
+                    dropdown.classList.remove('hidden');
+                } else {
+                    dropdown.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500">No customers found</div>';
+                    dropdown.classList.remove('hidden');
+                }
+            } catch(e) { console.error("Search failed", e); }
+        }
+
+        async function selectMobileCustomer(id, name, mobile, address) {
+            selectedCustomerId = id;
+            document.getElementById('admin-cust-name').value = name;
+            document.getElementById('admin-cust-phone').value = mobile;
+            document.getElementById('admin-cust-address').value = address;
+            
+            document.getElementById('admin-cust-name').disabled = true;
+            document.getElementById('admin-cust-phone').disabled = true;
+            document.getElementById('admin-cust-address').disabled = true;
+            
+            document.getElementById('btn-clear-cust').classList.remove('hidden');
+            document.getElementById('admin-cust-dropdown').classList.add('hidden');
+            document.getElementById('admin-cust-search').value = '';
+            
+            try {
+                const res = await fetch(`/api/customers/${id}/measurements`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    currentCustomerMeasurements = data.measurements || [];
+                }
+            } catch(e) { console.error("Failed to load measurements", e); }
+            
+            // Re-trigger garment change if something is already selected
+            const currentGarment = document.getElementById('admin-garment-type').value;
+            if (currentGarment) {
+                handleGarmentChange(currentGarment);
+            }
+        }
+
+        function clearSelectedCustomer() {
+            selectedCustomerId = null;
+            currentCustomerMeasurements = [];
+            document.getElementById('admin-cust-name').value = '';
+            document.getElementById('admin-cust-phone').value = '';
+            document.getElementById('admin-cust-address').value = '';
+            
+            document.getElementById('admin-cust-name').disabled = false;
+            document.getElementById('admin-cust-phone').disabled = false;
+            document.getElementById('admin-cust-address').disabled = false;
+            
+            document.getElementById('btn-clear-cust').classList.add('hidden');
+            
+            const currentGarment = document.getElementById('admin-garment-type').value;
+            if (currentGarment) {
+                handleGarmentChange(currentGarment);
+            }
+        }
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('admin-cust-dropdown');
+            const searchInput = document.getElementById('admin-cust-search');
+            if (dropdown && !dropdown.contains(e.target) && e.target !== searchInput) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         function handleGarmentChange(value) {
             // Auto set price when garment typed matches a rate
             const rate = garmentRates.find(r => r.garment_type.toLowerCase() === value.toLowerCase());
             if(rate) document.getElementById('admin-price').value = rate.rate;
 
-            // Generate measurement fields
+            // Generate measurement fields (24 Box Grid exactly like Desktop App)
             const grid = document.getElementById('admin-measurements-grid');
+            
+            // For mobile, grid-cols-4 or 6 depending on screen width. We use grid-cols-4 gap-2 for a good mobile layout.
+            grid.className = "grid grid-cols-4 gap-2";
             grid.innerHTML = '';
             
-            // Try to match a template (case-insensitive)
-            const templateKey = Object.keys(MEASUREMENT_TEMPLATES).find(k => k.toLowerCase() === value.toLowerCase());
-            
-            if (templateKey) {
-                const fields = MEASUREMENT_TEMPLATES[templateKey];
-                fields.forEach(field => {
-                    grid.innerHTML += `
-                        <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">${field}</label>
-                            <div class="relative">
-                                <input type="text" data-field="${field}" class="measurement-field w-full px-3 py-2 pr-6 rounded-lg border border-slate-200 focus:border-slate-900 focus:ring-1 bg-white outline-none text-sm">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">"</span>
-                            </div>
+            // Find old profile if exists
+            const profile = currentCustomerMeasurements.find(m => m.template_type.toLowerCase() === value.toLowerCase());
+
+            for (let i = 1; i <= 24; i++) {
+                const field = `Box ${i}`;
+                const savedVal = (profile && profile.values[field]) ? profile.values[field] : '';
+                grid.innerHTML += `
+                    <div>
+                        <div class="relative">
+                            <input type="text" data-name="${field}" value="${savedVal}" 
+                                autocomplete="off"
+                                class="measurement-field w-full p-2.5 bg-surface-container-lowest border border-slate-200 rounded focus:border-slate-900 focus:ring-1 outline-none text-sm text-center font-semibold">
                         </div>
-                    `;
-                });
+                    </div>
+                `;
             }
         }
 
-        
         // Mobile Photo Attachment Handling
         let mobilePhotosBase64 = [];
+        let currentOrderItems = [];
         
         async function handleMobilePhotoSelect(event) {
             const files = event.target.files;
             if(!files || files.length === 0) return;
             
-            const previewContainer = document.getElementById('admin-photo-preview');
+            const MAX_WIDTH = 1024;
+            const MAX_HEIGHT = 1024;
             
-            for(let file of files) {
+            for(let i=0; i<files.length; i++) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    const base64Str = e.target.result;
-                    mobilePhotosBase64.push(base64Str);
-                    
-                    const idx = mobilePhotosBase64.length - 1;
-                    const imgDiv = document.createElement('div');
-                    imgDiv.className = "relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm";
-                    imgDiv.innerHTML = `
-                        <img src="${base64Str}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeMobilePhoto(${idx}, this.parentElement)" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-md border-2 border-white">
-                            <span class="material-symbols-outlined text-[12px]">close</span>
-                        </button>
-                    `;
-                    previewContainer.appendChild(imgDiv);
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height = Math.round(height * (MAX_WIDTH / width));
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width = Math.round(width * (MAX_HEIGHT / height));
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Compress to JPEG with 0.6 quality
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                        mobilePhotosBase64.push(dataUrl);
+                        renderMobilePhotos();
+                    };
+                    img.src = e.target.result;
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(files[i]);
             }
         }
-        
-        function removeMobilePhoto(idx, el) {
-            mobilePhotosBase64[idx] = null;
-            el.remove();
+
+        function renderMobilePhotos() {
+            const container = document.getElementById('admin-photo-preview');
+            container.innerHTML = '';
+            mobilePhotosBase64.forEach((b64, idx) => {
+                container.innerHTML += `
+                    <div class="relative w-16 h-16 group">
+                        <img src="${b64}" class="w-full h-full object-cover rounded-lg border shadow-sm">
+                        <button onclick="removeMobilePhoto(${idx})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 text-xs w-5 h-5 flex items-center justify-center hover:bg-red-600 shadow-md">✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeMobilePhoto(index) {
+            mobilePhotosBase64.splice(index, 1);
+            renderMobilePhotos();
+        }
+
+        function addCustomMeasurementMobile() {
+            const container = document.getElementById('admin-measurements-grid');
+            const id = Date.now();
+            const html = `
+                <div class="custom-meas-row col-span-2 flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Measurement Name</label>
+                        <input type="text" placeholder="e.g. Bicep" class="custom-meas-name w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-slate-900 outline-none">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Value</label>
+                        <input type="text" placeholder="e.g. 14" class="custom-meas-val w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-slate-900 outline-none">
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addAdminOrderItem() {
+            const garment_type = document.getElementById('admin-garment-type').value;
+            const quantity = parseInt(document.getElementById('admin-quantity').value);
+            const price = parseFloat(document.getElementById('admin-price').value);
+            
+            if (!garment_type) {
+                alert("Please select a Garment Type to add.");
+                return;
+            }
+            if (!price) {
+                alert("Please enter a Price to add.");
+                return;
+            }
+
+            let measurements_text = "";
+            const fields = document.querySelectorAll('.measurement-field');
+            fields.forEach(f => {
+                if (f.value.trim()) {
+                    measurements_text += `${f.dataset.name}: ${f.value.trim()}\n`;
+                }
+            });
+            
+            const customRows = document.querySelectorAll('.custom-meas-row');
+            customRows.forEach(row => {
+                const nameInput = row.querySelector('.custom-meas-name');
+                const valInput = row.querySelector('.custom-meas-val');
+                if (nameInput && valInput && nameInput.value.trim() && valInput.value.trim()) {
+                    measurements_text += `${nameInput.value.trim()}: ${valInput.value.trim()}\n`;
+                }
+            });
+
+            const save_profile = document.getElementById('admin-save-profile').checked;
+            const notes = document.getElementById('admin-instructions').value.trim();
+
+            currentOrderItems.push({
+                garment_type,
+                quantity,
+                price,
+                measurements_text,
+                save_profile,
+                notes,
+                image_base64: [...mobilePhotosBase64]
+            });
+
+            renderAdminItems();
+
+            // Clear fields for next item
+            document.getElementById('admin-garment-type').value = '';
+            document.getElementById('admin-quantity').value = '1';
+            document.getElementById('admin-price').value = '';
+            document.getElementById('admin-measurements-grid').innerHTML = '';
+            document.getElementById('admin-instructions').value = '';
+            mobilePhotosBase64 = [];
+            renderMobilePhotos();
+        }
+
+        function renderAdminItems() {
+            const container = document.getElementById('admin-items-list');
+            container.innerHTML = '';
+            if(currentOrderItems.length === 0) return;
+
+            currentOrderItems.forEach((item, index) => {
+                let measHtml = '';
+                if(item.measurements_text) {
+                    const parts = item.measurements_text.split('\n');
+                    parts.forEach(p => {
+                        if(p.includes(':')) {
+                            const val = p.split(':')[1].trim();
+                            if(val) {
+                                measHtml += `<div class="bg-indigo-50 text-indigo-900 text-[10px] font-semibold px-2 py-0.5 rounded border border-indigo-100">${val}</div>`;
+                            }
+                        }
+                    });
+                }
+
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-slate-800 font-semibold text-sm">
+                                ${item.garment_type} <span class="font-normal text-slate-500 ml-1">Qty: ${item.quantity} × ₹${item.price}</span>
+                            </div>
+                            <div class="text-slate-900 font-semibold text-sm">
+                                ₹${item.quantity * item.price}
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            ${measHtml}
+                        </div>
+                        <div class="flex justify-end gap-2 border-t border-slate-100 pt-2 mt-2">
+                            <button type="button" onclick="duplicateAdminItem(${index})" class="text-slate-500 hover:text-green-600 transition-colors" title="Duplicate">
+                                <span class="material-symbols-outlined text-[18px]">content_copy</span>
+                            </button>
+                            <button type="button" onclick="removeAdminItem(${index})" class="text-red-500 hover:text-red-700 transition-colors" title="Delete">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const totalContainer = document.getElementById('admin-total-container');
+            const totalSpan = document.getElementById('admin-grand-total');
+            if (currentOrderItems.length > 0) {
+                const total = currentOrderItems.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+                totalSpan.textContent = total;
+                totalContainer.classList.remove('hidden');
+            } else {
+                totalContainer.classList.add('hidden');
+            }
+        }
+
+        function duplicateAdminItem(index) {
+            const item = currentOrderItems[index];
+            currentOrderItems.push({ ...item });
+            renderAdminItems();
+        }
+
+        function removeAdminItem(index) {
+            currentOrderItems.splice(index, 1);
+            renderAdminItems();
         }
 
         async function submitAdminOrder() {
             const btn = document.getElementById('admin-submit-btn');
             const msg = document.getElementById('admin-submit-msg');
             
-            // Customer Details
-            const name = document.getElementById('admin-cust-name').value;
-            const mobile = document.getElementById('admin-cust-phone').value;
-            const address = document.getElementById('admin-cust-address').value;
-            
-            // Order Details
-            const garment_type = document.getElementById('admin-garment-type').value;
-            const quantity = parseInt(document.getElementById('admin-quantity').value) || 1;
-            const price = parseFloat(document.getElementById('admin-price').value) || 0;
-            const special_instructions = document.getElementById('admin-instructions').value;
-            const advance_amount = parseFloat(document.getElementById('admin-advance').value) || 0;
+            const name = document.getElementById('admin-cust-name').value.trim();
+            const mobile = document.getElementById('admin-cust-phone').value.trim();
+            const address = document.getElementById('admin-cust-address').value.trim();
             
             if (!name) {
                 alert("Customer Name is required.");
                 return;
             }
-            if (!mobile) {
-                alert("Mobile number is required.");
-                return;
+
+            // Also capture any partially filled item if garment type is present
+            const garment_type = document.getElementById('admin-garment-type').value;
+            if (garment_type) {
+                addAdminOrderItem();
             }
-            const mobileRegex = /^[0-9]{10}$/;
-            if (!mobileRegex.test(mobile)) {
-                alert("Mobile number must be exactly 10 digits");
-                return;
-            }
-            if (!garment_type) {
-                alert("Please select a Garment Type.");
+
+            if (currentOrderItems.length === 0) {
+                alert("Please add at least one item to the order.");
                 return;
             }
 
@@ -1028,42 +1261,32 @@
             btn.disabled = true;
 
             try {
-                // 1. Create Customer
-                const custRes = await fetch('/api/customers/add', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name, mobile: '+91 ' + mobile, address: address})
-                });
-                const custData = await custRes.json();
-                if (!custRes.ok) throw new Error("Failed to create customer");
+                let customer_id = selectedCustomerId;
 
-                const customer_id = custData.customer_id;
-
-                // 2. Gather Measurements
-                let measurements_text = "";
-                const fields = document.querySelectorAll('.admin-meas-input');
-                fields.forEach(f => {
-                    if (f.value.trim()) {
-                        measurements_text += `${f.dataset.name}: ${f.value.trim()}\n`;
-                    }
-                });
-                const custom_meas = document.getElementById('admin-measurements-custom').value.trim();
-                if (custom_meas) {
-                    measurements_text += (measurements_text ? '\\n' : '') + custom_meas;
+                if (!customer_id) {
+                    // 1. Create Customer
+                    const custRes = await fetch('/api/customers/add', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({name: name, mobile: mobile ? '+91 ' + mobile : '', address: address})
+                    });
+                    const custData = await custRes.json();
+                    if (!custRes.ok) throw new Error("Failed to create customer");
+                    customer_id = custData.customer_id;
                 }
 
-                // 3. Create Order
-                const save_profile = document.getElementById('admin-save-profile').checked;
+                const advance_amount = parseFloat(document.getElementById('admin-advance').value) || 0;
+                const delivery_date = document.getElementById('admin-delivery-date').value || null;
+                const send_whatsapp = document.getElementById('admin-send-whatsapp').checked;
+
+                // 2. Create Order
                 const payload = {
                     customer_id: customer_id,
-                    garment_type,
-                    quantity,
-                    price,
-                    measurements_text,
-                    special_instructions,
+                    items: currentOrderItems,
+                    special_instructions: "",
                     advance_amount,
-                    save_profile,
-                    image_base64: mobilePhotosBase64
+                    delivery_date,
+                    send_whatsapp
                 };
 
                 const res = await fetch('/api/orders/create', {
@@ -1073,32 +1296,40 @@
                 });
                 
                 if (!res.ok) throw new Error("Failed to create order");
+                const data = await res.json();
                 
-                msg.textContent = "Customer and Order created successfully!";
-                msg.classList.remove('hidden', 'text-red-500');
-                msg.classList.add('text-green-500');
+                if (data.status === 'success') {
+                    if (data.whatsapp_url) {
+                        window.open(data.whatsapp_url, '_blank');
+                    }
+                    msg.textContent = `Order #${data.order_number} created successfully!`;
+                    msg.classList.remove('hidden', 'text-red-500');
+                    msg.classList.add('text-green-500');
                 
                 // Reset form
-                document.getElementById('admin-cust-name').value = '';
-                document.getElementById('admin-cust-phone').value = '';
-                document.getElementById('admin-cust-address').value = '';
+                clearSelectedCustomer();
                 document.getElementById('admin-garment-type').value = '';
                 document.getElementById('admin-quantity').value = '1';
                 document.getElementById('admin-price').value = '';
                 document.getElementById('admin-measurements-grid').innerHTML = '';
-                document.getElementById('admin-measurements-custom').value = '';
                 document.getElementById('admin-instructions').value = '';
                 document.getElementById('admin-advance').value = '0';
-                document.getElementById('admin-photo-preview').innerHTML = '';
-                mobilePhotosBase64 = [];
+                document.getElementById('admin-delivery-date').value = '';
                 
+                mobilePhotosBase64 = [];
+                currentOrderItems = [];
+                renderMobilePhotos();
+                renderAdminItems();
+                document.getElementById('admin-total-container').classList.add('hidden');
+
                 setTimeout(() => msg.classList.add('hidden'), 3000);
+                }
             } catch (e) {
                 msg.textContent = "Error: " + e.message;
                 msg.classList.remove('hidden', 'text-green-500');
                 msg.classList.add('text-red-500');
             } finally {
-                btn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Save Customer & Order';
+                btn.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Submit Order';
                 btn.disabled = false;
             }
         }

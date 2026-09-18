@@ -28,8 +28,8 @@ def format_date_display(d: date | datetime | None) -> str:
 
 
 def format_order_number(seq: int) -> str:
-    """Format order sequence number: ORD-000001."""
-    return f"ORD-{seq:06d}"
+    """Format order sequence number: Bill-000001."""
+    return f"Bill-{seq:06d}"
 
 
 def get_initials(name: str) -> str:

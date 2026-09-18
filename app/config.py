@@ -66,6 +66,22 @@ def ensure_dirs():
         except Exception as e:
             print(f"Warning: Failed to migrate old uploads: {e}")
 
+    # Ensure a junction exists for the desktop app's web view to access uploads via relative path
+    assets_uploads = os.path.join(base_dir, "assets", "uploads")
+    if not os.path.exists(assets_uploads):
+        import subprocess
+        import platform
+        if platform.system() == "Windows":
+            try:
+                subprocess.run(["cmd", "/c", "mklink", "/J", assets_uploads, UPLOADS_DIR], capture_output=True)
+                print(f"Created junction for uploads: {assets_uploads} -> {UPLOADS_DIR}")
+            except Exception as e:
+                print(f"Warning: Failed to create uploads junction: {e}")
+        else:
+            try:
+                os.symlink(UPLOADS_DIR, assets_uploads)
+            except Exception as e:
+                print(f"Warning: Failed to create uploads symlink: {e}")
 
 # ---------------------------------------------------------------------------
 # Assets
@@ -86,8 +102,8 @@ FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 # Order number format
 # ---------------------------------------------------------------------------
 
-ORDER_NUMBER_PREFIX = "ORD"
-ORDER_NUMBER_FORMAT = "{prefix}-{seq:06d}"  # ORD-000001
+ORDER_NUMBER_PREFIX = "Bill"
+ORDER_NUMBER_FORMAT = "{prefix}-{seq:06d}"  # Bill-000001
 
 # ---------------------------------------------------------------------------
 # Measurement templates
@@ -105,21 +121,19 @@ MEASUREMENT_TEMPLATES = {
     ],
     "Kurta": [
         "Length", "Shoulder", "Chest", "Waist", "Hip",
-        "Sleeve Length", "Bicep", "Cuff", "Collar",
-        "Front Length", "Back Length",
+        "Sleeve Length", "Collar", "Side Slit",
     ],
     "Blouse": [
         "Length", "Shoulder", "Bust", "Waist", "Sleeve",
         "Armhole", "Neck Front", "Neck Back",
     ],
     "Suit": [
-        "Length", "Shoulder", "Chest", "Waist", "Hip",
-        "Sleeve Length", "Bicep", "Cuff", "Collar",
-        "Front Length", "Back Length",
-        "Pant Length", "Pant Waist", "Pant Hip", "Pant Thigh",
-        "Pant Knee", "Pant Bottom", "Pant Rise",
+        "Jacket Length", "Shoulder", "Chest", "Waist", "Sleeve",
+        "Pant Length", "Pant Waist", "Pant Hip",
     ],
-    "Custom": [],  # user-defined fields
+    "Custom": [
+        "Measurement 1", "Measurement 2", "Measurement 3",
+    ],
 }
 
 # ---------------------------------------------------------------------------

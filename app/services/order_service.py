@@ -305,8 +305,8 @@ class OrderService:
                 from app.services.whatsapp_service import WhatsAppService
                 try:
                     msg = (
-                        f"✨ नमस्ते {customer_name}! ✨\n\n"
-                        f"खुशखबरी! आपका ऑर्डर #{order_number} अब पूरी तरह से तैयार है।\n"
+                        f"✨ {customer_name}! ✨\n\n"
+                        f"आपका ऑर्डर #{order_number} अब पूरी तरह से तैयार है।\n"
                         f"आप इसे हमारी दुकान से प्राप्त कर सकते हैं।\n\n"
                         f"धन्यवाद!"
                     )
@@ -331,17 +331,42 @@ class OrderService:
         finally:
             session.close()
 
-    def get_all_orders(self, status: str = None) -> list[Order]:
+    def get_all_orders(self, status: str = None, limit: int = None, offset: int = 0):
         session = get_session()
         try:
-            return OrderRepository(session).get_all(status)
+            repo = OrderRepository(session)
+            if limit is not None:
+                orders = repo.get_all(status, limit=limit, offset=offset)
+                total = repo.count_all(status)
+                return orders, total
+            else:
+                return repo.get_all(status, limit=None, offset=None)
         finally:
             session.close()
 
-    def get_overdue_orders(self) -> list[Order]:
+    def get_overdue_orders(self, limit: int = None, offset: int = 0):
         session = get_session()
         try:
-            return OrderRepository(session).get_overdue()
+            repo = OrderRepository(session)
+            if limit is not None:
+                orders = repo.get_overdue(limit=limit, offset=offset)
+                total = repo.count_overdue()
+                return orders, total
+            else:
+                return repo.get_overdue(limit=None, offset=None)
+        finally:
+            session.close()
+
+    def search_orders(self, query: str, limit: int = None, offset: int = 0):
+        session = get_session()
+        try:
+            repo = OrderRepository(session)
+            if limit is not None:
+                orders = repo.search(query, limit=limit, offset=offset)
+                total = repo.count_search(query)
+                return orders, total
+            else:
+                return repo.search(query, limit=None, offset=None)
         finally:
             session.close()
 

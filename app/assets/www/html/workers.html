@@ -14,97 +14,128 @@
 <!-- Tailwind Configuration -->
 
 <style>
-        body {
-            background-color: theme('colors.background');
-            color: theme('colors.on-surface');
-            -webkit-font-smoothing: antialiased;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .icon-fill {
-            font-variation-settings: 'FILL' 1;
-        }
-        
-        /* Custom Shadows for Tactile Feel */
-        .card-shadow {
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
-        }
-        .card-shadow-hover {
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
-        }
-    </style>
+ body {
+ background-color: theme('colors.background');
+ color: theme('colors.on-surface');
+ -webkit-font-smoothing: antialiased;
+ }
+ .material-symbols-outlined {
+ font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+ }
+ .icon-fill {
+ font-variation-settings: 'FILL' 1;
+ }
+ 
+ /* Custom Shadows for Tactile Feel */
+ .card-shadow {
+ box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+ }
+ .card-shadow-hover {
+ box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+ }
+ </style>
 <link href="../css/fonts.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/compiled.css">
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body class="font-body-md text-body-md overflow-x-hidden min-h-screen flex bg-surface">
 <!-- Global Navigation Rail / Sidebar (Shared Component) -->
 <nav style="position:fixed; top:0; bottom:0; left:0; width:280px; display:flex; flex-direction:column; z-index:40; background:#091426; color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
-  <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
-    <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-      <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
-    </div>
-    <div>
-      <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
-      <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
-    </div>
-  </div>
-  <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
-    <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
-    <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
-  </div>
-  <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
-      <span data-i18n="sidebar.dashboard">Dashboard</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">person</span>
-      <span data-i18n="sidebar.customers">Customers</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
-      <span data-i18n="sidebar.orders">Orders</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
-      <span data-i18n="sidebar.payments">Payments</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
-      <span data-i18n="sidebar.deliveries">Deliveries</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
-      <span data-i18n="sidebar.expenses">Expenses</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
-      <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">engineering</span>
-      <span data-i18n="sidebar.workers">Workers</span>
-    </a>
-        <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
-      <span data-i18n="sidebar.stock">Stock</span>
-    </a>
+ <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px;">
+ <div style="width:40px; height:40px; border-radius:50%; background:#1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+ <img src="../img/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;" />
+ </div>
+ <div>
+ <h2 style="font-size:18px; font-weight:700; color:#ffffff; line-height:1.2; margin:0;"><span class="global-shop-name">Artisan Stitch</span></h2>
+ <p style="font-size:13px; color:rgba(255,255,255,0.7); margin:0;" data-i18n="sidebar.premium_tailoring">Premium Tailoring</p>
+ </div>
+ </div>
+ <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:8px; justify-content:center;">
+ <button onclick="window.I18n && window.I18n.setLang('en')" id="lang-btn-en" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid #1e293b; background:#1e293b; color:#8590a6; cursor:pointer;">English</button>
+ <button onclick="window.I18n && window.I18n.setLang('hi')" id="lang-btn-hi" style="flex:1; padding:6px 0; border-radius:4px; font-size:11px; font-weight:700; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.7); cursor:pointer;">हिन्दी</button>
+ </div>
+ <div style="flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">dashboard</span>
+ <span data-i18n="sidebar.dashboard">Dashboard</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">person</span>
+ <span data-i18n="sidebar.customers">Customers</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">shopping_bag</span>
+ <span data-i18n="sidebar.orders">Orders</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">payments</span>
+ <span data-i18n="sidebar.payments">Payments</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">local_shipping</span>
+ <span data-i18n="sidebar.deliveries">Deliveries</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">receipt_long</span>
+ <span data-i18n="sidebar.expenses">Expenses</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:#ffffff; font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; background:rgba(211,228,254,0.1); border-left:4px solid #d3e4fe; opacity:0.9;">
+ <span class="material-symbols-outlined" style="font-size:25px; font-variation-settings: 'FILL' 1;">engineering</span>
+ <span data-i18n="sidebar.workers">Workers</span>
+ </a>
+ <a href="#" data-nav="stock_list" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:25px;">inventory_2</span>
+ <span data-i18n="sidebar.stock">Stock</span>
+ </a>
 <a href="#" style="display:flex; align-items:center; gap:16px; padding:12px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:16px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
-      <span data-i18n="sidebar.settings">Settings</span>
-    </a>
-  </div>
-  <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
-      <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">help</span>
-      <span data-i18n="sidebar.help">Help</span>
-    </a>
-    <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
-      <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
-      <span data-i18n="sidebar.offline">Offline Mode</span>
-    </a>
-  </div>
+ <span class="material-symbols-outlined" style="font-size:25px;">settings</span>
+ <span data-i18n="sidebar.settings">Settings</span>
+ </a>
+ 
+ <!-- INJECTED WORKER LINK -->
+ <div style="margin-top: 16px; padding: 12px; background: rgba(30,41,59,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+ <span style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase;">Worker Link</span>
+ <div style="display:flex; align-items:center; justify-content:space-between;">
+ <span class="sidebar-worker-link" style="color: #6ee7b7; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; cursor: text; user-select: all;">Loading...</span>
+ </div>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ setTimeout(() => {
+ if (window.API) {
+ window.API.request('get_worker_portal_url').then(res => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => {
+ if (res && res.status === 'success') {
+ el.textContent = res.data.url.replace('https://', '').replace('http://', '');
+ } else {
+ el.textContent = 'Not Active';
+ }
+ });
+ }).catch(e => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => el.textContent = 'Error');
+ });
+ }
+ }, 500);
+ });
+ </script>
+ </div>
+ <!-- END INJECTED WORKER LINK -->
+
+ </div>
+ <div style="padding:12px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:4px;">
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">backup</span>
+ <span data-i18n="sidebar.backup">Backup &amp; Restore</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">help</span>
+ <span data-i18n="sidebar.help">Help</span>
+ </a>
+ <a href="#" style="display:flex; align-items:center; gap:16px; padding:8px 16px; border-radius:8px; color:rgba(255,255,255,0.7); font-size:14px; font-weight:600; letter-spacing:0.02em; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.color='#ffffff'; this.style.background='rgba(30,41,59,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.background='transparent'">
+ <span class="material-symbols-outlined" style="font-size:22px;">cloud_off</span>
+ <span data-i18n="sidebar.offline">Offline Mode</span>
+ </a>
+ </div>
 </nav>
 <!-- Main Content Wrapper -->
 <div class="flex-1 flex flex-col ml-[280px]">
@@ -117,15 +148,15 @@
 <!-- Global Actions -->
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 text-on-surface-variant">
-<button class="p-2 rounded-full hover:bg-surface-container-highest/30 hover:text-primary transition-colors duration-200">
+<button class="p-2 rounded-full hover:bg-surface-container-highest/30 hover:text-primary transition-colors ">
 <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
 </button>
 </div>
 <div class="h-8 w-px bg-outline-variant/30"></div>
 <button class="bg-primary text-on-primary px-5 py-2.5 rounded-lg font-label-lg text-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm" onclick="window.API.navigate('new_order')">
 <span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
-                    New Order
-                </button>
+ New Order
+ </button>
 <!-- Profile -->
 <div class="ml-2">
 <img alt='\"Shop' class="w-10 h-10 rounded-full object-cover border border-outline-variant/20 shadow-sm" data-alt="A small, professional portrait photograph of a mature master tailor in a warmly lit, elegant workshop, soft focus background, high quality, modern aesthetic." profile\"="" src='\"../img/profile.png\"/'/>
@@ -150,14 +181,14 @@
 </div>
 <!-- Page Primary Action -->
 <div class="flex gap-3">
-    <button class="bg-primary text-on-primary shadow-sm px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors whitespace-nowrap" onclick="openLogWorkModal()">
-        <span class="material-symbols-outlined text-[20px]" data-icon="work">work</span>
-        Log Work
-    </button>
-    <button class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap" onclick="document.getElementById('add-worker-modal').classList.remove('hidden')">
-        <span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
-        Add Worker
-    </button>
+ <button class="bg-primary text-on-primary shadow-sm px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-primary/90 transition-colors whitespace-nowrap" onclick="openLogWorkModal()">
+ <span class="material-symbols-outlined text-[20px]" data-icon="work">work</span>
+ Log Work
+ </button>
+ <button class="bg-secondary-container text-on-surface border border-outline-variant px-5 py-2.5 rounded-lg font-label-lg flex items-center gap-2 hover:bg-surface-container-highest transition-colors whitespace-nowrap" onclick="document.getElementById('add-worker-modal').classList.remove('hidden')">
+ <span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
+ Add Worker
+ </button>
 </div>
 </div>
 </div>
@@ -179,14 +210,17 @@
 <button class="p-2.5 bg-surface border border-outline-variant rounded-lg text-primary hover:bg-primary-container/50 transition-colors" onclick="copyPortalLink()" title="Copy Link">
 <span class="material-symbols-outlined text-[20px]">content_copy</span>
 </button>
+<button class="p-2.5 bg-surface border border-outline-variant rounded-lg text-primary hover:bg-primary-container/50 transition-colors" onclick="openPortalLink()" title="Open Link">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+</button>
 </div>
 </div>
 <!-- Main Data Table -->
 
 <div class="flex gap-4 mb-4 border-b border-surface-container-highest">
-    <button id="tab-btn-workers" class="px-4 py-2 font-label-lg border-b-2 border-primary text-primary transition-colors" onclick="switchAdminTab('workers')">Workers Ledger</button>
-    <button id="tab-btn-pending" class="px-4 py-2 font-label-lg border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" onclick="switchAdminTab('pending')">Pending Approvals</button>
-    <button id="tab-btn-rates" class="px-4 py-2 font-label-lg border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" onclick="switchAdminTab('rates')">Garment Rates</button>
+ <button id="tab-btn-workers" class="px-4 py-2 font-label-lg border-b-2 border-primary text-primary transition-colors" onclick="switchAdminTab('workers')">Workers Ledger</button>
+ <button id="tab-btn-pending" class="px-4 py-2 font-label-lg border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" onclick="switchAdminTab('pending')">Pending Approvals</button>
+ <button id="tab-btn-rates" class="px-4 py-2 font-label-lg border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" onclick="switchAdminTab('rates')">Garment Rates</button>
 </div>
 
 <div id="tab-workers" class="admin-tab-content block">
@@ -223,52 +257,53 @@
 </div> <!-- End tab-workers -->
 
 <div id="tab-pending" class="admin-tab-content hidden">
-    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider">
-                    <th class="px-6 py-4 font-medium">Date</th>
-                    <th class="px-6 py-4 font-medium">Worker</th>
-                    <th class="px-6 py-4 font-medium">Details</th>
-                    <th class="px-6 py-4 font-medium">Amount</th>
-                    <th class="px-6 py-4 font-medium text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="pending-list" class="divide-y divide-surface-container-highest">
-                <!-- Populated by JS -->
-            </tbody>
-        </table>
-    </div>
+ <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden">
+ <table class="w-full text-left border-collapse">
+ <thead>
+ <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider">
+ <th class="px-6 py-4 font-medium">Date</th>
+ <th class="px-6 py-4 font-medium">Worker</th>
+ <th class="px-6 py-4 font-medium">Details</th>
+ <th class="px-6 py-4 font-medium">Amount</th>
+ <th class="px-6 py-4 font-medium text-right">Actions</th>
+ </tr>
+ </thead>
+ <tbody id="pending-list" class="divide-y divide-surface-container-highest">
+ <!-- Populated by JS -->
+ </tbody>
+ </table>
+ </div>
 </div>
 
 <div id="tab-rates" class="admin-tab-content hidden">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="font-headline-sm">Garment Piece Rates</h3>
-        <div class="flex gap-2">
-            <input type="text" id="new-garment-name" placeholder="Garment (e.g. Shirt)" class="px-3 py-2 border rounded-lg bg-surface">
-            <input type="number" id="new-garment-rate" placeholder="Rate (₹)" class="px-3 py-2 border rounded-lg bg-surface w-24">
-            <button class="bg-primary text-on-primary px-4 py-2 rounded-lg" onclick="saveGarmentRate()">Add/Update</button>
-        </div>
-    </div>
-    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider">
-                    <th class="px-6 py-4 font-medium">Garment Type</th>
-                    <th class="px-6 py-4 font-medium text-right">Rate (₹)</th>
-                </tr>
-            </thead>
-            <tbody id="rates-list" class="divide-y divide-surface-container-highest">
-                <!-- Populated by JS -->
-            </tbody>
-        </table>
-    </div>
+ <div class="flex justify-between items-center mb-4">
+ <h3 class="font-headline-sm">Garment Piece Rates</h3>
+ <div class="flex gap-2">
+ <input type="text" id="new-garment-name" placeholder="Garment (e.g. Shirt)" class="px-3 py-2 border rounded-lg bg-surface">
+ <input type="number" id="new-garment-rate" placeholder="Rate (₹)" class="px-3 py-2 border rounded-lg bg-surface w-24">
+ <button class="bg-primary text-on-primary px-4 py-2 rounded-lg" onclick="saveGarmentRate()">Add/Update</button>
+ </div>
+ </div>
+ <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-highest overflow-hidden">
+ <table class="w-full text-left border-collapse">
+ <thead>
+ <tr class="bg-surface/50 border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider">
+ <th class="px-6 py-4 font-medium">Garment Type</th>
+ <th class="px-6 py-4 font-medium text-right">Rate (₹)</th>
+ <th class="px-6 py-4 font-medium text-right">Actions</th>
+ </tr>
+ </thead>
+ <tbody id="rates-list" class="divide-y divide-surface-container-highest">
+ <!-- Populated by JS -->
+ </tbody>
+ </table>
+ </div>
 </div>
 
 </main>
 </div>
 <!-- Add Worker Modal -->
-<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm transition-opacity" id="add-worker-modal">
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center " id="add-worker-modal">
 <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[450px] max-w-[90vw] overflow-hidden flex flex-col">
 <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
 <h3 class="font-headline-sm text-on-surface">Add New Worker</h3>
@@ -287,31 +322,31 @@
 <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface" id="w-phone" placeholder="+91 " type="text"/>
 </div>
 <div class="flex gap-4">
-    <div class="flex-1">
-        <label class="block font-label-md text-on-surface mb-1.5">Worker Role</label>
-        <select id="w-role" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface">
-            <option value="STITCHING">Stitching Worker</option>
-            <option value="CUTTING">Cutting Worker</option>
-            <option value="ADMIN">Admin</option>
-        </select>
-    </div>
+ <div class="flex-1">
+ <label class="block font-label-md text-on-surface mb-1.5">Worker Role</label>
+ <select id="w-role" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface">
+ <option value="STITCHING">Stitching Worker</option>
+ <option value="CUTTING">Cutting Worker</option>
+ <option value="ADMIN">Admin</option>
+ </select>
+ </div>
 </div>
 <div class="flex gap-4">
-    <div class="flex-[2]">
-        <label class="block font-label-md text-on-surface mb-1.5">4-Digit PIN <span class="text-error">*</span></label>
-        <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface font-mono tracking-[0.5em] text-center" id="w-pin" maxlength="4" placeholder="1234" type="text"/>
-    </div>
-    <div class="flex-1">
-        <label class="block font-label-md text-on-surface mb-1.5">Payment</label>
-        <select id="w-type" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface" onchange="document.getElementById('w-rate-container').style.display = this.value === 'DAILY_SALARY' ? 'block' : 'none'">
-            <option value="PIECE_RATE">Piece Rate</option>
-            <option value="DAILY_SALARY">Daily Salary</option>
-        </select>
-    </div>
+ <div class="flex-[2]">
+ <label class="block font-label-md text-on-surface mb-1.5">4-Digit PIN <span class="text-error">*</span></label>
+ <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow bg-surface font-mono tracking-[0.5em] text-center" id="w-pin" maxlength="4" placeholder="1234" type="text"/>
+ </div>
+ <div class="flex-1">
+ <label class="block font-label-md text-on-surface mb-1.5">Payment</label>
+ <select id="w-type" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface" onchange="document.getElementById('w-rate-container').style.display = this.value === 'DAILY_SALARY' ? 'block' : 'none'">
+ <option value="PIECE_RATE">Piece Rate</option>
+ <option value="DAILY_SALARY">Daily Salary</option>
+ </select>
+ </div>
 </div>
 <div id="w-rate-container" style="display:none;">
-    <label class="block font-label-md text-on-surface mb-1.5">Daily Rate (₹)</label>
-    <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface" id="w-rate" type="number" value="0"/>
+ <label class="block font-label-md text-on-surface mb-1.5">Daily Rate (₹)</label>
+ <input class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface" id="w-rate" type="number" value="0"/>
 </div>
 
 </div>
@@ -323,7 +358,7 @@
 </div>
 
 <!-- Advance Modal -->
-<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="advance-modal">
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center" id="advance-modal">
 <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[400px] overflow-hidden flex flex-col">
 <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
 <h3 class="font-headline-sm">Give Advance</h3>
@@ -350,7 +385,7 @@
 </div>
 
 <!-- Log Work Modal -->
-<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="log-work-modal">
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center" id="log-work-modal">
 <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[500px] max-w-[95vw] max-h-[90vh] overflow-hidden flex flex-col">
 <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
 <h3 class="font-headline-sm">Log Work</h3>
@@ -361,38 +396,38 @@
 <p id="lw-worker-name-display" class="font-bold text-lg mb-2 text-primary hidden"></p>
 
 <div id="lw-worker-select-container" class="mb-4">
-    <label class="block font-label-md mb-1.5">Select Worker</label>
-    <select id="lw-worker-select" onchange="handleWorkerSelectChange()" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
-        <option value="">-- Choose Worker --</option>
-    </select>
+ <label class="block font-label-md mb-1.5">Select Worker</label>
+ <select id="lw-worker-select" onchange="handleWorkerSelectChange()" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+ <option value="">-- Choose Worker --</option>
+ </select>
 </div>
 
 <div id="lw-attendance-section" class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4 hidden">
-    <label class="flex items-center gap-3 cursor-pointer">
-        <input type="checkbox" id="lw-is-present" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary">
-        <span class="font-label-md">Mark Present for Today (Adds Daily Wage)</span>
-    </label>
+ <label class="flex items-center gap-3 cursor-pointer">
+ <input type="checkbox" id="lw-is-present" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary">
+ <span class="font-label-md">Mark Present for Today (Adds Daily Wage)</span>
+ </label>
 </div>
 
 <div id="lw-garments-section" class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest mb-4">
-    <div class="flex justify-between items-center mb-2">
-        <label class="block font-label-md">Garments Made</label>
-        <button onclick="addLogWorkRow()" class="text-xs bg-primary text-on-primary px-2 py-1 rounded hover:bg-primary/90">+ Add Row</button>
-    </div>
-    <div id="lw-garments-container" class="space-y-2">
-        <!-- populated by js -->
-    </div>
+ <div class="flex justify-between items-center mb-2">
+ <label class="block font-label-md">Garments Made</label>
+ <button onclick="addLogWorkRow()" class="text-xs bg-primary text-on-primary px-2 py-1 rounded hover:bg-primary/90">+ Add Row</button>
+ </div>
+ <div id="lw-garments-container" class="space-y-2">
+ <!-- populated by js -->
+ </div>
 </div>
 
 <div class="bg-surface-container-highest/20 p-4 rounded-xl border border-surface-container-highest space-y-4">
-    <div>
-        <label class="block font-label-md mb-1.5">Extra Work Description (Optional)</label>
-        <input id="lw-extra-desc" type="text" placeholder="e.g. Alteration, buttons" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
-    </div>
-    <div>
-        <label class="block font-label-md mb-1.5">Extra Amount (₹)</label>
-        <input id="lw-extra-amount" type="number" min="0" value="0" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
-    </div>
+ <div>
+ <label class="block font-label-md mb-1.5">Extra Work Description (Optional)</label>
+ <input id="lw-extra-desc" type="text" placeholder="e.g. Alteration, buttons" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+ </div>
+ <div>
+ <label class="block font-label-md mb-1.5">Extra Amount (₹)</label>
+ <input id="lw-extra-amount" type="number" min="0" value="0" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant focus:border-primary focus:ring-1 bg-surface outline-none">
+ </div>
 </div>
 
 </div>
@@ -404,33 +439,33 @@
 </div>
 
 <!-- Worker History Modal -->
-<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="worker-history-modal">
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center" id="worker-history-modal">
 <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[650px] max-w-[95vw] max-h-[85vh] overflow-hidden flex flex-col">
 <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
 <h3 class="font-headline-sm" id="history-modal-title">Worker Payment History</h3>
 <div class="flex items-center gap-2">
-    <button id="btn-settle-account" class="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded hover:bg-green-600 hover:text-white transition-colors font-bold" onclick="settleAccount()">Settle Account</button>
-    <button class="p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('worker-history-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+ <button id="btn-settle-account" class="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded hover:bg-green-600 hover:text-white transition-colors font-bold" onclick="settleAccount()">Settle Account</button>
+ <button class="p-1 rounded-full hover:bg-surface-container-highest/50" onclick="document.getElementById('worker-history-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
 </div>
 </div>
 <div class="p-6 flex flex-col flex-1 min-h-0">
 <div id="history-summary" class="flex gap-4 mb-6 shrink-0">
-    <!-- Summary cards filled by JS -->
+ <!-- Summary cards filled by JS -->
 </div>
 <div class="overflow-y-auto border border-surface-container-highest rounded-lg" style="max-height: 300px;">
 <table class="w-full text-left border-collapse">
-    <thead class="sticky top-0 z-10 bg-surface shadow-sm">
-        <tr class="border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider bg-surface/95 backdrop-blur">
-            <th class="px-4 py-3 font-medium">Date</th>
-            <th class="px-4 py-3 font-medium">Type</th>
-            <th class="px-4 py-3 font-medium">Description</th>
-            <th class="px-4 py-3 font-medium">Status</th>
-            <th class="px-4 py-3 font-medium text-right">Amount</th>
-        </tr>
-    </thead>
-    <tbody id="history-list" class="divide-y divide-surface-container-highest">
-        <tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">Loading...</td></tr>
-    </tbody>
+ <thead class="sticky top-0 z-10 bg-surface shadow-sm">
+ <tr class="border-b border-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider bg-surface/95">
+ <th class="px-4 py-3 font-medium">Date</th>
+ <th class="px-4 py-3 font-medium">Type</th>
+ <th class="px-4 py-3 font-medium">Description</th>
+ <th class="px-4 py-3 font-medium">Status</th>
+ <th class="px-4 py-3 font-medium text-right">Amount</th>
+ </tr>
+ </thead>
+ <tbody id="history-list" class="divide-y divide-surface-container-highest">
+ <tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">Loading...</td></tr>
+ </tbody>
 </table>
 </div>
 </div>
@@ -446,7 +481,7 @@
 <script src="../js/app.js?v=1787471943"></script>
 
 <!-- Edit Entry Modal -->
-<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center backdrop-blur-sm" id="edit-entry-modal">
+<div class="fixed inset-0 z-50 bg-on-surface/40 hidden flex items-center justify-center" id="edit-entry-modal">
 <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-[400px] overflow-hidden flex flex-col">
 <div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between bg-surface/50">
 <h3 class="font-headline-sm">Edit Pending Entry</h3>
@@ -478,527 +513,563 @@
 
 <script>
 
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('block'));
-            
-            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
-                btn.classList.remove('border-primary', 'text-primary');
-                btn.classList.add('border-transparent', 'text-on-surface-variant');
-            });
-            
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.getElementById('tab-' + tab).classList.add('block');
-            
-            document.getElementById('tab-btn-' + tab).classList.remove('border-transparent', 'text-on-surface-variant');
-            document.getElementById('tab-btn-' + tab).classList.add('border-primary', 'text-primary');
-            
-            if (tab === 'workers') loadWorkers();
-            if (tab === 'pending') loadPending();
-            if (tab === 'rates') loadRates();
-        }
+ function switchAdminTab(tab) {
+ document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+ document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('block'));
+ 
+ document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+ btn.classList.remove('border-primary', 'text-primary');
+ btn.classList.add('border-transparent', 'text-on-surface-variant');
+ });
+ 
+ document.getElementById('tab-' + tab).classList.remove('hidden');
+ document.getElementById('tab-' + tab).classList.add('block');
+ 
+ document.getElementById('tab-btn-' + tab).classList.remove('border-transparent', 'text-on-surface-variant');
+ document.getElementById('tab-btn-' + tab).classList.add('border-primary', 'text-primary');
+ 
+ if (tab === 'workers') loadWorkers();
+ if (tab === 'pending') loadPending();
+ if (tab === 'rates') loadRates();
+ }
 
-        async function initWorkers() {
-            if (!window.pyBridge) { setTimeout(initWorkers, 100); return; }
-            try {
-                if (window.API && window.API.attachMic) {
-                    window.API.attachMic('w-name');
-                    window.API.attachMic('new-garment-name');
-                    window.API.attachMic('adv-notes');
-                }
-                try {
-                    const portalRes = await window.API.request('get_worker_portal_url');
-                    if (portalRes && portalRes.url) document.getElementById('portal-url').value = portalRes.url;
-                } catch(e) {
-                    document.getElementById('portal-url').value = "Not Running";
-                }
-                await loadWorkers();
-            } catch(e) { console.error(e); }
-        }
+ async function initWorkers() {
+ if (!window.pyBridge) { setTimeout(initWorkers, 100); return; }
+ try {
+ if (window.API && window.API.attachMic) {
+ window.API.attachMic('w-name');
+ window.API.attachMic('new-garment-name');
+ window.API.attachMic('adv-notes');
+ }
+ try {
+ const portalRes = await window.API.request('get_worker_portal_url');
+ if (portalRes && portalRes.url) document.getElementById('portal-url').value = portalRes.url;
+ } catch(e) {
+ document.getElementById('portal-url').value = "Not Running";
+ }
+ await loadWorkers();
+ } catch(e) { console.error(e); }
+ }
 
-        let globalWorkersList = [];
+ let globalWorkersList = [];
 
-        async function loadWorkers() {
-            try {
-                const res = await window.API.request('get_all_workers');
-                const tbody = document.getElementById('workers-list');
-                tbody.innerHTML = '';
-                
-                globalWorkersList = res.workers || [];
-                
-                if (!res.workers || res.workers.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant">No workers found.</td></tr>`;
-                    return;
-                }
-                
-                for (const w of res.workers) {
-                    const ledger = w.ledger || {total_earned:0, total_advance:0, remaining_balance:0};
-                    
-                    const badge = w.worker_type === 'DAILY_SALARY' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
-                    const typeStr = w.worker_type === 'DAILY_SALARY' ? `Daily (₹${w.daily_rate})` : 'Piece Rate';
-                    const roleBadge = w.worker_role === 'ADMIN' ? 'bg-red-100 text-red-800' : (w.worker_role === 'CUTTING' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800');
-                    const roleStr = w.worker_role || 'STITCHING';
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-surface-container-lowest/50 cursor-pointer";
-                    tr.innerHTML = `
-                        <td class="px-6 py-4" onclick="openWorkerHistory(${w.id}, '${w.name.replace(/'/g, "\\'")}')">
-                            <div class="font-bold text-primary hover:underline">${w.name}</div>
-                            <div class="text-xs text-on-surface-variant">PIN: ${w.pin} | ${w.phone || ''}</div>
-                        </td>
-                        <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${roleBadge} font-bold uppercase tracking-wider">${roleStr}</span></td>
-                        <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${badge} font-bold uppercase tracking-wider">${typeStr}</span></td>
-                        <td class="px-6 py-4 font-bold text-green-700">₹${ledger.total_earned.toFixed(0)}</td>
-                        <td class="px-6 py-4 font-bold text-orange-600">₹${ledger.total_advance.toFixed(0)}</td>
-                        <td class="px-6 py-4 font-bold text-lg">₹${ledger.remaining_balance.toFixed(0)}</td>
-                        <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <button onclick="event.stopPropagation(); openLogWorkModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition-colors mr-1" title="Log Work">Log Work</button>
-                            <button onclick="event.stopPropagation(); openAdvanceModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors mr-1" title="Give Advance">Advance</button>
-                            <button onclick="event.stopPropagation(); deleteWorker(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-red-100 text-red-700 px-2.5 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors" title="Delete Worker"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                }
-            } catch (e) { console.error(e); }
-        }
-        
-        async function saveWorker() {
-            const name = document.getElementById('w-name').value;
-            const phone = document.getElementById('w-phone').value;
-            const pin = document.getElementById('w-pin').value;
-            const worker_type = document.getElementById('w-type').value;
-            const worker_role = document.getElementById('w-role').value;
-            const daily_rate = document.getElementById('w-rate').value;
-            
-            if (!name || !pin) return;
-            try {
-                await window.API.request('add_worker', {name, phone, pin, worker_type, worker_role, daily_rate});
-                document.getElementById('add-worker-modal').classList.add('hidden');
-                loadWorkers();
-            } catch(e) { console.error(e); }
-        }
+ async function loadWorkers() {
+ try {
+ const res = await window.API.request('get_all_workers');
+ const tbody = document.getElementById('workers-list');
+ tbody.innerHTML = '';
+ 
+ globalWorkersList = res.workers || [];
+ 
+ if (!res.workers || res.workers.length === 0) {
+ tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant">No workers found.</td></tr>`;
+ return;
+ }
+ 
+ for (const w of res.workers) {
+ const ledger = w.ledger || {total_earned:0, total_advance:0, remaining_balance:0};
+ 
+ const badge = w.worker_type === 'DAILY_SALARY' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
+ const typeStr = w.worker_type === 'DAILY_SALARY' ? `Daily (₹${w.daily_rate})` : 'Piece Rate';
+ const roleBadge = w.worker_role === 'ADMIN' ? 'bg-red-100 text-red-800' : (w.worker_role === 'CUTTING' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800');
+ const roleStr = w.worker_role || 'STITCHING';
+ 
+ const tr = document.createElement('tr');
+ tr.className = "hover:bg-surface-container-lowest/50 cursor-pointer";
+ tr.innerHTML = `
+ <td class="px-6 py-4" onclick="openWorkerHistory(${w.id}, '${w.name.replace(/'/g, "\\'")}')">
+ <div class="font-bold text-primary hover:underline">${w.name}</div>
+ <div class="text-xs text-on-surface-variant">PIN: ${w.pin} | ${w.phone || ''}</div>
+ </td>
+ <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${roleBadge} font-bold uppercase tracking-wider">${roleStr}</span></td>
+ <td class="px-6 py-4"><span class="text-xs px-2 py-1 rounded ${badge} font-bold uppercase tracking-wider">${typeStr}</span></td>
+ <td class="px-6 py-4 font-bold text-green-700">₹${ledger.total_earned.toFixed(0)}</td>
+ <td class="px-6 py-4 font-bold text-orange-600">₹${ledger.total_advance.toFixed(0)}</td>
+ <td class="px-6 py-4 font-bold text-lg">₹${ledger.remaining_balance.toFixed(0)}</td>
+ <td class="px-6 py-4 text-right whitespace-nowrap">
+ <button onclick="event.stopPropagation(); openLogWorkModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-600 hover:text-white transition-colors mr-1" title="Log Work">Log Work</button>
+ <button onclick="event.stopPropagation(); openAdvanceModal(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-primary/10 text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors mr-1" title="Give Advance">Advance</button>
+ <button onclick="event.stopPropagation(); deleteWorker(${w.id}, '${w.name.replace(/'/g, "\\'")}')" class="text-sm bg-red-100 text-red-700 px-2.5 py-1.5 rounded hover:bg-red-600 hover:text-white transition-colors" title="Delete Worker"><span class="material-symbols-outlined text-[18px] align-middle">delete</span></button>
+ </td>
+ `;
+ tbody.appendChild(tr);
+ }
+ } catch (e) { console.error(e); }
+ }
+ 
+ async function saveWorker() {
+ const name = document.getElementById('w-name').value;
+ const phone = document.getElementById('w-phone').value;
+ const pin = document.getElementById('w-pin').value;
+ const worker_type = document.getElementById('w-type').value;
+ const worker_role = document.getElementById('w-role').value;
+ const daily_rate = document.getElementById('w-rate').value;
+ 
+ if (!name || !pin) return;
+ try {
+ await window.API.request('add_worker', {name, phone, pin, worker_type, worker_role, daily_rate});
+ document.getElementById('add-worker-modal').classList.add('hidden');
+ loadWorkers();
+ } catch(e) { console.error(e); }
+ }
 
-        async function loadPending() {
-            try {
-                const res = await window.API.request('get_all_pending_entries');
-                const tbody = document.getElementById('pending-list');
-                tbody.innerHTML = '';
-                if (!res.entries || res.entries.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">No pending entries.</td></tr>`;
-                    return;
-                }
-                res.entries.forEach(e => {
-                    const date = new Date(e.entry_date).toLocaleDateString();
-                    let desc = e.garment_type ? `${e.quantity}x ${e.garment_type}` : 'Daily Salary';
-                    if (e.bill_number) desc += ` (Bill: ${e.bill_number})`;
-                    if (e.extra_work_description) desc += `<br><span class="text-xs text-on-surface-variant">Extra: ${e.extra_work_description}</span>`;
-                    
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="px-6 py-4 text-sm">${date}</td>
-                        <td class="px-6 py-4 font-bold">${e.worker_name}</td>
-                        <td class="px-6 py-4 text-sm">${desc}</td>
-                        <td class="px-6 py-4 font-bold text-lg">₹${e.total_amount}</td>
-                        <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <button onclick="openEditModal(${e.id}, '${e.worker_name}', ${e.quantity || 1}, ${e.extra_amount || 0}, ${e.total_amount})" class="text-white bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700 mr-1"><span class="material-symbols-outlined text-[14px] align-middle">edit</span></button>
-                            <button onclick="approveEntry(${e.id}, 'APPROVED')" class="text-white bg-green-600 px-3 py-1 rounded text-sm hover:bg-green-700">Approve</button>
-                            <button onclick="approveEntry(${e.id}, 'REJECTED')" class="text-white bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700 ml-1">Reject</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch(e) { console.error(e); }
-        }
+ async function loadPending() {
+ try {
+ const res = await window.API.request('get_all_pending_entries');
+ const tbody = document.getElementById('pending-list');
+ tbody.innerHTML = '';
+ if (!res.entries || res.entries.length === 0) {
+ tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">No pending entries.</td></tr>`;
+ return;
+ }
+ res.entries.forEach(e => {
+ const date = new Date(e.entry_date).toLocaleDateString();
+ let desc = e.garment_type ? `${e.quantity}x ${e.garment_type}` : 'Daily Salary';
+ if (e.bill_number) desc += ` (Bill: ${e.bill_number})`;
+ if (e.extra_work_description) desc += `<br><span class="text-xs text-on-surface-variant">Extra: ${e.extra_work_description}</span>`;
+ 
+ const tr = document.createElement('tr');
+ tr.innerHTML = `
+ <td class="px-6 py-4 text-sm">${date}</td>
+ <td class="px-6 py-4 font-bold">${e.worker_name}</td>
+ <td class="px-6 py-4 text-sm">${desc}</td>
+ <td class="px-6 py-4 font-bold text-lg">₹${e.total_amount}</td>
+ <td class="px-6 py-4 text-right whitespace-nowrap">
+ <button onclick="openEditModal(${e.id}, '${e.worker_name}', ${e.quantity || 1}, ${e.extra_amount || 0}, ${e.total_amount})" class="text-white bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700 mr-1"><span class="material-symbols-outlined text-[14px] align-middle">edit</span></button>
+ <button onclick="approveEntry(${e.id}, 'APPROVED')" class="text-white bg-green-600 px-3 py-1 rounded text-sm hover:bg-green-700">Approve</button>
+ <button onclick="approveEntry(${e.id}, 'REJECTED')" class="text-white bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700 ml-1">Reject</button>
+ </td>
+ `;
+ tbody.appendChild(tr);
+ });
+ } catch(e) { console.error(e); }
+ }
 
-        let currentEditUnitRate = 0;
+ let currentEditUnitRate = 0;
 
-        function openEditModal(id, workerName, qty, extraAmount, totalAmount) {
-            document.getElementById('edit-entry-id').value = id;
-            document.getElementById('edit-worker-name').textContent = workerName;
-            document.getElementById('edit-quantity').value = qty;
-            document.getElementById('edit-extra-amount').value = extraAmount;
-            document.getElementById('edit-total-amount').value = totalAmount;
-            
-            // Calculate base amount and unit rate
-            const total = parseFloat(totalAmount) || 0;
-            const extra = parseFloat(extraAmount) || 0;
-            const baseAmount = total - extra;
-            const quantity = parseInt(qty) || 1;
-            
-            // For piece rate, baseAmount = qty * rate. For daily salary (qty might be 0 or 1), treat baseAmount as fixed.
-            currentEditUnitRate = quantity > 0 ? (baseAmount / quantity) : baseAmount;
+ function openEditModal(id, workerName, qty, extraAmount, totalAmount) {
+ document.getElementById('edit-entry-id').value = id;
+ document.getElementById('edit-worker-name').textContent = workerName;
+ document.getElementById('edit-quantity').value = qty;
+ document.getElementById('edit-extra-amount').value = extraAmount;
+ document.getElementById('edit-total-amount').value = totalAmount;
+ 
+ // Calculate base amount and unit rate
+ const total = parseFloat(totalAmount) || 0;
+ const extra = parseFloat(extraAmount) || 0;
+ const baseAmount = total - extra;
+ const quantity = parseInt(qty) || 1;
+ 
+ // For piece rate, baseAmount = qty * rate. For daily salary (qty might be 0 or 1), treat baseAmount as fixed.
+ currentEditUnitRate = quantity > 0 ? (baseAmount / quantity) : baseAmount;
 
-            function recalculateTotal() {
-                const q = parseInt(document.getElementById('edit-quantity').value) || 0;
-                const e = parseFloat(document.getElementById('edit-extra-amount').value) || 0;
-                // If it's a daily salary type with 0 qty initially, maintain the base amount
-                const base = (quantity === 0) ? currentEditUnitRate : (q * currentEditUnitRate);
-                document.getElementById('edit-total-amount').value = base + e;
-            }
+ function recalculateTotal() {
+ const q = parseInt(document.getElementById('edit-quantity').value) || 0;
+ const e = parseFloat(document.getElementById('edit-extra-amount').value) || 0;
+ // If it's a daily salary type with 0 qty initially, maintain the base amount
+ const base = (quantity === 0) ? currentEditUnitRate : (q * currentEditUnitRate);
+ document.getElementById('edit-total-amount').value = base + e;
+ }
 
-            document.getElementById('edit-quantity').oninput = recalculateTotal;
-            document.getElementById('edit-extra-amount').oninput = recalculateTotal;
+ document.getElementById('edit-quantity').oninput = recalculateTotal;
+ document.getElementById('edit-extra-amount').oninput = recalculateTotal;
 
-            document.getElementById('edit-entry-modal').classList.remove('hidden');
-        }
+ document.getElementById('edit-entry-modal').classList.remove('hidden');
+ }
 
-        async function saveEditEntry() {
-            const id = document.getElementById('edit-entry-id').value;
-            const qty = document.getElementById('edit-quantity').value;
-            const extra = document.getElementById('edit-extra-amount').value;
-            const total = document.getElementById('edit-total-amount').value;
-            
-            try {
-                await window.API.request('edit_pending_entry', {
-                    entry_id: parseInt(id),
-                    quantity: parseInt(qty) || 0,
-                    extra_amount: parseFloat(extra) || 0,
-                    total_amount: parseFloat(total) || 0
-                });
-                document.getElementById('edit-entry-modal').classList.add('hidden');
-                loadPending();
-            } catch(e) { console.error(e); }
-        }
+ async function saveEditEntry() {
+ const id = document.getElementById('edit-entry-id').value;
+ const qty = document.getElementById('edit-quantity').value;
+ const extra = document.getElementById('edit-extra-amount').value;
+ const total = document.getElementById('edit-total-amount').value;
+ 
+ try {
+ await window.API.request('edit_pending_entry', {
+ entry_id: parseInt(id),
+ quantity: parseInt(qty) || 0,
+ extra_amount: parseFloat(extra) || 0,
+ total_amount: parseFloat(total) || 0
+ });
+ document.getElementById('edit-entry-modal').classList.add('hidden');
+ loadPending();
+ } catch(e) { console.error(e); }
+ }
 
-        async function approveEntry(id, status) {
-            try {
-                await window.API.request('approve_entry', {entry_id: id, status: status});
-                loadPending();
-            } catch(e) { console.error(e); }
-        }
+ async function approveEntry(id, status) {
+ try {
+ await window.API.request('approve_entry', {entry_id: id, status: status});
+ loadPending();
+ } catch(e) { console.error(e); }
+ }
 
-        async function loadRates() {
-            try {
-                const res = await window.API.request('get_garment_rates');
-                const tbody = document.getElementById('rates-list');
-                tbody.innerHTML = '';
-                res.rates.forEach(r => {
-                    tbody.innerHTML += `<tr>
-                        <td class="px-6 py-4 font-bold">${r.garment_type}</td>
-                        <td class="px-6 py-4 text-right font-mono text-lg">₹${r.rate}</td>
-                    </tr>`;
-                });
-            } catch(e) { console.error(e); }
-        }
+ async function loadRates() {
+ try {
+ const res = await window.API.request('get_garment_rates');
+ const tbody = document.getElementById('rates-list');
+ tbody.innerHTML = '';
+ res.rates.forEach(r => {
+ tbody.innerHTML += `<tr>
+ <td class="px-6 py-4 font-bold">${r.garment_type}</td>
+ <td class="px-6 py-4 text-right font-mono text-lg">₹${r.rate}</td>
+ <td class="px-6 py-4 text-right">
+ <button class="text-primary hover:bg-primary-container p-2 rounded-full transition-colors" onclick="editGarmentRate('${r.garment_type}', ${r.rate})" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+ <button class="text-error hover:bg-error-container p-2 rounded-full transition-colors ml-2" onclick="deleteGarmentRate('${r.garment_type}')" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+ </td>
+ </tr>`;
+ });
+ } catch(e) { console.error(e); }
+ }
 
-        async function saveGarmentRate() {
-            const garment_type = document.getElementById('new-garment-name').value;
-            const rate = document.getElementById('new-garment-rate').value;
-            if(!garment_type || !rate) return;
-            try {
-                await window.API.request('set_garment_rate', {garment_type, rate});
-                document.getElementById('new-garment-name').value = '';
-                document.getElementById('new-garment-rate').value = '';
-                loadRates();
-            } catch(e) { console.error(e); }
-        }
+ function editGarmentRate(garmentType, rate) {
+ document.getElementById('new-garment-name').value = garmentType;
+ document.getElementById('new-garment-rate').value = rate;
+ }
 
-        function openAdvanceModal(workerId, workerName) {
-            document.getElementById('adv-worker-id').value = workerId;
-            document.getElementById('adv-worker-name').textContent = workerName;
-            
-            let pending = '';
-            if (globalWorkersList) {
-                const w = globalWorkersList.find(x => x.id == workerId);
-                if (w && w.ledger && w.ledger.remaining_balance > 0) {
-                    pending = Math.round(w.ledger.remaining_balance);
-                }
-            }
-            
-            document.getElementById('adv-amount').value = pending;
-            document.getElementById('adv-notes').value = '';
-            document.getElementById('advance-modal').classList.remove('hidden');
-        }
+ async function deleteGarmentRate(garmentType) {
+ if (!confirm(`Are you sure you want to delete the rate for "${garmentType}"?`)) return;
+ try {
+ await window.API.request('delete_garment_rate', {garment_type: garmentType});
+ loadRates();
+ } catch(e) { console.error(e); }
+ }
 
-        async function saveAdvance() {
-            const worker_id = document.getElementById('adv-worker-id').value;
-            const amount = document.getElementById('adv-amount').value;
-            const notes = document.getElementById('adv-notes').value;
-            if(!worker_id || !amount) return;
-            try {
-                await window.API.request('record_advance', {worker_id, amount, notes});
-                document.getElementById('advance-modal').classList.add('hidden');
-                if(document.getElementById('tab-workers').classList.contains('block')) loadWorkers();
-            } catch(e) { console.error(e); }
-        }
+ async function saveGarmentRate() {
+ const garment_type = document.getElementById('new-garment-name').value;
+ const rate = document.getElementById('new-garment-rate').value;
+ if(!garment_type || !rate) return;
+ try {
+ await window.API.request('set_garment_rate', {garment_type, rate});
+ document.getElementById('new-garment-name').value = '';
+ document.getElementById('new-garment-rate').value = '';
+ loadRates();
+ } catch(e) { console.error(e); }
+ }
 
-        function copyPortalLink() {
-            const link = document.getElementById('portal-url').value;
-            if (link && link !== "Not Running" && link !== "Loading link...") {
-                navigator.clipboard.writeText(link).then(() => {
-                    alert("Link copied!");
-                });
-            }
-        }
-        
-        // Log Work Functions
-        let availableGarments = [];
-        
-        async function fetchAvailableGarments() {
-            try {
-                const res = await window.API.request('get_garment_rates');
-                availableGarments = res.rates || [];
-            } catch(e) {}
-        }
-        
-        async function openLogWorkModal(workerId = null, workerName = '') {
-            document.getElementById('lw-extra-desc').value = '';
-            document.getElementById('lw-extra-amount').value = '0';
-            
-            if (workerId) {
-                document.getElementById('lw-worker-id').value = workerId;
-                document.getElementById('lw-worker-name-display').textContent = workerName;
-                document.getElementById('lw-worker-name-display').classList.remove('hidden');
-                document.getElementById('lw-worker-select-container').classList.add('hidden');
-                updateLogWorkUIForWorker(workerId);
-            } else {
-                document.getElementById('lw-worker-id').value = '';
-                document.getElementById('lw-worker-name-display').classList.add('hidden');
-                document.getElementById('lw-worker-select-container').classList.remove('hidden');
-                
-                const select = document.getElementById('lw-worker-select');
-                select.innerHTML = '<option value="">-- Choose Worker --</option>';
-                globalWorkersList.forEach(w => {
-                    select.innerHTML += `<option value="${w.id}">${w.name}</option>`;
-                });
-                updateLogWorkUIForWorker(null);
-            }
-            
-            document.getElementById('lw-garments-container').innerHTML = '';
-            
-            if(availableGarments.length === 0) {
-                await fetchAvailableGarments();
-            }
-            addLogWorkRow();
-            
-            document.getElementById('log-work-modal').classList.remove('hidden');
-        }
+ function openAdvanceModal(workerId, workerName) {
+ document.getElementById('adv-worker-id').value = workerId;
+ document.getElementById('adv-worker-name').textContent = workerName;
+ 
+ let pending = '';
+ if (globalWorkersList) {
+ const w = globalWorkersList.find(x => x.id == workerId);
+ if (w && w.ledger && w.ledger.remaining_balance > 0) {
+ pending = Math.round(w.ledger.remaining_balance);
+ }
+ }
+ 
+ document.getElementById('adv-amount').value = pending;
+ document.getElementById('adv-notes').value = '';
+ document.getElementById('advance-modal').classList.remove('hidden');
+ }
 
-        function handleWorkerSelectChange() {
-            const workerId = document.getElementById('lw-worker-select').value;
-            updateLogWorkUIForWorker(workerId ? parseInt(workerId) : null);
-        }
+ async function saveAdvance() {
+ const worker_id = document.getElementById('adv-worker-id').value;
+ const amount = document.getElementById('adv-amount').value;
+ const notes = document.getElementById('adv-notes').value;
+ if(!worker_id || !amount) return;
+ try {
+ await window.API.request('record_advance', {worker_id, amount, notes});
+ document.getElementById('advance-modal').classList.add('hidden');
+ if(document.getElementById('tab-workers').classList.contains('block')) loadWorkers();
+ } catch(e) { console.error(e); }
+ }
 
-        function updateLogWorkUIForWorker(workerId) {
-            const garmentsSection = document.getElementById('lw-garments-section');
-            const attendanceSection = document.getElementById('lw-attendance-section');
-            const isPresentCheckbox = document.getElementById('lw-is-present');
-            
-            isPresentCheckbox.checked = true; // default to present
+ function copyPortalLink() {
+ const link = document.getElementById('portal-url').value;
+ if (link && link !== "Not Running" && link !== "Loading link...") {
+ if (window.API && window.API.request) {
+ window.API.request('copy_to_clipboard', {text: link}).then(() => {
+ window.API.toast("Link copied to clipboard!", "success");
+ });
+ } else if (navigator.clipboard) {
+ navigator.clipboard.writeText(link).then(() => {
+ alert("Link copied!");
+ });
+ }
+ }
+ }
 
-            if (!workerId) {
-                garmentsSection.classList.remove('hidden');
-                attendanceSection.classList.add('hidden');
-                return;
-            }
+ function openPortalLink() {
+ const link = document.getElementById('portal-url').value;
+ if (link && link !== "Not Running" && link !== "Loading link...") {
+ if (window.API && window.API.request) {
+ window.API.request('open_url', {url: link}).then(() => {
+ window.API.toast("Opening link...", "info");
+ });
+ } else {
+ window.open(link, '_blank');
+ }
+ }
+ }
+ 
+ // Log Work Functions
+ let availableGarments = [];
+ 
+ async function fetchAvailableGarments() {
+ try {
+ const res = await window.API.request('get_garment_rates');
+ availableGarments = res.rates || [];
+ } catch(e) {}
+ }
+ 
+ async function openLogWorkModal(workerId = null, workerName = '') {
+ document.getElementById('lw-extra-desc').value = '';
+ document.getElementById('lw-extra-amount').value = '0';
+ 
+ if (workerId) {
+ document.getElementById('lw-worker-id').value = workerId;
+ document.getElementById('lw-worker-name-display').textContent = workerName;
+ document.getElementById('lw-worker-name-display').classList.remove('hidden');
+ document.getElementById('lw-worker-select-container').classList.add('hidden');
+ updateLogWorkUIForWorker(workerId);
+ } else {
+ document.getElementById('lw-worker-id').value = '';
+ document.getElementById('lw-worker-name-display').classList.add('hidden');
+ document.getElementById('lw-worker-select-container').classList.remove('hidden');
+ 
+ const select = document.getElementById('lw-worker-select');
+ select.innerHTML = '<option value="">-- Choose Worker --</option>';
+ globalWorkersList.forEach(w => {
+ select.innerHTML += `<option value="${w.id}">${w.name}</option>`;
+ });
+ updateLogWorkUIForWorker(null);
+ }
+ 
+ document.getElementById('lw-garments-container').innerHTML = '';
+ 
+ if(availableGarments.length === 0) {
+ await fetchAvailableGarments();
+ }
+ addLogWorkRow();
+ 
+ document.getElementById('log-work-modal').classList.remove('hidden');
+ }
 
-            const worker = globalWorkersList.find(w => w.id === workerId);
-            if (worker && worker.worker_type === 'DAILY_SALARY') {
-                attendanceSection.classList.remove('hidden');
-                // We keep garments section visible as well in case they did extra piece work? 
-                // Or hide it to keep it simple? The user said "agr ham uska kuch exta work dalte he to vo bhi update kr do total me". 
-                // Extra work might just use the "Extra Amount" fields below. Let's keep garments visible but optional.
-            } else {
-                attendanceSection.classList.add('hidden');
-            }
-        }
-        
-        function addLogWorkRow() {
-            const container = document.getElementById('lw-garments-container');
-            const row = document.createElement('div');
-            row.className = "flex gap-2 items-center lw-garment-row";
-            
-            let optionsHtml = '<option value="">-- Select Garment --</option>';
-            availableGarments.forEach(g => {
-                optionsHtml += `<option value="${g.garment_type}">${g.garment_type} (₹${g.rate})</option>`;
-            });
-            
-            row.innerHTML = `
-                <select class="flex-1 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-select">
-                    ${optionsHtml}
-                </select>
-                <input type="number" min="1" value="1" class="w-20 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-qty" placeholder="Qty">
-                <button onclick="this.parentElement.remove()" class="text-error hover:bg-error/10 p-1.5 rounded-full"><span class="material-symbols-outlined text-[20px]">delete</span></button>
-            `;
-            container.appendChild(row);
-        }
-        
-        async function saveLogWork() {
-            let worker_id = document.getElementById('lw-worker-id').value;
-            if (!worker_id) {
-                worker_id = document.getElementById('lw-worker-select').value;
-            }
-            worker_id = parseInt(worker_id);
-            if (!worker_id) {
-                alert("Please select a worker.");
-                return;
-            }
-            
-            const extra_desc = document.getElementById('lw-extra-desc').value;
-            const extra_amount = parseFloat(document.getElementById('lw-extra-amount').value) || 0;
-            
-            const is_present = document.getElementById('lw-is-present').checked;
-            
-            const rows = document.querySelectorAll('.lw-garment-row');
-            const items = [];
-            
-            rows.forEach(row => {
-                const garmentType = row.querySelector('.lw-garment-select').value;
-                const qty = parseInt(row.querySelector('.lw-garment-qty').value);
-                if (garmentType && qty > 0) {
-                    items.push({ garment_type: garmentType, quantity: qty });
-                }
-            });
-            
-            const worker = globalWorkersList.find(w => w.id === worker_id);
-            const isDaily = worker && worker.worker_type === 'DAILY_SALARY';
-            
-            if (items.length === 0 && extra_amount <= 0 && !(isDaily && is_present)) {
-                alert("Please add at least one garment, an extra amount, or mark present (for daily workers).");
-                return;
-            }
-            
-            try {
-                await window.API.request('submit_manual_work', {
-                    worker_id: worker_id,
-                    items: items,
-                    extra_desc: extra_desc,
-                    extra_amount: extra_amount,
-                    is_present: is_present
-                });
-                document.getElementById('log-work-modal').classList.add('hidden');
-                loadWorkers();
-            } catch(e) {
-                console.error(e);
-                alert("Error logging work");
-            }
-        }
+ function handleWorkerSelectChange() {
+ const workerId = document.getElementById('lw-worker-select').value;
+ updateLogWorkUIForWorker(workerId ? parseInt(workerId) : null);
+ }
 
-        async function deleteWorker(workerId, workerName) {
-            if (!confirm(`Are you sure you want to delete worker "${workerName}"?\n\nThis will also delete all their work entries, advances, and task records. This action cannot be undone.`)) {
-                return;
-            }
-            try {
-                await window.API.request('delete_worker', {worker_id: workerId});
-                loadWorkers();
-            } catch(e) {
-                console.error(e);
-                alert("Failed to delete worker: " + e);
-            }
-        }
+ function updateLogWorkUIForWorker(workerId) {
+ const garmentsSection = document.getElementById('lw-garments-section');
+ const attendanceSection = document.getElementById('lw-attendance-section');
+ const isPresentCheckbox = document.getElementById('lw-is-present');
+ 
+ isPresentCheckbox.checked = true; // default to present
 
-        async function openWorkerHistory(workerId, workerName) {
-            document.getElementById('history-modal-title').textContent = workerName + ' — Payment History';
-            document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant"><span class="material-symbols-outlined animate-spin text-2xl">refresh</span></td></tr>';
-            document.getElementById('history-summary').innerHTML = '';
-            document.getElementById('worker-history-modal').classList.remove('hidden');
+ if (!workerId) {
+ garmentsSection.classList.remove('hidden');
+ attendanceSection.classList.add('hidden');
+ return;
+ }
 
-            try {
-                const res = await window.API.request('get_worker_history', {worker_id: workerId});
-                const ledgerRes = await window.API.request('get_worker_ledger', {worker_id: workerId});
-                const ledger = ledgerRes.ledger || {};
+ const worker = globalWorkersList.find(w => w.id === workerId);
+ if (worker && worker.worker_type === 'DAILY_SALARY') {
+ attendanceSection.classList.remove('hidden');
+ // We keep garments section visible as well in case they did extra piece work? 
+ // Or hide it to keep it simple? The user said "agr ham uska kuch exta work dalte he to vo bhi update kr do total me". 
+ // Extra work might just use the "Extra Amount" fields below. Let's keep garments visible but optional.
+ } else {
+ attendanceSection.classList.add('hidden');
+ }
+ }
+ 
+ function addLogWorkRow() {
+ const container = document.getElementById('lw-garments-container');
+ const row = document.createElement('div');
+ row.className = "flex gap-2 items-center lw-garment-row";
+ 
+ let optionsHtml = '<option value="">-- Select Garment --</option>';
+ availableGarments.forEach(g => {
+ optionsHtml += `<option value="${g.garment_type}">${g.garment_type} (₹${g.rate})</option>`;
+ });
+ 
+ row.innerHTML = `
+ <select class="flex-1 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-select">
+ ${optionsHtml}
+ </select>
+ <input type="number" min="1" value="1" class="w-20 px-3 py-2 rounded-lg border border-outline-variant bg-surface outline-none lw-garment-qty" placeholder="Qty">
+ <button onclick="this.parentElement.remove()" class="text-error hover:bg-error/10 p-1.5 rounded-full"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+ `;
+ container.appendChild(row);
+ }
+ 
+ async function saveLogWork() {
+ let worker_id = document.getElementById('lw-worker-id').value;
+ if (!worker_id) {
+ worker_id = document.getElementById('lw-worker-select').value;
+ }
+ worker_id = parseInt(worker_id);
+ if (!worker_id) {
+ alert("Please select a worker.");
+ return;
+ }
+ 
+ const extra_desc = document.getElementById('lw-extra-desc').value;
+ const extra_amount = parseFloat(document.getElementById('lw-extra-amount').value) || 0;
+ 
+ const is_present = document.getElementById('lw-is-present').checked;
+ 
+ const rows = document.querySelectorAll('.lw-garment-row');
+ const items = [];
+ 
+ rows.forEach(row => {
+ const garmentType = row.querySelector('.lw-garment-select').value;
+ const qty = parseInt(row.querySelector('.lw-garment-qty').value);
+ if (garmentType && qty > 0) {
+ items.push({ garment_type: garmentType, quantity: qty });
+ }
+ });
+ 
+ const worker = globalWorkersList.find(w => w.id === worker_id);
+ const isDaily = worker && worker.worker_type === 'DAILY_SALARY';
+ 
+ if (items.length === 0 && extra_amount <= 0 && !(isDaily && is_present)) {
+ alert("Please add at least one garment, an extra amount, or mark present (for daily workers).");
+ return;
+ }
+ 
+ try {
+ await window.API.request('submit_manual_work', {
+ worker_id: worker_id,
+ items: items,
+ extra_desc: extra_desc,
+ extra_amount: extra_amount,
+ is_present: is_present
+ });
+ document.getElementById('log-work-modal').classList.add('hidden');
+ loadWorkers();
+ } catch(e) {
+ console.error(e);
+ alert("Error logging work");
+ }
+ }
 
-                // Current worker globally to use in Settle Account
-                document.getElementById('history-modal-title').dataset.workerId = workerId;
-                document.getElementById('history-modal-title').dataset.workerName = workerName;
-                document.getElementById('btn-settle-account').dataset.balance = ledger.remaining_balance || 0;
+ async function deleteWorker(workerId, workerName) {
+ if (!confirm(`Are you sure you want to delete worker "${workerName}"?\n\nThis will also delete all their work entries, advances, and task records. This action cannot be undone.`)) {
+ return;
+ }
+ try {
+ await window.API.request('delete_worker', {worker_id: workerId});
+ loadWorkers();
+ } catch(e) {
+ console.error(e);
+ alert("Failed to delete worker: " + e);
+ }
+ }
 
-                // Summary cards
-                document.getElementById('history-summary').innerHTML = `
-                    <div class="flex-1 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                        <div class="text-xs text-green-600 font-bold uppercase tracking-wider mb-1">Unsettled Earned</div>
-                        <div class="text-2xl font-bold text-green-700">₹${(ledger.total_earned || 0).toFixed(0)}</div>
-                    </div>
-                    <div class="flex-1 bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
-                        <div class="text-xs text-orange-600 font-bold uppercase tracking-wider mb-1">Unsettled Advance</div>
-                        <div class="text-2xl font-bold text-orange-600">₹${(ledger.total_advance || 0).toFixed(0)}</div>
-                    </div>
-                    <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-                        <div class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Current Balance</div>
-                        <div class="text-2xl font-bold text-blue-700">₹${(ledger.remaining_balance || 0).toFixed(0)}</div>
-                    </div>
-                `;
+ async function openWorkerHistory(workerId, workerName) {
+ document.getElementById('history-modal-title').textContent = workerName + ' — Payment History';
+ document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant"><span class="material-symbols-outlined animate-spin text-2xl">refresh</span></td></tr>';
+ document.getElementById('history-summary').innerHTML = '';
+ document.getElementById('worker-history-modal').classList.remove('hidden');
 
-                if (ledger.total_earned === 0 && ledger.total_advance === 0) {
-                    document.getElementById('btn-settle-account').classList.add('hidden');
-                } else {
-                    document.getElementById('btn-settle-account').classList.remove('hidden');
-                }
+ try {
+ const res = await window.API.request('get_worker_history', {worker_id: workerId});
+ const ledgerRes = await window.API.request('get_worker_ledger', {worker_id: workerId});
+ const ledger = ledgerRes.ledger || {};
 
-                const tbody = document.getElementById('history-list');
-                tbody.innerHTML = '';
+ // Current worker globally to use in Settle Account
+ document.getElementById('history-modal-title').dataset.workerId = workerId;
+ document.getElementById('history-modal-title').dataset.workerName = workerName;
+ document.getElementById('btn-settle-account').dataset.balance = ledger.remaining_balance || 0;
 
-                const history = res.history || [];
-                if (history.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">No payment history found.</td></tr>';
-                    return;
-                }
+ // Summary cards
+ document.getElementById('history-summary').innerHTML = `
+ <div class="flex-1 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+ <div class="text-xs text-green-600 font-bold uppercase tracking-wider mb-1">Unsettled Earned</div>
+ <div class="text-2xl font-bold text-green-700">₹${(ledger.total_earned || 0).toFixed(0)}</div>
+ </div>
+ <div class="flex-1 bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+ <div class="text-xs text-orange-600 font-bold uppercase tracking-wider mb-1">Unsettled Advance</div>
+ <div class="text-2xl font-bold text-orange-600">₹${(ledger.total_advance || 0).toFixed(0)}</div>
+ </div>
+ <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+ <div class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Current Balance</div>
+ <div class="text-2xl font-bold text-blue-700">₹${(ledger.remaining_balance || 0).toFixed(0)}</div>
+ </div>
+ `;
 
-                history.forEach(h => {
-                    const date = h.date ? new Date(h.date).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : '-';
-                    const isWork = h.type === 'WORK';
-                    const typeBadge = isWork
-                        ? '<span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-800 font-bold">WORK</span>'
-                        : '<span class="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold">ADVANCE</span>';
-                    
-                    const statusBadge = h.status === 'APPROVED' ? 'bg-green-100 text-green-800'
-                        : h.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800'
-                        : h.status === 'REJECTED' ? 'bg-red-100 text-red-800'
-                        : 'bg-blue-100 text-blue-800';
+ if (ledger.total_earned === 0 && ledger.total_advance === 0) {
+ document.getElementById('btn-settle-account').classList.add('hidden');
+ } else {
+ document.getElementById('btn-settle-account').classList.remove('hidden');
+ }
 
-                    let amountColor = isWork ? 'text-green-700' : 'text-orange-600';
-                    let amountPrefix = isWork ? '+' : '-';
-                    
-                    let settledBadge = '';
-                    let rowClass = '';
-                    if (h.is_settled) {
-                        amountColor = 'text-on-surface-variant';
-                        rowClass = 'opacity-60 bg-surface-container-lowest';
-                        settledBadge = '<span class="ml-2 text-[10px] bg-surface-container-highest px-1.5 py-0.5 rounded text-on-surface-variant uppercase font-bold tracking-wider">Settled</span>';
-                    }
+ const tbody = document.getElementById('history-list');
+ tbody.innerHTML = '';
 
-                    const tr = document.createElement('tr');
-                    tr.className = `border-b border-surface-container-highest/50 last:border-0 ${rowClass}`;
-                    tr.innerHTML = `
-                        <td class="px-4 py-3 text-sm">${date}</td>
-                        <td class="px-4 py-3">${typeBadge}</td>
-                        <td class="px-4 py-3 text-sm">${h.description}${settledBadge}</td>
-                        <td class="px-4 py-3"><span class="text-xs px-2 py-0.5 rounded ${statusBadge} font-bold">${h.status}</span></td>
-                        <td class="px-4 py-3 text-right font-bold ${amountColor}">${amountPrefix}₹${h.amount.toFixed(0)}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch(e) {
-                console.error(e);
-                document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-error">Failed to load history</td></tr>';
-            }
-        }
-        
-        async function settleAccount() {
-            const workerId = document.getElementById('history-modal-title').dataset.workerId;
-            const workerName = document.getElementById('history-modal-title').dataset.workerName;
-            const balance = parseFloat(document.getElementById('btn-settle-account').dataset.balance || "0");
-            
-            if (Math.abs(balance) > 0.01) {
-                alert(`Cannot settle account yet.\n\nRemaining Balance: ₹${balance.toFixed(0)}\n\nPlease complete the balance (bring it to ₹0) by logging work or giving advance before settling.`);
-                return;
-            }
-            
-            if (!confirm(`Are you sure you want to Settle the account for ${workerName}?\n\nThis will mark all current work and advances as paid/settled, bringing the balance to ₹0. Old history will be kept, but the ledger will start fresh from today.`)) {
-                return;
-            }
-            
-            try {
-                await window.API.request('settle_worker_account', {worker_id: workerId});
-                openWorkerHistory(workerId, workerName); // refresh modal
-                loadWorkers(); // refresh background table
-            } catch(e) {
-                console.error(e);
-                alert("Failed to settle account: " + e);
-            }
-        }
+ const history = res.history || [];
+ if (history.length === 0) {
+ tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-on-surface-variant">No payment history found.</td></tr>';
+ return;
+ }
 
-        document.addEventListener("DOMContentLoaded", initWorkers);
+ history.forEach(h => {
+ const date = h.date ? new Date(h.date).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : '-';
+ const isWork = h.type === 'WORK';
+ const typeBadge = isWork
+ ? '<span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-800 font-bold">WORK</span>'
+ : '<span class="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold">ADVANCE</span>';
+ 
+ const statusBadge = h.status === 'APPROVED' ? 'bg-green-100 text-green-800'
+ : h.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800'
+ : h.status === 'REJECTED' ? 'bg-red-100 text-red-800'
+ : 'bg-blue-100 text-blue-800';
+
+ let amountColor = isWork ? 'text-green-700' : 'text-orange-600';
+ let amountPrefix = isWork ? '+' : '-';
+ 
+ let settledBadge = '';
+ let rowClass = '';
+ if (h.is_settled) {
+ amountColor = 'text-on-surface-variant';
+ rowClass = 'opacity-60 bg-surface-container-lowest';
+ settledBadge = '<span class="ml-2 text-[10px] bg-surface-container-highest px-1.5 py-0.5 rounded text-on-surface-variant uppercase font-bold tracking-wider">Settled</span>';
+ }
+
+ const tr = document.createElement('tr');
+ tr.className = `border-b border-surface-container-highest/50 last:border-0 ${rowClass}`;
+ tr.innerHTML = `
+ <td class="px-4 py-3 text-sm">${date}</td>
+ <td class="px-4 py-3">${typeBadge}</td>
+ <td class="px-4 py-3 text-sm">${h.description}${settledBadge}</td>
+ <td class="px-4 py-3"><span class="text-xs px-2 py-0.5 rounded ${statusBadge} font-bold">${h.status}</span></td>
+ <td class="px-4 py-3 text-right font-bold ${amountColor}">${amountPrefix}₹${h.amount.toFixed(0)}</td>
+ `;
+ tbody.appendChild(tr);
+ });
+ } catch(e) {
+ console.error(e);
+ document.getElementById('history-list').innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-error">Failed to load history</td></tr>';
+ }
+ }
+ 
+ async function settleAccount() {
+ const workerId = document.getElementById('history-modal-title').dataset.workerId;
+ const workerName = document.getElementById('history-modal-title').dataset.workerName;
+ const balance = parseFloat(document.getElementById('btn-settle-account').dataset.balance || "0");
+ 
+ if (Math.abs(balance) > 0.01) {
+ alert(`Cannot settle account yet.\n\nRemaining Balance: ₹${balance.toFixed(0)}\n\nPlease complete the balance (bring it to ₹0) by logging work or giving advance before settling.`);
+ return;
+ }
+ 
+ if (!confirm(`Are you sure you want to Settle the account for ${workerName}?\n\nThis will mark all current work and advances as paid/settled, bringing the balance to ₹0. Old history will be kept, but the ledger will start fresh from today.`)) {
+ return;
+ }
+ 
+ try {
+ await window.API.request('settle_worker_account', {worker_id: workerId});
+ openWorkerHistory(workerId, workerName); // refresh modal
+ loadWorkers(); // refresh background table
+ } catch(e) {
+ console.error(e);
+ alert("Failed to settle account: " + e);
+ }
+ }
+
+ document.addEventListener("DOMContentLoaded", initWorkers);
 
 </script>
 <script src="../js/i18n.js?v=1787471943"></script>

@@ -21,6 +21,9 @@ class OrdersPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.order_service = OrderService()
+        self.current_page = 1
+        self.page_size = 50
+        self.total_count = 0
         self._current_filter = "All"
         self._setup_ui()
 
@@ -31,7 +34,7 @@ class OrdersPage(QWidget):
         scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
 
         content = QWidget()
-        content.setStyleSheet("background: transparent;")
+        content.setStyleSheet("")
         layout = QVBoxLayout(content)
         layout.setContentsMargins(CONTAINER_PADDING, CONTAINER_PADDING,
                                    CONTAINER_PADDING, CONTAINER_PADDING)
@@ -102,6 +105,29 @@ class OrdersPage(QWidget):
         self.empty_label.setVisible(False)
         layout.addWidget(self.empty_label)
 
+        # Pagination Controls
+        pagination_row = QHBoxLayout()
+        pagination_row.addStretch()
+        
+        self.btn_prev = QPushButton("◄ Previous")
+        self.btn_prev.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_prev.clicked.connect(self._prev_page)
+        
+        self.lbl_page = QLabel("Page 1")
+        self.lbl_page.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lbl_page.setFixedWidth(100)
+        
+        self.btn_next = QPushButton("Next ►")
+        self.btn_next.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_next.clicked.connect(self._next_page)
+        
+        pagination_row.addWidget(self.btn_prev)
+        pagination_row.addWidget(self.lbl_page)
+        pagination_row.addWidget(self.btn_next)
+        pagination_row.addStretch()
+        
+        layout.addLayout(pagination_row)
+
         layout.addStretch()
         scroll.setWidget(content)
 
@@ -141,12 +167,14 @@ class OrdersPage(QWidget):
 
     def _apply_filter(self, status: str):
         self._current_filter = status
+        self.current_page = 1
         for name, btn in self.filter_buttons.items():
             btn.setChecked(name == status)
         self._style_filter_buttons()
         self.refresh_data()
 
     def _on_search(self, text: str):
+        self.current_page = 1
         self.refresh_data()
 
     def refresh_data(self):
@@ -160,27 +188,43 @@ class OrdersPage(QWidget):
                 session.close()
 
             status_filter = None if self._current_filter == "All" else self._current_filter.upper()
+            search_text = self.search_input.text().strip()
+            offset = (self.current_page - 1) * self.page_size
 
-            if self._current_filter == "Overdue":
-                orders = self.order_service.get_overdue_orders()
-            else:
-                orders = self.order_service.get_all_orders(status_filter)
-
-            # Apply search
-            search_text = self.search_input.text().strip().lower()
             if search_text:
-                orders = [o for o in orders if
-                          search_text in o.order_number.lower() or
-                          (o.customer and search_text in o.customer.name.lower())]
+                orders, total = self.order_service.search_orders(search_text, limit=self.page_size, offset=offset)
+            elif self._current_filter == "Overdue":
+                orders, total = self.order_service.get_overdue_orders(limit=self.page_size, offset=offset)
+            else:
+                orders, total = self.order_service.get_all_orders(status_filter, limit=self.page_size, offset=offset)
 
+            self.total_count = total
+            self._update_pagination_ui()
             self._populate_table(orders, currency)
         except Exception as e:
             from app.utils.logger import get_logger
             get_logger(__name__).error(f"Error loading orders: {e}")
 
+    def _prev_page(self):
+        if self.current_page > 1:
+            self.current_page -= 1
+            self.refresh_data()
+            
+    def _next_page(self):
+        max_page = max(1, (self.total_count + self.page_size - 1) // self.page_size)
+        if self.current_page < max_page:
+            self.current_page += 1
+            self.refresh_data()
+            
+    def _update_pagination_ui(self):
+        max_page = max(1, (self.total_count + self.page_size - 1) // self.page_size)
+        self.lbl_page.setText(f"Page {self.current_page} of {max_page}")
+        self.btn_prev.setEnabled(self.current_page > 1)
+        self.btn_next.setEnabled(self.current_page < max_page)
+        self.count_label.setText(f"{self.total_count} order{'s' if self.total_count != 1 else ''}")
+
     def _populate_table(self, orders: list, currency: str):
         self.table.setRowCount(len(orders))
-        self.count_label.setText(f"{len(orders)} order{'s' if len(orders) != 1 else ''}")
         self.empty_label.setVisible(len(orders) == 0)
         self.table.setVisible(len(orders) > 0)
 

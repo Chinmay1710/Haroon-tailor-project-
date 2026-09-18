@@ -3,83 +3,83 @@
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    const btnSave = document.getElementById('btn-save-settings');
-    if (btnSave) {
-        btnSave.addEventListener('click', saveSettings);
-    }
-    
-    function init() {
-        if (!window.pyBridge) {
-            setTimeout(init, 100);
-            return;
-        }
-        
-        if (window.API && window.API.attachMic) {
-            window.API.attachMic('set-shop-name');
-            window.API.attachMic('set-owner-name');
-            window.API.attachMic('set-address');
-        }
-        
-        loadSettings();
-    }
-    init();
+ const btnSave = document.getElementById('btn-save-settings');
+ if (btnSave) {
+ btnSave.addEventListener('click', saveSettings);
+ }
+ 
+ function init() {
+ if (!window.pyBridge) {
+ setTimeout(init, 100);
+ return;
+ }
+ 
+ if (window.API && window.API.attachMic) {
+ window.API.attachMic('set-shop-name');
+ window.API.attachMic('set-owner-name');
+ window.API.attachMic('set-address');
+ }
+ 
+ loadSettings();
+ }
+ init();
 });
 
 async function loadSettings() {
-    try {
-        const data = await window.API.request('get_settings');
-        
-        const setVal = (id, val) => {
-            const el = document.getElementById(id);
-            if (el) el.value = val || '';
-        };
-        
-        setVal('set-shop-name', data.shop_name);
-        setVal('set-owner-name', data.owner_name);
-        setVal('set-phone', data.phone);
-        setVal('set-address', data.address);
-        setVal('set-currency', data.currency_symbol);
-        setVal('set-unit', data.measurement_unit);
-        
-        const dictationSelect = document.getElementById('dictationLanguageSelect');
-        if (dictationSelect) {
-            dictationSelect.value = data.dictation_language || 'en-IN';
-        }
-    } catch (e) {
-        console.error(e);
-        window.API.toast("Failed to load settings", "error");
-    }
+ try {
+ const data = await window.API.request('get_settings');
+ 
+ const setVal = (id, val) => {
+ const el = document.getElementById(id);
+ if (el) el.value = val || '';
+ };
+ 
+ setVal('set-shop-name', data.shop_name);
+ setVal('set-owner-name', data.owner_name);
+ setVal('set-phone', data.phone);
+ setVal('set-address', data.address);
+ setVal('set-currency', data.currency_symbol);
+ setVal('set-unit', data.measurement_unit);
+ 
+ const dictationSelect = document.getElementById('dictationLanguageSelect');
+ if (dictationSelect) {
+ dictationSelect.value = data.dictation_language || 'en-IN';
+ }
+ } catch (e) {
+ console.error(e);
+ window.API.toast("Failed to load settings", "error");
+ }
 }
 
 async function saveSettings() {
-    const getVal = (id) => {
-        const el = document.getElementById(id);
-        return el ? el.value : '';
-    };
-    
-    const payload = {
-        shop_name: getVal('set-shop-name'),
-        owner_name: getVal('set-owner-name'),
-        phone: getVal('set-phone'),
-        address: getVal('set-address'),
-        currency: getVal('set-currency'),
-        measurement_unit: getVal('set-unit')
-    };
-    
-    const dictationSelect = document.getElementById('dictationLanguageSelect');
-    if (dictationSelect) {
-        payload.dictation_language = dictationSelect.value;
-    }
-    
-    try {
-        await window.API.request('update_settings', payload);
-        window.API.toast("Settings saved successfully!", "success");
-        
-        // Update the shop name in the sidebar globally
-        document.querySelectorAll('.global-shop-name').forEach(el => {
-            el.textContent = payload.shop_name || 'My Tailor Shop';
-        });
-    } catch (e) {
-        window.API.toast(e.toString(), "error");
-    }
+ const getVal = (id) => {
+ const el = document.getElementById(id);
+ return el ? el.value : '';
+ };
+ 
+ const payload = {
+ shop_name: getVal('set-shop-name'),
+ owner_name: getVal('set-owner-name'),
+ phone: getVal('set-phone'),
+ address: getVal('set-address'),
+ currency: getVal('set-currency'),
+ measurement_unit: getVal('set-unit')
+ };
+ 
+ const dictationSelect = document.getElementById('dictationLanguageSelect');
+ if (dictationSelect) {
+ payload.dictation_language = dictationSelect.value;
+ }
+ 
+ try {
+ await window.API.request('update_settings', payload);
+ window.API.toast("Settings saved successfully!", "success");
+ 
+ // Update the shop name in the sidebar globally
+ document.querySelectorAll('.global-shop-name').forEach(el => {
+ el.textContent = payload.shop_name || 'My Tailor Shop';
+ });
+ } catch (e) {
+ window.API.toast(e.toString(), "error");
+ }
 }

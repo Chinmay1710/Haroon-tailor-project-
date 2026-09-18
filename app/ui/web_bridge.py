@@ -6,12 +6,17 @@ from app.services.customer_service import CustomerService
 from app.services.order_service import OrderService
 from app.services.payment_service import PaymentService
 import threading
+import qrcode
+import urllib.parse
 import os
 import shutil
 import glob
 from app.config import APP_DATA_DIR, UPLOADS_DIR
 from app.printing.receipt_printer import generate_receipt_pdf
 from app.web import tunnel
+import qrcode
+import urllib.parse
+import qrcode.image.pil
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,6 +44,19 @@ class WebBridge(QObject):
     @Slot(str)
     def log(self, message):
         print(f"[JS] {message}")
+
+    @Slot(str)
+    def copy_to_clipboard(self, text):
+        from PySide6.QtGui import QGuiApplication
+        clipboard = QGuiApplication.clipboard()
+        clipboard.setText(text)
+        self.notification_requested.emit("Success", "Link copied to clipboard!")
+
+    @Slot(str)
+    def open_url(self, url):
+        from PySide6.QtGui import QDesktopServices
+        from PySide6.QtCore import QUrl
+        QDesktopServices.openUrl(QUrl(url))
 
     def _get_shop_name(self) -> str:
         try:
@@ -89,6 +107,21 @@ class WebBridge(QObject):
             if action == "navigate_to":
                 page = payload.get("page", "dashboard")
                 self.navigate_requested.emit(page)
+                response = {"status": "success"}
+
+            elif action == "copy_to_clipboard":
+                text = payload.get("text", "")
+                from PySide6.QtGui import QGuiApplication
+                clipboard = QGuiApplication.clipboard()
+                clipboard.setText(text)
+                self.notification_requested.emit("Success", "Link copied to clipboard!")
+                response = {"status": "success"}
+
+            elif action == "open_url":
+                url = payload.get("url", "")
+                from PySide6.QtGui import QDesktopServices
+                from PySide6.QtCore import QUrl
+                QDesktopServices.openUrl(QUrl(url))
                 response = {"status": "success"}
 
             # ────────────────────────────────────────────────────────────
@@ -181,6 +214,11 @@ class WebBridge(QObject):
                 worker_srv = self.services["worker"]
                 rate = worker_srv.set_garment_rate(payload.get("garment_type"), float(payload.get("rate", 0)))
                 response = {"status": "success", "data": {"rate": rate}}
+
+            elif action == "delete_garment_rate":
+                worker_srv = self.services["worker"]
+                success = worker_srv.delete_garment_rate(payload.get("garment_type"))
+                response = {"status": "success" if success else "error"}
 
             elif action == "get_all_pending_entries":
                 worker_srv = self.services["worker"]
@@ -340,7 +378,7 @@ class WebBridge(QObject):
                         img_str = base64.b64encode(buffered.getvalue()).decode()
                         base64_url = f"data:image/png;base64,{img_str}"
                     except Exception as e:
-                        print(f"Error generating QR locally: {e}")
+                        logger.error(f"Error generating QR locally: {e}", exc_info=True)
                         base64_url = ""
                     response = {"status": "success", "data": {"url": qr_url, "base64": base64_url}}
                 else:
@@ -361,6 +399,8 @@ class WebBridge(QObject):
                     customers = session.query(Customer).options(
                         joinedload(Customer.orders)
                     ).filter(Customer.is_active == True).order_by(Customer.id.desc()).all()  # noqa: E712
+                    if isinstance(customers, tuple):
+                        customers = customers[0]
                     
                     data = []
                     for c in customers:
@@ -604,12 +644,13 @@ class WebBridge(QObject):
                         shop_name = self._get_shop_name()
                         paid_amt = order.total_amount - order.remaining_amount
                         msg = (
-                            f"✨ नमस्ते {customer.name}! ✨\n\n"
+                            f"✨ {customer.name}! ✨\n\n"
                             f"{shop_name} को चुनने के लिए धन्यवाद! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
                             f"👔 कुल बिल: ₹{order.total_amount}\n"
                             f"✅ जमा किए: ₹{paid_amt}\n"
                             f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
                             f"जैसे ही आपके कपड़े तैयार हो जाएंगे, हम आपको सूचित कर देंगे!\n\n"
+                            f"नोट: शुक्रवार को दुकान बंद रहती है।\n\n"
                             f"धन्यवाद,\n{shop_name}"
                         )
                         whatsapp_url = self._build_whatsapp_url(customer.mobile, msg)
@@ -645,6 +686,8 @@ class WebBridge(QObject):
             elif action == "get_all_orders":
                 order_srv = self.services["order"]
                 orders = order_srv.get_all_orders()
+                if isinstance(orders, tuple):
+                    orders = orders[0]
                 data = []
                 for o in orders:
                     data.append({
@@ -719,7 +762,7 @@ class WebBridge(QObject):
                                 if p:
                                     # the path is typically '../uploads/items/filename.jpg'
                                     filename = os.path.basename(p)
-                                    abs_paths.append(f"file://{os.path.join(UPLOADS_DIR, 'items', filename)}")
+                                    abs_paths.append(f"file:///{os.path.join(UPLOADS_DIR, 'items', filename).replace(os.sep, '/')}")
                             image_path_out = ",".join(abs_paths)
                             
                         item_data = {
@@ -729,6 +772,7 @@ class WebBridge(QObject):
                             "price": item.price,
                             "notes": item.notes or "",
                             "image_path": image_path_out,
+                            "is_delivered": getattr(item, "is_delivered", False),
                             "measurements": {}
                         }
                         for m in item.measurements:
@@ -744,8 +788,34 @@ class WebBridge(QObject):
                 status = payload.get("status")
                 order_id = payload.get("order_id") or payload.get("id")
                 send_whatsapp = payload.get("send_whatsapp", False)
+                delivered_item_ids = payload.get("delivered_item_ids")
                 
-                order_srv.update_status(order_id, status)
+                from app.database.engine import get_session
+                session = get_session()
+                try:
+                    from app.models.order import Order, OrderItem
+                    order = session.query(Order).filter(Order.id == order_id).first()
+                    if order and delivered_item_ids is not None:
+                        # Update individual items
+                        for item in order.items:
+                            if item.id in delivered_item_ids:
+                                item.is_delivered = True
+                        
+                        # Check if all items are delivered
+                        all_delivered = all(item.is_delivered for item in order.items) if order.items else True
+                        if all_delivered:
+                            status = "DELIVERED"
+                        else:
+                            status = "PARTIALLY_DELIVERED"
+                    
+                    if order:
+                        order.status = status
+                    session.commit()
+                except Exception as e:
+                    session.rollback()
+                    raise e
+                finally:
+                    session.close()
                 
                 # Build WhatsApp URL if requested
                 whatsapp_url = None
@@ -755,9 +825,10 @@ class WebBridge(QObject):
                     if order and order.customer and order.customer.mobile:
                         items_str = ", ".join(f"{item.quantity} {item.clothing_type}" for item in order.items) if order.items else "कपड़े"
                         msg = (
-                            f"🎉 खुशखबरी, {order.customer.name}! 🎉\n\n"
+                            f"🎉 {order.customer.name}! 🎉\n\n"
                             f"आपका ऑर्डर #{order.order_number} ({items_str}) अब बिल्कुल तैयार है! आप इसे {shop_name} से ले जा सकते हैं।\n\n"
                             f"कृपया अपनी सुविधा अनुसार दुकान पर आएं और अपने सिले हुए कपड़े प्राप्त करें।\n\n"
+                            f"नोट: शुक्रवार को दुकान बंद रहती है।\n\n"
                             f"जल्द मिलेंगे!\n{shop_name}"
                         )
                         whatsapp_url = self._build_whatsapp_url(order.customer.mobile, msg)
@@ -770,6 +841,28 @@ class WebBridge(QObject):
                 if url:
                     webbrowser.open(url)
                 response = {"status": "success"}
+
+            elif action == "generate_payment_reminder_whatsapp":
+                from app.repositories.settings_repo import SettingsRepository
+                settings = SettingsRepository(session).get_settings()
+                shop_name = settings.shop_name if settings else "Haroon Tailor"
+                
+                order_id = payload.get("order_id")
+                order_srv = self.services.get("order")
+                order = order_srv.get_order(order_id) if order_srv else None
+                
+                if order and order.customer and order.customer.mobile:
+                    msg = (
+                        f"{order.customer.name},\n\n"
+                        f"यह एक रिमाइंडर है कि आपके ऑर्डर {order.order_number} का ₹{order.remaining_amount} बकाया है। "
+                        f"कृपया अपनी सुविधा अनुसार इसे जल्द से जल्द चुका दें।\n\n"
+                        f"नोट: शुक्रवार को दुकान बंद रहती है।\n\n"
+                        f"धन्यवाद!\n{shop_name}"
+                    )
+                    whatsapp_url = self._build_whatsapp_url(order.customer.mobile, msg)
+                    response = {"status": "success", "data": {"whatsapp_url": whatsapp_url}}
+                else:
+                    response = {"status": "error", "message": "Customer mobile not found or order not found"}
 
             # ────────────────────────────────────────────────────────────
             # PAYMENTS
@@ -878,10 +971,11 @@ class WebBridge(QObject):
                         shop_name = self._get_shop_name()
                         paid_amt = order.total_amount - order.remaining_amount
                         msg = (
-                            f"✨ नमस्ते {order.customer.name}! ✨\n\n"
+                            f"✨ {order.customer.name}! ✨\n\n"
                             f"हमने आपके ऑर्डर #{order.order_number} के लिए ₹{payment.amount} का भुगतान प्राप्त कर लिया है।\n\n"
                             f"✅ कुल जमा: ₹{paid_amt}\n"
                             f"⏳ बकाया राशि: ₹{order.remaining_amount}\n\n"
+                            f"नोट: शुक्रवार को दुकान बंद रहती है।\n\n"
                             f"धन्यवाद,\n{shop_name}"
                         )
                         whatsapp_url = self._build_whatsapp_url(order.customer.mobile, msg)
@@ -1214,10 +1308,10 @@ class WebBridge(QObject):
                                 shutil.copytree(UPLOADS_DIR, os.path.join(temp_dir, "uploads"))
                                 
                             # 3. Zip it all up
-                            shutil.make_archive(save_path.replace('.zip', ''), 'zip', temp_dir)
-                            # make_archive appends .zip, so ensure the name matches save_path
-                            if not save_path.endswith('.zip'):
-                                os.rename(save_path.replace('.zip', '') + '.zip', save_path)
+                            if not save_path.lower().endswith('.zip'):
+                                save_path += '.zip'
+                            base_path = save_path[:-4] # remove .zip for make_archive
+                            shutil.make_archive(base_path, 'zip', temp_dir)
                     except Exception as e:
                         print(f"Error creating zip backup: {e}")
                         response = {"status": "error", "message": f"Backup failed: {e}"}
@@ -1238,8 +1332,8 @@ class WebBridge(QObject):
                                 session.commit()
                         
                         if gdrive_path and os.path.exists(gdrive_path):
-                            gdrive_backup = os.path.join(gdrive_path, default_filename)
-                            shutil.copy2(db_path, gdrive_backup)
+                            gdrive_backup = os.path.join(gdrive_path, os.path.basename(save_path))
+                            shutil.copy2(save_path, gdrive_backup)
                             response = {"status": "success", "data": {"path": f"Hard Drive: {save_path}\nGoogle Drive: {gdrive_backup}"}}
                         else:
                             response = {"status": "success", "data": {"path": save_path}}
@@ -1419,18 +1513,24 @@ class WebBridge(QObject):
             else:
                 response = {"status": "error", "message": f"Unknown action: {action}"}
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            logger.error(f"Error in bridge dispatch ({action}): {e}", exc_info=True)
             response = {"status": "error", "message": str(e)}
 
         # Resolve image paths to absolute file:// URIs so QWebEngineView can load them from APP_DATA_DIR
         def resolve_paths(obj):
             if isinstance(obj, dict):
                 for k, v in obj.items():
-                    if isinstance(v, str) and v.startswith("../uploads/items/"):
-                        filename = v.split("/")[-1]
-                        abs_path = os.path.join(UPLOADS_DIR, "items", filename)
-                        obj[k] = f"file:///{abs_path}".replace("\\", "/")
+                    if isinstance(v, str) and "../uploads/items/" in v:
+                        paths = [p.strip() for p in v.split(",") if p.strip()]
+                        resolved = []
+                        for p in paths:
+                            if p.startswith("../uploads/items/"):
+                                filename = p.split("/")[-1]
+                                abs_path = os.path.join(UPLOADS_DIR, "items", filename)
+                                resolved.append(f"file:///{abs_path}".replace("\\", "/"))
+                            else:
+                                resolved.append(p)
+                        obj[k] = ",".join(resolved)
                     else:
                         resolve_paths(v)
             elif isinstance(obj, list):

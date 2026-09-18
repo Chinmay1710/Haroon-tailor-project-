@@ -310,25 +310,15 @@ class MeasurementDialog(QDialog):
         self.measurement_inputs.clear()
         self.custom_fields.clear()
 
-        fields = MEASUREMENT_TEMPLATES.get(template, [])
-
         if template == "Custom":
             self._build_custom_fields()
             return
 
-        for i, field_name in enumerate(fields):
-            col = i % 3
-            row = i // 3
-
-            field_container = QWidget()
-            field_container.setStyleSheet("background: transparent;")
-            flayout = QVBoxLayout(field_container)
-            flayout.setContentsMargins(0, 0, 0, 0)
-            flayout.setSpacing(4)
-            
-            label = QLabel(field_name)
-            label.setStyleSheet(f"font-size: {FONT_SIZES['label_lg']}px; font-weight: 600; border: none; color: {COLORS['on_surface']};")
-            flayout.addWidget(label)
+        # Build 6x4 grid (24 boxes) with no labels
+        for i in range(1, 25):
+            col = (i - 1) % 6
+            row = (i - 1) // 6
+            field_name = f"Box {i}"
 
             inp_container = QWidget()
             inp_container.setStyleSheet("background: transparent;")
@@ -337,26 +327,19 @@ class MeasurementDialog(QDialog):
             inp_layout.setSpacing(0)
             
             inp = QLineEdit()
-            inp.setPlaceholderText("00.0")
             inp.setFixedHeight(48)
             inp.setStyleSheet(f"""
                 QLineEdit {{
                     background-color: {COLORS['surface_container_low']};
                     border: 1px solid {COLORS['outline_variant']};
-                    border-radius: 8px; padding: 0 40px 0 16px;
+                    border-radius: 8px; padding: 0 16px;
                     font-size: {FONT_SIZES['headline_md']}px; text-align: center;
                 }}
                 QLineEdit:focus {{ border: 1px solid {COLORS['primary']}; }}
             """)
             inp_layout.addWidget(inp)
             
-            unit_lbl = QLabel("in" if self.btn_inches.isChecked() else "cm")
-            unit_lbl.setStyleSheet(f"font-size: {FONT_SIZES['label_sm']}px; color: {COLORS['on_surface_variant']}; border: none; background: transparent;")
-            
-            # Use absolute positioning for the unit label inside QLineEdit using layouts
-            # (In PySide, an easier way is to add it via a container or QAction, but we'll use a tight layout)
-            
-            self.fields_layout.addWidget(field_container, row, col)
+            self.fields_layout.addWidget(inp_container, row, col)
             self.measurement_inputs[field_name] = inp
 
     def _build_custom_fields(self):

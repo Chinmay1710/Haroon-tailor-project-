@@ -11,11 +11,11 @@
 
 
 <style>
-        .ambient-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
-        .active-shadow { box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1); }
-    </style>
-    <link href="../css/fonts.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/compiled.css">
+ .ambient-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
+ .active-shadow { box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1); }
+ </style>
+ <link href="../css/fonts.css" rel="stylesheet" />
+ <link rel="stylesheet" href="../css/compiled.css">
 </head>
 <body class="bg-surface text-on-surface font-body-md min-h-screen flex">
 <!-- SideNavBar (Suppressed due to sub-page task-focused intent) -->
@@ -29,7 +29,7 @@
 <button onclick="window.API.navigate('orders_list')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
 <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
 </button>
-<h1 id="od-title" class="font-headline-lg text-headline-lg text-on-surface">Order #...</h1>
+<h1 id="od-title" class="font-headline-lg text-headline-lg text-on-surface">Bill #...</h1>
 </div>
 <p id="od-subtitle" class="font-body-lg text-body-lg text-on-surface-variant ml-[56px]">Loading...</p>
 </div>
@@ -76,8 +76,8 @@
 <h2 class="font-headline-md text-headline-md text-on-surface">Special Notes</h2>
 </div>
 <p id="od-notes" class="font-body-md text-body-md text-on-surface-variant italic border-l-4 border-surface-container-highest pl-4 py-1">
-                            No special instructions provided.
-                        </p>
+ No special instructions provided.
+ </p>
 <button class="mt-auto pt-stack_sm text-primary font-label-lg text-label-lg self-start hover:underline">Edit Notes</button>
 </section>
 </div>
@@ -91,7 +91,7 @@
 <span id="od-items-count" class="bg-surface-container text-primary font-label-sm text-label-sm px-3 py-1 rounded-full">0 Items</span>
 </div>
 <div id="od-items-container" class="flex flex-col gap-stack_sm">
-    <div class="text-on-surface-variant text-center p-4">Loading items...</div>
+ <div class="text-on-surface-variant text-center p-4">Loading items...</div>
 </div>
 </section>
 <!-- Measurements Snapshot -->
@@ -101,7 +101,7 @@
 <h2 class="font-headline-md text-headline-md text-on-surface">Measurements Snapshot</h2>
 </div>
 <div id="od-measurements-container" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <div class="col-span-2 text-on-surface-variant text-center p-4">Loading measurements...</div>
+ <div class="col-span-2 text-on-surface-variant text-center p-4">Loading measurements...</div>
 </div>
 </section>
 </div>
@@ -113,25 +113,56 @@
 <div class="flex flex-col gap-stack_sm">
 <button id="od-edit-order-btn" class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
 <span class="material-symbols-outlined">edit</span>
-                            Edit Order
-                        </button>
+ Edit Order
+ </button>
 <button id="od-add-payment-btn" class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
 <span class="material-symbols-outlined">payments</span>
-                            Add Payment
-                        </button>
+ Add Payment
+ </button>
 <button id="od-mark-complete-btn" class="w-full bg-primary text-on-primary font-label-lg text-label-lg rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-on-primary-fixed-variant transition-colors ambient-shadow mt-2 hidden">
 <span class="material-symbols-outlined">check_circle</span>
-                            Mark as Complete
-                        </button>
+ Mark as Complete
+ </button>
 <div class="h-[1px] bg-outline-variant my-2 w-full"></div>
 <button id="od-print-receipt-btn" class="w-full text-on-surface-variant font-label-lg text-label-lg py-3 px-4 flex items-center justify-start gap-3 hover:bg-surface-container-low rounded-lg transition-colors">
 <span class="material-symbols-outlined">receipt_long</span>
-                            Print Receipt
-                        </button>
+ Print Receipt
+ </button>
 <button id="od-print-slip-btn" class="w-full text-on-surface-variant font-label-lg text-label-lg py-3 px-4 flex items-center justify-start gap-3 hover:bg-surface-container-low rounded-lg transition-colors">
 <span class="material-symbols-outlined">content_cut</span>
-                            Print Stitching Slip
-                        </button>
+ Print Stitching Slip
+ </button>
+
+ <div class="h-[1px] bg-outline-variant my-2 w-full"></div>
+ <!-- WORKER PORTAL LINK IN ACTIONS -->
+ <div class="p-3 bg-surface-container-high rounded-lg border border-outline-variant flex flex-col gap-1">
+ <span class="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">Worker Link</span>
+ <div class="flex items-center justify-between">
+ <span class="sidebar-worker-link text-[13px] font-semibold text-primary overflow-hidden text-ellipsis whitespace-nowrap max-w-[140px] select-all cursor-text">Loading...</span>
+ <span class="material-symbols-outlined text-[16px] text-primary cursor-pointer" onclick="if(window.API){ window.API.request('get_worker_portal_url').then(res=>{ if(res.status==='success') { window.API.request('open_url', {url: res.data.url}) }}) }">open_in_new</span>
+ </div>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ setTimeout(() => {
+ if (window.API) {
+ window.API.request('get_worker_portal_url').then(res => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => {
+ if (res && res.status === 'success') {
+ el.textContent = res.data.url.replace('https://', '').replace('http://', '');
+ } else {
+ el.textContent = 'Not Active';
+ }
+ });
+ }).catch(e => {
+ const links = document.querySelectorAll('.sidebar-worker-link');
+ links.forEach(el => el.textContent = 'Error');
+ });
+ }
+ }, 500);
+ });
+ </script>
+ </div>
 </div>
 </section>
 <!-- Payment History -->
@@ -158,7 +189,7 @@
 <div class="flex flex-col gap-3">
 <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">History</h3>
 <div id="od-payments-history" class="flex flex-col gap-2">
-    <div class="text-on-surface-variant text-center p-2">Loading...</div>
+ <div class="text-on-surface-variant text-center p-2">Loading...</div>
 </div>
 </div>
 </section>
@@ -166,11 +197,11 @@
 </div>
 </main>
 <!-- Full Screen Image Modal -->
-<div id="image-modal" class="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity" onclick="closeImageModal()">
-    <img id="image-modal-content" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded">
-    <button class="absolute top-4 right-4 text-white hover:text-gray-300 w-10 h-10 flex items-center justify-center bg-black/50 rounded-full" onclick="closeImageModal(event)">
-        <span class="material-symbols-outlined">close</span>
-    </button>
+<div id="image-modal" class="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center hidden " onclick="closeImageModal()">
+ <img id="image-modal-content" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded">
+ <button class="absolute top-4 right-4 text-white hover:text-gray-300 w-10 h-10 flex items-center justify-center bg-black/50 rounded-full" onclick="closeImageModal(event)">
+ <span class="material-symbols-outlined">close</span>
+ </button>
 </div>
 
 <script src="../js/api.js?v=1787471943"></script>

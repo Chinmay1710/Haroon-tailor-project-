@@ -1,9 +1,10 @@
 import os
+import sys
 import uvicorn
 import logging
 from threading import Thread
 from typing import Optional, List
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,16 +47,7 @@ class CustomerRequest(BaseModel):
     mobile: str = ""
     address: str = ""
 
-class MobileOrderRequest(BaseModel):
-    customer_id: int
-    garment_type: str
-    quantity: int
-    price: float
-    measurements_text: str = ""
-    special_instructions: str = ""
-    advance_amount: float = 0.0
-    save_profile: bool = False
-    image_base64: Optional[List[str]] = None
+
 
 
 @app.post("/api/login")
@@ -90,48 +82,33 @@ def search_customers(q: str = ""):
         "customers": [{"id": c.id, "name": c.name, "mobile": c.mobile} for c in customers]
     }
 
-@app.post("/api/orders/create")
-def create_mobile_order(req: MobileOrderRequest):
-    from app.services.order_service import OrderService
-    from datetime import date
+@app.get("/api/customers/{customer_id}/measurements")
+def get_customer_measurements(customer_id: int):
+    from app.services.measurement_service import MeasurementService
     try:
-        srv = OrderService()
-        items = [{
-            "clothing_type": req.garment_type,
-            "quantity": req.quantity,
-            "price": req.price,
-            "notes": "Measurements: " + req.measurements_text if req.measurements_text else ""
-        }]
-        
-        order = srv.create_order(
-            customer_id=req.customer_id,
-            items=items,
-            order_date=date.today(),
-            delivery_date=None,
-            special_instructions=req.special_instructions,
-            advance_amount=req.advance_amount
-        )
-        
-        if bridge_instance:
-            bridge_instance.notification_requested.emit("Success", f"New Order Added: {order.order_number}")
-            if hasattr(bridge_instance, "order_updated"):
-                bridge_instance.order_updated.emit()
-                
-        return {"status": "success", "order_id": order.id, "order_number": order.order_number}
+        meas_srv = MeasurementService()
+        measurements = meas_srv.get_profiles_for_customer(customer_id)
+        data = []
+        for m in measurements:
+            vals = {}
+            for v in m.values:
+                vals[v.field_name] = v.field_value
+            data.append({
+                "id": m.id,
+                "template_type": m.template_type,
+                "values": vals,
+                "updated_at": m.updated_at.isoformat() if m.updated_at else None
+            })
+        return {"status": "success", "measurements": data}
     except Exception as e:
-        logger.error(f"Failed to create order via API: {e}")
+        logger.error(f"Failed to fetch measurements: {e}")
         raise HTTPException(status_code=400, detail=str(e))
-
-
-
 class WorkEntryRequest(BaseModel):
     garment_type: Optional[str] = None
     quantity: int = 0
     bill_number: Optional[str] = None
     extra_work_description: Optional[str] = None
     extra_amount: float = 0.0
-    stock_item_id: Optional[int] = None
-    stock_quantity: float = 0.0
     is_present: bool = False
 
 @app.post("/api/worker/{worker_id}/work-entry")
@@ -147,13 +124,6 @@ def submit_work_entry(worker_id: int, req: WorkEntryRequest):
     )
     if "error" in res:
         raise HTTPException(status_code=400, detail=res["error"])
-        
-    if req.stock_item_id and req.stock_quantity > 0:
-        from app.services.stock_service import stock_service
-        try:
-            stock_service.adjust_stock(req.stock_item_id, req.stock_quantity, "consume", worker_id)
-        except Exception as e:
-            logger.error(f"Failed to record stock usage: {e}")
             
     return {"status": "success", "entry": res}
 
@@ -309,56 +279,106 @@ def submit_order_stage(order_id: int, req: StageRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-class MobileOrderRequest(BaseModel):
-    customer_id: int
+class MobileOrderItem(BaseModel):
     garment_type: str
     quantity: int
     price: float
     measurements_text: str = ""
-    special_instructions: str = ""
-    advance_amount: float = 0.0
     save_profile: bool = False
     image_base64: Optional[List[str]] = None
+    notes: str = ""
+
+class MobileOrderRequest(BaseModel):
+    customer_id: int
+    items: List[MobileOrderItem]
+    special_instructions: str = ""
+    advance_amount: float = 0.0
+    delivery_date: Optional[str] = None
+    send_whatsapp: bool = False
 
 @app.post("/api/orders/create")
 def create_mobile_order(req: MobileOrderRequest):
     logger.info(f"Creating new order from worker portal for customer: {req.customer_id}")
     try:
         from app.services.order_service import OrderService
-        from datetime import date
+        from datetime import date, datetime
         
         srv = OrderService()
         
-        # Try to parse measurements_text into a dictionary
-        measurements_dict = {}
-        if req.measurements_text:
-            # simple parsing: comma or newline separated "key: value"
-            import re
-            parts = re.split(r'[,\n]', req.measurements_text)
-            for part in parts:
-                if ':' in part:
-                    k, v = part.split(':', 1)
-                    measurements_dict[k.strip()] = v.strip()
-                elif part.strip():
-                    measurements_dict[part.strip()] = ""
-                    
-        item_data = {
-            "clothing_type": req.garment_type,
-            "quantity": req.quantity,
-            "price": req.price,
-            "measurements": measurements_dict,
-            "save_profile": req.save_profile,
-            "image_base64": req.image_base64
-        }
+        all_item_data = []
+        for item in req.items:
+            measurements_dict = {}
+            if item.measurements_text:
+                import re
+                parts = re.split(r'[,\n]', item.measurements_text)
+                for part in parts:
+                    if ':' in part:
+                        k, v = part.split(':', 1)
+                        measurements_dict[k.strip()] = v.strip()
+                    elif part.strip():
+                        measurements_dict[part.strip()] = ""
+                        
+            all_item_data.append({
+                "clothing_type": item.garment_type,
+                "quantity": item.quantity,
+                "price": item.price,
+                "measurements": measurements_dict,
+                "save_profile": item.save_profile,
+                "image_base64": item.image_base64,
+                "notes": item.notes
+            })
         
+        del_date = None
+        if req.delivery_date:
+            try:
+                del_date = datetime.strptime(req.delivery_date, "%Y-%m-%d").date()
+            except:
+                pass
+
         order = srv.create_order(
             customer_id=req.customer_id,
-            items=[item_data],
+            items=all_item_data,
             order_date=date.today(),
-            delivery_date=None,
+            delivery_date=del_date,
             special_instructions=req.special_instructions,
             advance_amount=req.advance_amount
         )
+        
+        whatsapp_url = None
+        if req.send_whatsapp:
+            from app.database.engine import get_session
+            from app.models.customer import Customer
+            from app.repositories.settings_repo import SettingsRepository
+            import urllib.parse
+            
+            session = get_session()
+            try:
+                customer = session.query(Customer).get(req.customer_id)
+                settings = SettingsRepository(session).get_settings()
+                shop_name = settings.shop_name if settings else "Haroon Tailor"
+                
+                if customer and customer.mobile:
+                    clean_phone = customer.mobile.strip().replace("+", "").replace(" ", "").replace("-", "")
+                    if clean_phone.startswith("0"):
+                        clean_phone = "91" + clean_phone[1:]
+                    elif len(clean_phone) == 10:
+                        clean_phone = "91" + clean_phone
+                        
+                    paid_amt = order.total_amount - order.remaining_amount
+                    msg = (
+                        f"🌟 {customer.name}! 🌟\n\n"
+                        f"{shop_name} में आपका बहुत स्वागत है! आपका ऑर्डर #{order.order_number} सफलतापूर्वक दर्ज कर लिया गया है।\n\n"
+                        f"कुल बिल राशि: ₹{order.total_amount}\n"
+                        f"अब तक जमा: ₹{paid_amt}\n"
+                        f"बकाया राशि: ₹{order.remaining_amount}\n\n"
+                        f"किसी भी तरह की पूछताछ के लिए, बेझिझक हमसे संपर्क करें!\n\n"
+                        f"नोट: डिलीवरी के समय रसीद साथ जरूर लाएं।\n\n"
+                        f"धन्यवाद,\n{shop_name}"
+                    )
+                    encoded_msg = urllib.parse.quote(msg)
+                    whatsapp_url = f"whatsapp://send?phone={clean_phone}&text={encoded_msg}"
+            finally:
+                session.close()
         
         # Trigger desktop reload
         if bridge_instance:
@@ -366,18 +386,22 @@ def create_mobile_order(req: MobileOrderRequest):
             if hasattr(bridge_instance, "order_added"):
                 bridge_instance.order_added.emit()
                 
-        return {"status": "success", "order_id": order.id, "order_number": order.order_number}
+        return {"status": "success", "order_id": order.id, "order_number": order.order_number, "whatsapp_url": whatsapp_url}
     except Exception as e:
         logger.error(f"Failed to create mobile order: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/", response_class=HTMLResponse)
-def index():
+def index(response: Response):
     # Return the mobile portal HTML
     index_path = os.path.join(mobile_assets_dir, "index.html")
     if os.path.exists(index_path):
         with open(index_path, "r", encoding="utf-8") as f:
-            return f.read()
+            content = f.read()
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return HTMLResponse(content, headers=response.headers)
     return "<h1>Worker Portal not found</h1>"
 
 class WebServerThread(Thread):
@@ -388,15 +412,20 @@ class WebServerThread(Thread):
         self.server = None
 
     def run(self):
-        logger.info(f"Starting Worker Portal server on {self.host}:{self.port}")
-        import sys, os
-        if sys.stdout is None:
-            sys.stdout = open(os.devnull, 'w')
-        if sys.stderr is None:
-            sys.stderr = open(os.devnull, 'w')
-        config = uvicorn.Config(app, host=self.host, port=self.port, log_level="info", access_log=False)
-        self.server = uvicorn.Server(config)
-        self.server.run()
+        try:
+            # Handle PyInstaller windowed mode where stdout/stderr are None
+            import sys, os
+            if sys.stdout is None:
+                sys.stdout = open(os.devnull, "w")
+            if sys.stderr is None:
+                sys.stderr = open(os.devnull, "w")
+
+            logger.info(f"Starting Worker Portal server on {self.host}:{self.port}")
+            config = uvicorn.Config(app, host=self.host, port=self.port, log_level="info", access_log=False)
+            self.server = uvicorn.Server(config)
+            self.server.run()
+        except Exception as e:
+            logger.error(f"Failed to start uvicorn/fastapi server: {e}", exc_info=True)
         
     def stop(self):
         if self.server:

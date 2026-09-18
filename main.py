@@ -63,6 +63,10 @@ def main():
     # Load custom fonts
     load_fonts()
 
+    # Install smooth scrolling
+    from app.utils.smooth_scroll import install_smooth_scrolling
+    install_smooth_scrolling(app)
+
     # Create and show the main window
     from app.ui.main_window import MainWindow
     window = MainWindow()
